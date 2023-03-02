@@ -1,0 +1,8 @@
+sudoku_prueba1(L), mostrar_sudoku(L).
+
+sudoku_prueba1(L), buscar_posibilidades(L, L1).
+
+sudoku_prueba1(L), buscar_posibilidades(L, L1), prueba0(L1).
+
+
+predicado time(predicado a llvear a cabo) --> Saca el tiempo (tiempo CPU utilizado)
