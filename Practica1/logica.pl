@@ -91,34 +91,103 @@ obtenerBloque(Vector, Fila, Columna, ValoresBloque) :-
         nth0(IndexBloque, Vector, Valor)
     ), ValoresBloque).
 %-------------------------------------------------------------------------------
+%Meter funcion de actualizar
 
+actualizar_sudoku(Sudoku, Resultado):-
+    actualizarSudokuAux(Sudoku, 81, [], Resultado).
+    
+actualizarSudokuAux(_, 0, Resultado, Resultado).
+
+actualizarSudokuAux(Sudoku, N, Lista, Resultado):-
+    nth1(N, Sudoku, X),
+    valoresPosibles(Num),
+    member(X, Num),
+    obtener_ejes(N, J1, J2),
+    actualizarFila(Sudoku, J1, X, ListaAux),
+    actualizarColumna(),
+    actualizarBloque(),
+    N1 is N -1,
+    actualizarSudokuAux(Sudoku, N1, Lista, Resultado), !.
+    
+actualizarSudokuAux(Sudoku, N, Lista, Resultado):-
+    N1 is N - 1,
+    actualizarSudokuAux(Sudoku, N1, Lista, Resultado), !.
+    
+%-------------------------------------------------------------------------------
+actualizarFila(Sudoku, Fila, Elem, ListaAux):-
+    actualizarFilaAux(Sudoku, Fila, Elem, 9, [], ListaAux),
+    write(ListaAux),nl.
+    
+actualizarFilaAux(_, _, _ , 0, ListaAux, ListaAux).
+
+actualizarFilaAux(Sudoku, Fila, Elem, N, Lista, ListaAux):-
+    N is Fila,
+    write('Salida del recorridooooooooo '), write(N), nl,
+    N1 is N - 1,
+    actualizarFilaAux(Sudoku, Fila, Elem, N1, Lista, ListaAux),!.
+
+actualizarFilaAux(Sudoku, Fila, Elem, N, Lista, ListaAux):-
+    write('Elemento de entrada' ), write(Elem), nl,
+    recorrerFila(Sudoku, N, 9, Lista),
+    %No se puede modificar argumentos creo que es necesario crear una nueva variable
+    write('Salida del recorrido '), write(Lista), nl,
+    N1 is N - 1,
+    actualizarFilaAux(Sudoku, Fila, Elem, N1, Lista, ListaAux),!.
+    
+recorrerFila(_, _, 0, Final).
+
+recorrerFila(Sudoku, N, M, Lista):-
+    write('M '), write(M), write(' -- N'), write(N), nl,
+    Elemento is (N - 1) * 9 + M,
+    write('Elemento '), write(Elemento), nl,
+    nth1(Elemento, Sudoku, X),
+    write('Vamos a ver si va bien '), write(X), nl,
+    M1 is M - 1,
+    recorrerFila(Sudoku, N, M1, [X | Lista]),!.
+
+%-------------------------------------------------------------------------------
+actualizarColumna().
+
+
+actualizarBloque().
+
+
+%-------------------------------------------------------------------------------
 %Reglas de simplificacion
 %Regla 0 --> Si hay un lugar donde solo cabe un numero, lo escribimos en el lugar correspondiente y lo eliminamos de los lugares en los que aparezca de los que son conflictivos
-regla0(Sudoku):-
-    regla0Aux(Sudoku, 81, [], Resultado). %recorre sudoku buscando cuando hay una casilla con un solo numero
+regla0(Sudoku, Resultado):-
+    regla0Aux(Sudoku, 81, [], Resultado).
 
-regla0Aux(_, -1, Resultado, Resultado).
+regla0Aux(_, 0, Resultado, Resultado).
 
 regla0Aux(Sudoku, N, Lista, Resultado):-
-    write(Sudoku),nl,
-    mostrar_sudoku(Sudoku),
-    nth1(N,Sudoku, X),
-    write(X),nl,
+    nth1(N, Sudoku, X),
     valoresPosibles(Num),
-    member(X, Num) -> (write('Cositas2'),nl,
+    member(X, Num),
     N1 is N - 1,
-    regla0Aux(Sudoku, N1, [X | Lista], Resultado));
-    (write('Cositas3'),nl,
-    length(X, N),
-    N > 1 -> (write('Mayor'), nl,
+    regla0Aux(Sudoku, N1, [X | Lista], Resultado),!.
+
+regla0Aux(Sudoku, N, Lista, Resultado):-
+    nth1(N, Sudoku, X),
+    length(X, Tam),
+    Tam > 1,
     N1 is N - 1,
-    regla0Aux(Sudoku, N1, [X | Lista], Resultado));
-    (write('Menor'), nl),
+    regla0Aux(Sudoku, N1, [X | Lista], Resultado),!.
+
+regla0Aux(Sudoku, N, Lista, Resultado):-
+    nth1(N, Sudoku, X),
     N1 is N - 1,
     nth1(1, X, X1),
-    regla0Aux(Sudoku, N1, [X1 | Lista], Resultado)).
+    regla0Aux(Sudoku, N1, [X1 | Lista], Resultado),!.
 
+%-------------------------------------------------------------------------------
+regla1(Sudoku, Resultado):-
+    regla0Aux(Sudoku, 81, [], Resultado).
 
+regla1Aux(_, 0, Resultado, Resultado).
+
+regla1Aux(_, 0, Resultado, Resultado):-
+    write('hola'), nl.
 
 
 
