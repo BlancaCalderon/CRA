@@ -105,12 +105,10 @@ actualizar_sudoku(Sudoku, N, Resultado):-
      obtener_ejes(N, J1, J2),
      nth1(N, Sudoku, X),
      recorrerFila(Sudoku, X, 9, J1, ListaAux),
-     write(ListaAux),nl,
-     mostrar_sudoku(ListaAux),
-     %recorrerColumna(),
+     recorrerColumna(ListaAux, X, 9, J2, ListaAux2),
      %recorrerCuadrado(),
-     Resultado = ListaAux.
-
+     Resultado = ListaAux2.
+%-------------------------------------------------------------------------------
 recorrerFila(Final, _, 0, _, Final).
 
 recorrerFila(Sudoku, X, N, Fila, ListaFinal):-
@@ -125,7 +123,21 @@ recorrerFila(Sudoku, X, N, Fila, ListaFinal):-
 recorrerFila(Sudoku, X, N, Fila, ListaFinal):-
      N1 is N - 1,
      recorrerFila(Sudoku, X, N1, Fila, ListaFinal),!.
+     
+recorrerColumna(Final, _, -1, _, Final).
 
+recorrerColumna(Sudoku, X, N, Columna, ListaFinal):-
+     Index is (Columna) + N * 9,
+     nth1(Index, Sudoku, Y),
+     member(X, Y),
+     select(X, Y, Borrada),
+     sustituir_elemento(Sudoku, Index, Borrada, SudokuAux),
+     N1 is N - 1,
+     recorrerColumna(SudokuAux, X, N1, Columna, ListaFinal),!.
+
+recorrerColumna(Sudoku, X, N, Columna, ListaFinal):-
+     N1 is N - 1,
+     recorrerColumna(Sudoku, X, N1, Columna, ListaFinal),!.
 %-------------------------------------------------------------------------------
 %Reglas de simplificacion
 %Regla 0 --> Si hay un lugar donde solo cabe un numero, lo escribimos en el lugar correspondiente y lo eliminamos de los lugares en los que aparezca de los que son conflictivos
@@ -153,10 +165,8 @@ regla0Aux(Sudoku, N, Resultado):-
     N1 is N - 1,
     nth1(1, X, X1),
     sustituir_elemento(Sudoku, N, X1, SudokuAux),
-    write(SudokuAux), nl,
-    mostrar_sudoku(SudokuAux),
     actualizar_sudoku(SudokuAux, N, Prueba),
-    regla0Aux(Sudoku, N1, Resultado),!.
+    regla0Aux(Prueba, N1, Resultado),!.
 
 %-------------------------------------------------------------------------------
 regla1(Sudoku, Resultado):-
