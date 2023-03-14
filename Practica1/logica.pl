@@ -77,9 +77,9 @@ obtenerColumnaAux(_, _, -1, P, P).        %Para terminar la ejecución de la func
 obtenerColumnaAux(Sudoku, Columna, N, Lista, ValoresColumna):-    %Funcion auxiliar que saca los posibles valores de una columna
     Index is (Columna - 1) + N * 9,                               %Calcula el index correspondiente
     nth0(Index, Sudoku, Valor),                                   %Saca el valor correspondiente al idnex del sudoku y lo introduce en valor
-    NuevosValores = [Valor | Lista],                              %Introduce el valor en la lista de nuevso valores
-    N1 is N - 1,                                                  %Para recorrer siguiente elemento
-    obtenerColumnaAux(Sudoku, Columna, N1, NuevosValores, ValoresColumna).             %Llamada recursiva para sacar los valores de la siguiente posicion
+    NuevosValores = [Valor | Lista],                                                  %Introduce el valor en la lista de nuevso valores
+    N1 is N - 1,                                                                      %Para recorrer siguiente elemento
+    obtenerColumnaAux(Sudoku, Columna, N1, NuevosValores, ValoresColumna).            %Llamada recursiva para sacar los valores de la siguiente posicion
 %-------------------------------------------------------------------------------
 obtenerBloque(Vector, Fila, Columna, ValoresBloque) :-        %Funcion que obtiene los valores podibles del bloque en el que nos encontramos
     InicioFila is (Fila - 1) // 3 * 3,                        %Calcula posición en la que comienza la fila
@@ -106,8 +106,8 @@ actualizar_sudoku(Sudoku, N, Resultado):-
      nth1(N, Sudoku, X),
      recorrerFila(Sudoku, X, 9, J1, ListaAux),
      recorrerColumna(ListaAux, X, 9, J2, ListaAux2),
-     %recorrerCuadrado(),
-     Resultado = ListaAux2.
+     recorrerCuadrado(ListaAux2, X, J1, J2, 3, 3, ListaAux3),
+     Resultado = ListaAux3.
 %-------------------------------------------------------------------------------
 recorrerFila(Final, _, 0, _, Final).
 
@@ -123,7 +123,7 @@ recorrerFila(Sudoku, X, N, Fila, ListaFinal):-
 recorrerFila(Sudoku, X, N, Fila, ListaFinal):-
      N1 is N - 1,
      recorrerFila(Sudoku, X, N1, Fila, ListaFinal),!.
-     
+%-------------------------------------------------------------------------------
 recorrerColumna(Final, _, -1, _, Final).
 
 recorrerColumna(Sudoku, X, N, Columna, ListaFinal):-
@@ -138,6 +138,31 @@ recorrerColumna(Sudoku, X, N, Columna, ListaFinal):-
 recorrerColumna(Sudoku, X, N, Columna, ListaFinal):-
      N1 is N - 1,
      recorrerColumna(Sudoku, X, N1, Columna, ListaFinal),!.
+%-------------------------------------------------------------------------------
+recorrerCuadrado(Final, _, _, _, _, 0, Final).
+
+recorrerCuadrado(Sudoku, X, Fila, Columna, ContF, ContC, ListaFinal):-
+    ContF is 0,
+    N1 is ContC - 1,
+    recorrerCuadrado(Sudoku, X, Fila, Columna, 3, N1, ListaFinal),!.
+
+recorrerCuadrado(Sudoku, X, Fila, Columna, ContF, ContC, ListaFinal):-
+     InicioFila is ((Fila - 1) // 3 * 3) + ContF - 1,
+     InicioColumna is ((Columna - 1) // 3 * 3) + ContC,
+     Posicion is InicioFila * 9 + InicioColumna,
+     valoresPosibles(Num),
+     nth1(Posicion, Sudoku, Y),
+     not(member(Y, Num)),
+     select(X, Y, Borrada),
+     sustituir_elemento(Sudoku, Posicion, Borrada, SudokuAux),
+     N1 is ContF - 1,
+     recorrerCuadrado(SudokuAux, X, Fila, Columna, N1, ContC, ListaFinal),!.
+
+recorrerCuadrado(Sudoku, X, Fila, Columna, ContF, ContC, ListaFinal):-
+    N1 is ContF - 1,
+    recorrerCuadrado(Sudoku, X, Fila, Columna, N1, ContC, ListaFinal),!.
+
+
 %-------------------------------------------------------------------------------
 %Reglas de simplificacion
 %Regla 0 --> Si hay un lugar donde solo cabe un numero, lo escribimos en el lugar correspondiente y lo eliminamos de los lugares en los que aparezca de los que son conflictivos
