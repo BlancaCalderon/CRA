@@ -99,8 +99,6 @@ sustituir_elemento(Vector, Indice, NuevoElemento, NuevoVector) :-
     nth1(Indice, Vector, _, Resto),
     nth1(Indice, NuevoVector, NuevoElemento, Resto).
 
-%Meter funcion de actualizar
-
 actualizar_sudoku(Sudoku, N, Resultado):-
      obtener_ejes(N, J1, J2),
      nth1(N, Sudoku, X),
@@ -162,7 +160,6 @@ recorrerCuadrado(Sudoku, X, Fila, Columna, ContF, ContC, ListaFinal):-
     N1 is ContF - 1,
     recorrerCuadrado(Sudoku, X, Fila, Columna, N1, ContC, ListaFinal),!.
 
-
 %-------------------------------------------------------------------------------
 %Reglas de simplificacion
 %Regla 0 --> Si hay un lugar donde solo cabe un numero, lo escribimos en el lugar correspondiente y lo eliminamos de los lugares en los que aparezca de los que son conflictivos
@@ -195,13 +192,57 @@ regla0Aux(Sudoku, N, Resultado):-
 
 %-------------------------------------------------------------------------------
 regla1(Sudoku, Resultado):-
-    regla0Aux(Sudoku, 81, [], Resultado).
+    regla1Aux(Sudoku, 81, Resultado).
 
-regla1Aux(_, 0, Resultado, Resultado).
+regla1Aux(Resultado, 0, Resultado).
 
-regla1Aux(_, 0, Resultado, Resultado):-
-    write('hola'), nl.
+regla1Aux(Sudoku, N, Resultado):-
+    nth1(N, Sudoku, X),
+    valoresPosibles(Num),
+    member(X, Num),
+    N1 is N - 1,
+    regla1Aux(Sudoku, N1, Resultado),!.
+
+regla1Aux(Sudoku, N, Resultado):-
+    obtener_ejes(N, J1, J2),
+    nth1(N, Sudoku, X),
+    length(X, Tam),
+    regla1Fila(Sudoku, N, X, Tam, 9, J1, ListaAux),
+    %regla1Columna(),
+    %regla1Cuadrante(),
+    N1 is N - 1,
+    write('-------'), nl,
+    regla1Aux(ListaAux, N1, Resultado),!.
+%-------------------------------------------------------------------------------
+regla1Fila(Final, _, _, 0, _, _, Final).
+
+regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux):-
+    Index is (Fila - 1) * 9 + N,
+    Pos is Index,
+    N1 is N - 1,
+    regla1Fila(Sudoku, Pos, X, Tam, N1, Fila, ListaAux),!.
+    
+regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux):-
+    N is 0,
+    write('Soy   '), write(X), nl,
+    nth1(Tam, X, Y),
+    sustituir_elemento(Sudoku, Pos, Y, SudokuAux),
+    mostrar_sudoku(SudokuAux),
+    Tam1 is Tam - 1,
+    regla1Fila(SudokuAux, Pos, X, Tam1, 9, Fila, ListaAux),!.
+    
+regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux):-
+    Index is (Fila - 1) * 9 + N,
+    nth1(Index, Sudoku, Sig),
+    nth1(Tam, X, Y),
+    member(Y, Sig),
+    regla1Fila(Sudoku, Pos, X, 0, N, Fila, ListaAux),!.
+    
+regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux):-
+    N1 is N - 1,
+    regla1Fila(Sudoku, Pos, X, Tam, N1, Fila, ListaAux),!.
 
 
+%-------------------------------------------------------------------------------
 
 
