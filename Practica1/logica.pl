@@ -226,7 +226,8 @@ regla1Columna(Sudoku, Pos, X, Tam, N, Columna, ListaAux):-
     N is 0,
     nth1(Tam, X, Y),
     sustituir_elemento(Sudoku, Pos, Y, SudokuAux),
-    regla1Columna(SudokuAux, Pos, X, 0, 9, Columna, ListaAux),!.
+    actualizar_sudoku(SudokuAux, Pos, Resultado),
+    regla1Columna(Resultado, Pos, X, 0, 9, Columna, ListaAux),!.
 
 regla1Columna(Sudoku, Pos, X, Tam, N, Columna, ListaAux):-
     Index is (Columna) + (N - 1) * 9,
@@ -253,7 +254,8 @@ regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux):-
     N is 0,
     nth1(Tam, X, Y),
     sustituir_elemento(Sudoku, Pos, Y, SudokuAux),
-    regla1Fila(SudokuAux, Pos, X, 0, 9, Fila, ListaAux),!.
+    actualizar_sudoku(SudokuAux, Pos, Resultado),
+    regla1Fila(Resultado, Pos, X, 0, 9, Fila, ListaAux),!.
     
 regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux):-
     Index is (Fila - 1) * 9 + N,
