@@ -209,10 +209,47 @@ regla1Aux(Sudoku, N, Resultado):-
     length(X, Tam),
     regla1Fila(Sudoku, N, X, Tam, 9, J1, ListaAux),
     regla1Columna(ListaAux, N, X, Tam, 9, J2, ListaAux2),
-    %regla1Cuadrante(),
+    regla1Cuadrante(ListaAux2, N, X, Tam, 3, 3, J1, J2, ListaAux3),
     N1 is N - 1,
-    write('-------'), nl,
-    regla1Aux(ListaAux2, N1, Resultado),!.
+    regla1Aux(ListaAux3, N1, Resultado),!.
+%-------------------------------------------------------------------------------
+regla1Cuadrante(Final, _, _, 0, _, _, _, _, Final).
+
+regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux):-
+    M is 0,
+    N is 0,
+    nth1(Tam, X, Y),
+    sustituir_elemento(Sudoku, Pos, Y, SudokuAux),
+    actualizar_sudoku(SudokuAux, Pos, Resultado),
+    regla1Cuadrante(Resultado, Pos, X, 0, N, M, Fila, Columna, ListaAux),!.
+
+regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux):-
+    InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
+    InicioColumna is ((Columna - 1) // 3 * 3) + M,
+    Posicion is InicioFila * 9 + InicioColumna,
+    Pos is Posicion,
+    N > 0,
+    N1 is N - 1,
+    regla1Cuadrante(Sudoku, Pos, X, Tam, N1, M, Fila, Columna, ListaAux),!.
+
+regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux):-
+    N is 0,
+    M1 is M - 1,
+    regla1Cuadrante(Sudoku, Pos, X, Tam, 3, M1, Fila, Columna, ListaAux),!.
+    
+regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux):-
+    InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
+    InicioColumna is ((Columna - 1) // 3 * 3) + M,
+    Posicion is InicioFila * 9 + InicioColumna,
+    nth1(Tam, X, Y),
+    nth1(Posicion, Sudoku, Sig),
+    member(Y, Sig),
+    Tam1 is Tam - 1,
+    regla1Cuadrante(Sudoku, Pos, X, Tam1, 3, 3, Fila, Columna, ListaAux),!.
+
+regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux):-
+    N1 is N - 1,
+    regla1Cuadrante(Sudoku, Pos, X, Tam, N1, M, Fila, Columna, ListaAux),!.
 %-------------------------------------------------------------------------------
 regla1Columna(Final, _, _, 0, _, _, Final).
 
@@ -240,7 +277,6 @@ regla1Columna(Sudoku, Pos, X, Tam, N, Columna, ListaAux):-
 regla1Columna(Sudoku, Pos, X, Tam, N, Columna, ListaAux):-
     N1 is N - 1,
     regla1Columna(Sudoku, Pos, X, Tam, N1, Columna, ListaAux),!.
-
 %-------------------------------------------------------------------------------
 regla1Fila(Final, _, _, 0, _, _, Final).
 
