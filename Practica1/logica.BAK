@@ -99,15 +99,13 @@ sustituir_elemento(Vector, Indice, NuevoElemento, NuevoVector) :-
     nth1(Indice, Vector, _, Resto),
     nth1(Indice, NuevoVector, NuevoElemento, Resto).
 
-%Meter funcion de actualizar
-
 actualizar_sudoku(Sudoku, N, Resultado):-
      obtener_ejes(N, J1, J2),
      nth1(N, Sudoku, X),
      recorrerFila(Sudoku, X, 9, J1, ListaAux),
      recorrerColumna(ListaAux, X, 9, J2, ListaAux2),
-     recorrerCuadrado(ListaAux2, X, J1, J2, ListaAux),
-     Resultado = ListaAux.
+     recorrerCuadrado(ListaAux2, X, J1, J2, 3, 3, ListaAux3),
+     Resultado = ListaAux3.
 %-------------------------------------------------------------------------------
 recorrerFila(Final, _, 0, _, Final).
 
@@ -139,11 +137,29 @@ recorrerColumna(Sudoku, X, N, Columna, ListaFinal):-
      N1 is N - 1,
      recorrerColumna(Sudoku, X, N1, Columna, ListaFinal),!.
 %-------------------------------------------------------------------------------
-recorrerCuadrado(Sudoku, X, Fila, Columna, ListaFinal):-
-     InicioFila is (Fila - 1) // 3 * 3,
-     InicioColumna is (Columna - 1) // 3 * 3,
-     write(InicioFila), nl,
-     write(InicioColumna), nl.
+recorrerCuadrado(Final, _, _, _, _, 0, Final).
+
+recorrerCuadrado(Sudoku, X, Fila, Columna, ContF, ContC, ListaFinal):-
+    ContF is 0,
+    N1 is ContC - 1,
+    recorrerCuadrado(Sudoku, X, Fila, Columna, 3, N1, ListaFinal),!.
+
+recorrerCuadrado(Sudoku, X, Fila, Columna, ContF, ContC, ListaFinal):-
+     InicioFila is ((Fila - 1) // 3 * 3) + ContF - 1,
+     InicioColumna is ((Columna - 1) // 3 * 3) + ContC,
+     Posicion is InicioFila * 9 + InicioColumna,
+     valoresPosibles(Num),
+     nth1(Posicion, Sudoku, Y),
+     not(member(Y, Num)),
+     select(X, Y, Borrada),
+     sustituir_elemento(Sudoku, Posicion, Borrada, SudokuAux),
+     N1 is ContF - 1,
+     recorrerCuadrado(SudokuAux, X, Fila, Columna, N1, ContC, ListaFinal),!.
+
+recorrerCuadrado(Sudoku, X, Fila, Columna, ContF, ContC, ListaFinal):-
+    N1 is ContF - 1,
+    recorrerCuadrado(Sudoku, X, Fila, Columna, N1, ContC, ListaFinal),!.
+
 %-------------------------------------------------------------------------------
 %Reglas de simplificacion
 %Regla 0 --> Si hay un lugar donde solo cabe un numero, lo escribimos en el lugar correspondiente y lo eliminamos de los lugares en los que aparezca de los que son conflictivos
@@ -176,13 +192,119 @@ regla0Aux(Sudoku, N, Resultado):-
 
 %-------------------------------------------------------------------------------
 regla1(Sudoku, Resultado):-
-    regla0Aux(Sudoku, 81, [], Resultado).
+    regla1Aux(Sudoku, 81, Resultado).
 
-regla1Aux(_, 0, Resultado, Resultado).
+regla1Aux(Resultado, 0, Resultado).
 
-regla1Aux(_, 0, Resultado, Resultado):-
-    write('hola'), nl.
+regla1Aux(Sudoku, N, Resultado):-
+    nth1(N, Sudoku, X),
+    valoresPosibles(Num),
+    member(X, Num),
+    N1 is N - 1,
+    regla1Aux(Sudoku, N1, Resultado),!.
 
+regla1Aux(Sudoku, N, Resultado):-
+    obtener_ejes(N, J1, J2),
+    nth1(N, Sudoku, X),
+    length(X, Tam),
+    regla1Fila(Sudoku, N, X, Tam, 9, J1, ListaAux),
+    regla1Columna(ListaAux, N, X, Tam, 9, J2, ListaAux2),
+    regla1Cuadrante(ListaAux2, N, X, Tam, 3, 3, J1, J2, ListaAux3),
+    N1 is N - 1,
+    regla1Aux(ListaAux3, N1, Resultado),!.
+%-------------------------------------------------------------------------------
+regla1Cuadrante(Final, _, _, 0, _, _, _, _, Final).
+
+regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux):-
+    M is 0,
+    N is 0,
+    nth1(Tam, X, Y),
+    sustituir_elemento(Sudoku, Pos, Y, SudokuAux),
+    actualizar_sudoku(SudokuAux, Pos, Resultado),
+    regla1Cuadrante(Resultado, Pos, X, 0, N, M, Fila, Columna, ListaAux),!.
+
+regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux):-
+    InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
+    InicioColumna is ((Columna - 1) // 3 * 3) + M,
+    Posicion is InicioFila * 9 + InicioColumna,
+    Pos is Posicion,
+    N > 0,
+    N1 is N - 1,
+    regla1Cuadrante(Sudoku, Pos, X, Tam, N1, M, Fila, Columna, ListaAux),!.
+
+regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux):-
+    N is 0,
+    M1 is M - 1,
+    regla1Cuadrante(Sudoku, Pos, X, Tam, 3, M1, Fila, Columna, ListaAux),!.
+    
+regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux):-
+    InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
+    InicioColumna is ((Columna - 1) // 3 * 3) + M,
+    Posicion is InicioFila * 9 + InicioColumna,
+    nth1(Tam, X, Y),
+    nth1(Posicion, Sudoku, Sig),
+    member(Y, Sig),
+    Tam1 is Tam - 1,
+    regla1Cuadrante(Sudoku, Pos, X, Tam1, 3, 3, Fila, Columna, ListaAux),!.
+
+regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux):-
+    N1 is N - 1,
+    regla1Cuadrante(Sudoku, Pos, X, Tam, N1, M, Fila, Columna, ListaAux),!.
+%-------------------------------------------------------------------------------
+regla1Columna(Final, _, _, 0, _, _, Final).
+
+regla1Columna(Sudoku, Pos, X, Tam, N, Columna, ListaAux):-
+    Index is (Columna) + (N - 1) * 9,
+    Pos is Index,
+    N1 is N - 1,
+    regla1Columna(Sudoku, Pos, X, Tam, N1, Columna, ListaAux),!.
+    
+regla1Columna(Sudoku, Pos, X, Tam, N, Columna, ListaAux):-
+    N is 0,
+    nth1(Tam, X, Y),
+    sustituir_elemento(Sudoku, Pos, Y, SudokuAux),
+    actualizar_sudoku(SudokuAux, Pos, Resultado),
+    regla1Columna(Resultado, Pos, X, 0, 9, Columna, ListaAux),!.
+
+regla1Columna(Sudoku, Pos, X, Tam, N, Columna, ListaAux):-
+    Index is (Columna) + (N - 1) * 9,
+    nth1(Index, Sudoku, Sig),
+    nth1(Tam, X, Y),
+    member(Y, Sig),
+    Tam1 is Tam - 1,
+    regla1Columna(Sudoku, Pos, X, Tam1, 9, Columna, ListaAux),!.
+
+regla1Columna(Sudoku, Pos, X, Tam, N, Columna, ListaAux):-
+    N1 is N - 1,
+    regla1Columna(Sudoku, Pos, X, Tam, N1, Columna, ListaAux),!.
+%-------------------------------------------------------------------------------
+regla1Fila(Final, _, _, 0, _, _, Final).
+
+regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux):-
+    Index is (Fila - 1) * 9 + N,
+    Pos is Index,
+    N1 is N - 1,
+    regla1Fila(Sudoku, Pos, X, Tam, N1, Fila, ListaAux),!.
+    
+regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux):-
+    N is 0,
+    nth1(Tam, X, Y),
+    sustituir_elemento(Sudoku, Pos, Y, SudokuAux),
+    actualizar_sudoku(SudokuAux, Pos, Resultado),
+    regla1Fila(Resultado, Pos, X, 0, 9, Fila, ListaAux),!.
+    
+regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux):-
+    Index is (Fila - 1) * 9 + N,
+    nth1(Index, Sudoku, Sig),
+    nth1(Tam, X, Y),
+    member(Y, Sig),
+    Tam1 is Tam - 1,
+    regla1Fila(Sudoku, Pos, X, Tam1, 9, Fila, ListaAux),!.
+    
+regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux):-
+    N1 is N - 1,
+    regla1Fila(Sudoku, Pos, X, Tam, N1, Fila, ListaAux),!.
+%-------------------------------------------------------------------------------
 
 
 
