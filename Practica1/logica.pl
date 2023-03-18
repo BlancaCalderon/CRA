@@ -8,7 +8,7 @@ mostrar_sudoku([X|L]):-                 %X es primer elemento del sudoku actual
     nl, write('-------------------'), nl,
     write('|'), write(X), write('|'),
     mostrar_sudoku(L),!.                 %lLamada recursiva para mostrar el siguiente elemento del sudoku
-    
+
 mostrar_sudoku([X|L]):-
     write(X), write('|'),
     mostrar_sudoku(L).
@@ -71,7 +71,7 @@ obtenerFilaAux(Sudoku, Fila, N, Lista, ValoresFila):-   %Funcion auxiliar para e
 %-------------------------------------------------------------------------------
 obtenerColumna(Sudoku, Columna, ValoresColumna) :-                  %Obtiene los valores posibles de una columna
     obtenerColumnaAux(Sudoku, Columna, 8, [], ValoresColumna).      %Primera llamada a la función auxiliar empezando en pos 8
-    
+
 obtenerColumnaAux(_, _, -1, P, P).        %Para terminar la ejecución de la función cuando posición es -1
 
 obtenerColumnaAux(Sudoku, Columna, N, Lista, ValoresColumna):-    %Funcion auxiliar que saca los posibles valores de una columna
@@ -236,7 +236,7 @@ regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux):-
     N is 0,
     M1 is M - 1,
     regla1Cuadrante(Sudoku, Pos, X, Tam, 3, M1, Fila, Columna, ListaAux),!.
-    
+
 regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux):-
     InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
     InicioColumna is ((Columna - 1) // 3 * 3) + M,
@@ -258,7 +258,7 @@ regla1Columna(Sudoku, Pos, X, Tam, N, Columna, ListaAux):-
     Pos is Index,
     N1 is N - 1,
     regla1Columna(Sudoku, Pos, X, Tam, N1, Columna, ListaAux),!.
-    
+
 regla1Columna(Sudoku, Pos, X, Tam, N, Columna, ListaAux):-
     N is 0,
     nth1(Tam, X, Y),
@@ -285,14 +285,14 @@ regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux):-
     Pos is Index,
     N1 is N - 1,
     regla1Fila(Sudoku, Pos, X, Tam, N1, Fila, ListaAux),!.
-    
+
 regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux):-
     N is 0,
     nth1(Tam, X, Y),
     sustituir_elemento(Sudoku, Pos, Y, SudokuAux),
     actualizar_sudoku(SudokuAux, Pos, Resultado),
     regla1Fila(Resultado, Pos, X, 0, 9, Fila, ListaAux),!.
-    
+
 regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux):-
     Index is (Fila - 1) * 9 + N,
     nth1(Index, Sudoku, Sig),
@@ -300,14 +300,14 @@ regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux):-
     member(Y, Sig),
     Tam1 is Tam - 1,
     regla1Fila(Sudoku, Pos, X, Tam1, 9, Fila, ListaAux),!.
-    
+
 regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux):-
     N1 is N - 1,
     regla1Fila(Sudoku, Pos, X, Tam, N1, Fila, ListaAux),!.
 %-------------------------------------------------------------------------------
 regla2(Sudoku, Resultado):-
     regla2Aux(Sudoku, 81, Resultado).
-    
+
 regla2Aux(Final, 0, Final).
 
 regla2Aux(Sudoku, N, Resultado):-
@@ -315,14 +315,14 @@ regla2Aux(Sudoku, N, Resultado):-
     number(X),
     N1 is N - 1,
     regla2Aux(Sudoku, N1, Resultado),!.
-    
+
 regla2Aux(Sudoku, N, Resultado):-
     nth1(N, Sudoku, X),
     length(X, Longitud),
     Longitud > 2,
     N1 is N - 1,
     regla2Aux(Sudoku, N1, Resultado),!.
-    
+
 regla2Aux(Sudoku, N, Resultado):-
     obtener_ejes(N, J1, J2),
     nth1(N, Sudoku, X),
@@ -349,11 +349,11 @@ regla2Columna(Sudoku, Pos, [X | Y], Columna, N, ListaAux):-
     member(X, Elem),
     nth1(1, Y, Y1),
     member(Y1, Elem),
-    write([X | Y]),nl,
-    %borrarParejaColumna(Sudoku, Pos, Index, Fila, 9, ListaSin),
+    write('Recuerda cambiar la llista'),nl,
+    borrarParejaColumna(Sudoku, Pos, Index, Columna, 9, ListaSin),
     N1 is N - 1,
-    regla2Columna(Sudoku, Pos, [X | Y], Columna, N1, ListaAux).
-    
+    regla2Columna(ListaSin, Pos, [X | Y], Columna, N1, ListaAux).
+
 regla2Columna(Sudoku, Pos, [X | Y], Columna, N, ListaAux):-
     N1 is N - 1,
     regla2Columna(Sudoku, Pos, [X | Y], Columna, N1, ListaAux).
@@ -369,7 +369,7 @@ regla2Fila(Sudoku, Pos, [X | Y], Fila, N, ListaAux):-
     Longitud > 2)),
     N1 is N - 1,
     regla2Fila(Sudoku, Pos, [X | Y], Fila, N1, ListaAux),!.
-    
+
 regla2Fila(Sudoku, Pos, [X | Y], Fila, N, ListaAux):-
     Index is (Fila - 1) * 9 + N,
     nth1(Index, Sudoku, Elem),
@@ -379,12 +379,32 @@ regla2Fila(Sudoku, Pos, [X | Y], Fila, N, ListaAux):-
     borrarParejaFila(Sudoku, Pos, Index, Fila, 9, ListaSin),
     N1 is N - 1,
     regla2Fila(ListaSin, Pos, [X | Y], Fila, N1, ListaAux). %X --> [X | Y]
-    
+
 regla2Fila(Sudoku, Pos, [X | Y], Fila, N, ListaAux):-
     N1 is N - 1,
     regla2Fila(Sudoku, Pos, [X | Y], Fila, N1, ListaAux).
 %-------------------------------------------------------------------------------
-%borrarParejaColumna()
+borrarParejaColumna(Final, _, _, _, 0, Final).
+
+borrarParejaColumna(Sudoku, Pos1, Pos2, Columna, N, SudokuAux):-
+    Index is (Columna) + (N - 1) * 9,
+    nth1(Index, Sudoku, Elem),
+    (Pos1 is Index;
+    Pos2 is Index;
+    number(Elem)),
+    N1 is N - 1,
+    borrarParejaColumna(Sudoku, Pos1, Pos2, Columna, N1, SudokuAux),!.
+
+borrarParejaColumna(Sudoku, Pos1, Pos2, Columna, N, SudokuAux):-
+    Index is (Columna) + (N - 1) * 9,
+    borrarParejaGeneral(Sudoku, Index, Pos1, SudokuSin),
+    mostrar_sudoku(SudokuSin),
+    N1 is N - 1,
+    borrarParejaColumna(SudokuSin, Pos1, Pos2, Columna, N1, SudokuAux),!.
+
+borrarParejaColumna(Sudoku, Pos1, Pos2, Columna, N, SudokuAux):-
+    N1 is N - 1,
+    borrarParejaColumna(Sudoku, Pos1, Pos2, Columna, N1, SudokuAux),!.
 %-------------------------------------------------------------------------------
 borrarParejaFila(Final, _, _, _, 0, Final).
 
@@ -396,13 +416,13 @@ borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N, SudokuAux):-
     number(Elem)),
     N1 is N - 1,
     borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N1, SudokuAux),!.
-    
+
 borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N, SudokuAux):-
     Index is (Fila - 1) * 9 + N,
     borrarParejaGeneral(Sudoku, Index, Pos1, SudokuSin),
     N1 is N - 1,
     borrarParejaFila(SudokuSin, Pos1, Pos2, Fila, N1, SudokuAux),!.
-    
+
 borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N, SudokuAux):-
     N1 is N - 1,
     borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N1, SudokuAux),!.
@@ -426,5 +446,4 @@ borrarParejaGeneral(Sudoku, Index, Pos1, SudokuAux):-
     )),
     sustituir_elemento(Sudoku, Index, Borrada2, SudokuSin),
     SudokuAux = SudokuSin.
-
 
