@@ -7,6 +7,7 @@ dibujar_sudoku(Sudoku):-
    send(Ventana, display, new(Tabla, tabular)),
    send(Tabla, border, 1),
    send(Tabla, cell_spacing, -1),
+   send(Tabla, cell_padding, 10),
    send(Tabla, rules, all),
    recorrer_sudoku_visual(Sudoku,LR),
    cadenas_a_terminos(LR, LRFormateado),
