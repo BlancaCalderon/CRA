@@ -326,13 +326,41 @@ regla2Aux(Sudoku, N, Resultado):-
 regla2Aux(Sudoku, N, Resultado):-
     obtener_ejes(N, J1, J2),
     nth1(N, Sudoku, X),
-    regla2Fila(Sudoku, N, X, J1, 9, ListaAux),
+    %regla2Fila(Sudoku, N, X, J1, 9, ListaAux),
+    regla2Columna(Sudoku, N, X, J2, 9, ListaAux),
     N1 is N - 1,
     regla2Aux(ListaAux, N1, Resultado),!.
 %-------------------------------------------------------------------------------
+regla2Columna(Final, _, _, _, 0, Final).
+
+regla2Columna(Sudoku, Pos, [X | Y], Columna, N, ListaAux):-
+    Index is (Columna) + (N - 1) * 9,
+    nth1(Index, Sudoku, Elem),
+    (Pos is Index;
+    number(Elem);
+    (length(Elem, Longitud),
+    Longitud > 2)),
+    N1 is N - 1,
+    regla2Columna(Sudoku, Pos, [X | Y], Columna, N1, ListaAux).
+
+regla2Columna(Sudoku, Pos, [X | Y], Columna, N, ListaAux):-
+    Index is (Columna) + (N - 1) * 9,
+    nth1(Index, Sudoku, Elem),
+    member(X, Elem),
+    nth1(1, Y, Y1),
+    member(Y1, Elem),
+    write([X | Y]),nl,
+    %borrarParejaColumna(Sudoku, Pos, Index, Fila, 9, ListaSin),
+    N1 is N - 1,
+    regla2Columna(Sudoku, Pos, [X | Y], Columna, N1, ListaAux).
+    
+regla2Columna(Sudoku, Pos, [X | Y], Columna, N, ListaAux):-
+    N1 is N - 1,
+    regla2Columna(Sudoku, Pos, [X | Y], Columna, N1, ListaAux).
+%-------------------------------------------------------------------------------
 regla2Fila(Final, _, _, _, 0, Final).
 
-regla2Fila(Sudoku, Pos, [X| Y], Fila, N, ListaAux):-
+regla2Fila(Sudoku, Pos, [X | Y], Fila, N, ListaAux):-
     Index is (Fila - 1) * 9 + N,
     nth1(Index, Sudoku, Elem),
     (Pos is Index;
@@ -350,11 +378,13 @@ regla2Fila(Sudoku, Pos, [X | Y], Fila, N, ListaAux):-
     member(Y1, Elem),
     borrarParejaFila(Sudoku, Pos, Index, Fila, 9, ListaSin),
     N1 is N - 1,
-    regla2Fila(ListaSin, Pos, X, Fila, N1, ListaAux).
+    regla2Fila(ListaSin, Pos, [X | Y], Fila, N1, ListaAux). %X --> [X | Y]
     
-regla2Fila(Sudoku, Pos, X, Fila, N, ListaAux):-
+regla2Fila(Sudoku, Pos, [X | Y], Fila, N, ListaAux):-
     N1 is N - 1,
-    regla2Fila(Sudoku, Pos, X, Fila, N1, ListaAux).
+    regla2Fila(Sudoku, Pos, [X | Y], Fila, N1, ListaAux).
+%-------------------------------------------------------------------------------
+%borrarParejaColumna()
 %-------------------------------------------------------------------------------
 borrarParejaFila(Final, _, _, _, 0, Final).
 
@@ -369,6 +399,15 @@ borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N, SudokuAux):-
     
 borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N, SudokuAux):-
     Index is (Fila - 1) * 9 + N,
+    borrarParejaGeneral(Sudoku, Index, Pos1, SudokuSin),
+    N1 is N - 1,
+    borrarParejaFila(SudokuSin, Pos1, Pos2, Fila, N1, SudokuAux),!.
+    
+borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N, SudokuAux):-
+    N1 is N - 1,
+    borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N1, SudokuAux),!.
+%-------------------------------------------------------------------------------
+borrarParejaGeneral(Sudoku, Index, Pos1, SudokuAux):-
     nth1(Index, Sudoku, Elem),
     nth1(Pos1, Sudoku, Pos),
     nth1(1, Pos, X),
@@ -379,21 +418,13 @@ borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N, SudokuAux):-
     select(X, Elem, Borrada1),
     select(Y, Borrada1, Borrada2)
     );
-    
     (member(X, Elem),
     select(X, Elem, Borrada2)
     );
-    
     (member(Y, Elem),
     select(Y, Elem, Borrada2)
     )),
     sustituir_elemento(Sudoku, Index, Borrada2, SudokuSin),
-    N1 is N - 1,
-    borrarParejaFila(SudokuSin, Pos1, Pos2, Fila, N1, SudokuAux),!.
-    
-borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N, SudokuAux):-
-    N1 is N - 1,
-    borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N1, SudokuAux),!.
-
+    SudokuAux = SudokuSin.
 
 
