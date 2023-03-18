@@ -249,3 +249,4 @@ sudoku_prueba25([5,.,.,.,6,.,.,4,.,
                  .,.,4,.,1,5,8,.,9]).
                  
 :-consult('logica.pl').
+:-consult('Implementacion_Grafica.pl').

@@ -319,17 +319,60 @@ regla2Aux(Sudoku, N, Resultado):-
 regla2Aux(Sudoku, N, Resultado):-
     nth1(N, Sudoku, X),
     length(X, Longitud),
-    Longitud > 2,
+    not(Longitud is 2),
     N1 is N - 1,
     regla2Aux(Sudoku, N1, Resultado),!.
 
 regla2Aux(Sudoku, N, Resultado):-
     obtener_ejes(N, J1, J2),
     nth1(N, Sudoku, X),
+    write('No te olvides '), write(N),nl,
+    write(X),nl,
     %regla2Fila(Sudoku, N, X, J1, 9, ListaAux),
-    regla2Columna(Sudoku, N, X, J2, 9, ListaAux),
+    %regla2Columna(ListaAux, N, X, J2, 9, ListaAux2),
+    regla2Cuadrante(Sudoku, N, X, 3, 3, J1, J2, ListaAux),
     N1 is N - 1,
-    regla2Aux(ListaAux, N1, Resultado),!.
+    regla2Aux(Sudoku, N1, Resultado),!.
+%-------------------------------------------------------------------------------
+regla2Cuadrante(Final, _, _, _, 0, _, _, Final).
+
+regla2Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, ListaAux):-
+    N is 0,
+    M1 is M - 1,
+    regla2Cuadrante(Sudoku, Pos, X, 3, M1, Fila, Columna, ListaAux),!.
+    
+regla2Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, ListaAux):-
+    InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
+    InicioColumna is ((Columna - 1) // 3 * 3) + M,
+    Posicion is InicioFila * 9 + InicioColumna,
+    nth1(Posicion, Sudoku, Elem),
+    (Pos is Posicion;
+    number(Elem);
+    (not(
+    number(Elem)),
+    length(Elem, Longitud),
+    Longitud > 2)),
+    N >= 1,
+    N1 is N - 1,
+    regla2Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, ListaAux),!.
+
+regla2Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, ListaAux):-
+    InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
+    InicioColumna is ((Columna - 1) // 3 * 3) + M,
+    Posicion is InicioFila * 9 + InicioColumna,
+    nth1(Posicion, Sudoku, Sig),
+    nth1(1, X, Y),
+    member(Y, Sig),
+    nth1(2, X, Y2),
+    member(Y2, Sig),
+    write('Podemos hacerlo '),nl,
+    %borrarParejaCuadrante(Sudoku, Pos, Index, Columna, 9, ListaSin),
+    N1 is N - 1,
+    regla2Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, ListaAux),!.
+    
+regla2Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, ListaAux):-
+    N1 is N - 1,
+    regla2Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, ListaAux),!.
 %-------------------------------------------------------------------------------
 regla2Columna(Final, _, _, _, 0, Final).
 
@@ -349,7 +392,6 @@ regla2Columna(Sudoku, Pos, [X | Y], Columna, N, ListaAux):-
     member(X, Elem),
     nth1(1, Y, Y1),
     member(Y1, Elem),
-    write('Recuerda cambiar la llista'),nl,
     borrarParejaColumna(Sudoku, Pos, Index, Columna, 9, ListaSin),
     N1 is N - 1,
     regla2Columna(ListaSin, Pos, [X | Y], Columna, N1, ListaAux).
@@ -384,6 +426,8 @@ regla2Fila(Sudoku, Pos, [X | Y], Fila, N, ListaAux):-
     N1 is N - 1,
     regla2Fila(Sudoku, Pos, [X | Y], Fila, N1, ListaAux).
 %-------------------------------------------------------------------------------
+borrarParejaCuadrante(Final, _, _, _, _, 0, Final).
+%-------------------------------------------------------------------------------
 borrarParejaColumna(Final, _, _, _, 0, Final).
 
 borrarParejaColumna(Sudoku, Pos1, Pos2, Columna, N, SudokuAux):-
@@ -398,7 +442,6 @@ borrarParejaColumna(Sudoku, Pos1, Pos2, Columna, N, SudokuAux):-
 borrarParejaColumna(Sudoku, Pos1, Pos2, Columna, N, SudokuAux):-
     Index is (Columna) + (N - 1) * 9,
     borrarParejaGeneral(Sudoku, Index, Pos1, SudokuSin),
-    mostrar_sudoku(SudokuSin),
     N1 is N - 1,
     borrarParejaColumna(SudokuSin, Pos1, Pos2, Columna, N1, SudokuAux),!.
 

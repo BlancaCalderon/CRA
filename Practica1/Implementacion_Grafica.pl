@@ -59,7 +59,7 @@ cadenas_a_terminos([Cadena|RestoCadenas], [Termino|RestoTerminos]) :-
 %Predicado que transforma una lista en un numero en conjunto
 lista_a_numero(Lista, NumeroResultado) :-
    length(Lista, Largo),
-   (Largo>2 ->
+   (Largo>1 ->
       lista_a_numero_aux(Lista, NumeroRes),
       atom_number(NumeroRes, NumeroResultado)
       ;
