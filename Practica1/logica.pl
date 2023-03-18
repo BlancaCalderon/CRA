@@ -529,20 +529,74 @@ regla3Aux(Sudoku, N, Resultado):-
 regla3Aux(Sudoku, N, Resultado):-
     nth1(N, Sudoku, X),
     length(X, Longitud),
-    not(Longitud is 2),
+    not(Longitud is 3),
     N1 is N - 1,
     regla3Aux(Sudoku, N1, Resultado),!.
 
 regla3Aux(Sudoku, N, Resultado):-
     obtener_ejes(N, J1, J2),
     nth1(N, Sudoku, X),
-    regla2Fila(Sudoku, N, X, J1, 9, ListaAux),
-    regla2Columna(ListaAux, N, X, J2, 9, ListaAux2),
-    regla2Cuadrante(ListaAux2, N, X, 3, 3, J1, J2, ListaAux3),
+    write('Somos nosotros'), write(X),nl,
+    %regla2Fila(Sudoku, N, X, J1, 9, ListaAux),
+    %regla2Columna(ListaAux, N, X, J2, 9, ListaAux2),
+    regla3Cuadrante(Sudoku, N, X, 3, 3, J1, J2, 0, ListaAux3),
     N1 is N - 1,
-    regla3Aux(ListaAux3, N1, Resultado),!.
+    regla3Aux(Sudoku, N1, Resultado),!.
 %-------------------------------------------------------------------------------
+regla3Cuadrante(Final, _, _, _, 0, _, _, _, Final).
 
+regla3Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, Count, ListaAux):-
+    N is 0,
+    M1 is M - 1,
+    regla3Cuadrante(Sudoku, Pos, X, 3, M1, Fila, Columna, Count, ListaAux),!.
+
+regla3Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, Count, ListaAux):-
+%write('Entro por esto ---------------------------> '), write(X), nl,
+    InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
+    InicioColumna is ((Columna - 1) // 3 * 3) + M,
+    Posicion is InicioFila * 9 + InicioColumna,
+    nth1(Posicion, Sudoku, Elem),
+    (Pos is Posicion;
+    number(Elem);
+    (not(number(Elem)),
+    length(Elem, Longitud),
+    not(
+    Longitud is 3) )),
+    write('Primera condicion '), write(Elem), write(' -- '), write(N),nl,
+    N >= 1,
+    N1 is N - 1,
+    regla3Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, Count, ListaAux),!.
+
+regla3Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, Count, ListaAux):-
+    InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
+    InicioColumna is ((Columna - 1) // 3 * 3) + M,
+    Posicion is InicioFila * 9 + InicioColumna,
+    nth1(Posicion, Sudoku, Sig),
+    nth1(1, X, Y),
+    member(Y, Sig),
+    nth1(2, X, Y2),
+    member(Y2, Sig),
+    nth1(3, X, Y3),
+    member(Y3, Sig),
+    write('MAMAMAMMAMAAMAMAMA - '), write(X), write(' - '), write(Count), nl,
+    (
+    (write('Soy el responsable'),nl,
+    Count is 0,
+    Count1 is Count + 1,
+    N1 is N - 1,
+    regla3Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, Count1, ListaAux),!)
+    ;
+    (write('Soy yooooooooo'),nl,
+    N1 is N - 1,
+    write('YO SI QUE LLEGOOOOOOOOOOOOOOOOOO'),nl,
+    regla3Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, Count, ListaAux),!)
+    ).
+    %borrarParejaCuadrante(Sudoku, Pos, Posicion, Fila, Columna, 3, 3, ListaSin),
+
+regla3Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, Count, ListaAux):-
+    N1 is N - 1,
+    regla3Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, Count, ListaAux),!.
+%-------------------------------------------------------------------------------
 buscar(Sudoku, N, Resultado):-
     buscar_posibilidades(Sudoku, SudokuAux),
     buscar_casos(SudokuAux, N, Resultado).
