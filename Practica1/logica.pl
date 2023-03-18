@@ -326,8 +326,6 @@ regla2Aux(Sudoku, N, Resultado):-
 regla2Aux(Sudoku, N, Resultado):-
     obtener_ejes(N, J1, J2),
     nth1(N, Sudoku, X),
-    write('No te olvides '), write(N),nl,
-    write(X),nl,
     regla2Fila(Sudoku, N, X, J1, 9, ListaAux),
     regla2Columna(ListaAux, N, X, J2, 9, ListaAux2),
     regla2Cuadrante(ListaAux2, N, X, 3, 3, J1, J2, ListaAux3),
@@ -365,7 +363,6 @@ regla2Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, ListaAux):-
     member(Y, Sig),
     nth1(2, X, Y2),
     member(Y2, Sig),
-    write('Podemos hacerlo '),nl,
     borrarParejaCuadrante(Sudoku, Pos, Posicion, Fila, Columna, 3, 3, ListaSin),
     N1 is N - 1,
     regla2Cuadrante(ListaSin, Pos, X, N1, M, Fila, Columna, ListaAux),!.
@@ -382,7 +379,7 @@ regla2Columna(Sudoku, Pos, [X | Y], Columna, N, ListaAux):-
     (Pos is Index;
     number(Elem);
     (length(Elem, Longitud),
-    Longitud > 2)),
+    not(Longitud is 2))),
     N1 is N - 1,
     regla2Columna(Sudoku, Pos, [X | Y], Columna, N1, ListaAux).
 
@@ -408,7 +405,7 @@ regla2Fila(Sudoku, Pos, [X | Y], Fila, N, ListaAux):-
     (Pos is Index;
     number(Elem);
     (length(Elem, Longitud),
-    Longitud > 2)),
+    not(Longitud is 2))),
     N1 is N - 1,
     regla2Fila(Sudoku, Pos, [X | Y], Fila, N1, ListaAux),!.
 
@@ -420,11 +417,11 @@ regla2Fila(Sudoku, Pos, [X | Y], Fila, N, ListaAux):-
     member(Y1, Elem),
     borrarParejaFila(Sudoku, Pos, Index, Fila, 9, ListaSin),
     N1 is N - 1,
-    regla2Fila(ListaSin, Pos, [X | Y], Fila, N1, ListaAux). %X --> [X | Y]
+    regla2Fila(ListaSin, Pos, [X | Y], Fila, N1, ListaAux),!. %X --> [X | Y]
 
 regla2Fila(Sudoku, Pos, [X | Y], Fila, N, ListaAux):-
     N1 is N - 1,
-    regla2Fila(Sudoku, Pos, [X | Y], Fila, N1, ListaAux).
+    regla2Fila(Sudoku, Pos, [X | Y], Fila, N1, ListaAux),!.
 %-------------------------------------------------------------------------------
 borrarParejaCuadrante(Final, _, _, _, _, _, 0, Final).
 
@@ -517,4 +514,49 @@ borrarParejaGeneral(Sudoku, Index, Pos1, SudokuAux):-
     )),
     sustituir_elemento(Sudoku, Index, Borrada2, SudokuSin),
     SudokuAux = SudokuSin.
+%-------------------------------------------------------------------------------
+regla3(Sudoku, Resultado):-
+    regla3Aux(Sudoku, 81, Resultado).
+
+regla3Aux(Final, 0, Final).
+
+regla3Aux(Sudoku, N, Resultado):-
+    nth1(N, Sudoku, X),
+    number(X),
+    N1 is N - 1,
+    regla3Aux(Sudoku, N1, Resultado),!.
+
+regla3Aux(Sudoku, N, Resultado):-
+    nth1(N, Sudoku, X),
+    length(X, Longitud),
+    not(Longitud is 2),
+    N1 is N - 1,
+    regla3Aux(Sudoku, N1, Resultado),!.
+
+regla3Aux(Sudoku, N, Resultado):-
+    obtener_ejes(N, J1, J2),
+    nth1(N, Sudoku, X),
+    regla2Fila(Sudoku, N, X, J1, 9, ListaAux),
+    regla2Columna(ListaAux, N, X, J2, 9, ListaAux2),
+    regla2Cuadrante(ListaAux2, N, X, 3, 3, J1, J2, ListaAux3),
+    N1 is N - 1,
+    regla3Aux(ListaAux3, N1, Resultado),!.
+%-------------------------------------------------------------------------------
+
+buscar(Sudoku, N, Resultado):-
+    buscar_posibilidades(Sudoku, SudokuAux),
+    buscar_casos(SudokuAux, N, Resultado).
+
+buscar_casos(Final, 0, Final).
+
+buscar_casos(Sudoku, N, Resultado):-
+    regla0(Sudoku, ListaAux),
+    regla1(ListaAux, ListaAux2),
+    regla2(ListaAux2, ListaAux3),
+    N1 is N - 1,
+    buscar_casos(ListaAux3, N1, Resultado),!.
+    
+
+
+
 
