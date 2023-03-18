@@ -539,9 +539,9 @@ regla3Aux(Sudoku, N, Resultado):-
     write('Somos nosotros'), write(X),nl,
     %regla2Fila(Sudoku, N, X, J1, 9, ListaAux),
     %regla2Columna(ListaAux, N, X, J2, 9, ListaAux2),
-    regla3Cuadrante(Sudoku, N, X, 3, 3, J1, J2, 0, ListaAux3),
+    regla3Cuadrante(Sudoku, N, X, 3, 3, J1, J2, [], ListaAux3),
     N1 is N - 1,
-    regla3Aux(Sudoku, N1, Resultado),!.
+    regla3Aux(ListaAux3, N1, Resultado),!.
 %-------------------------------------------------------------------------------
 regla3Cuadrante(Final, _, _, _, 0, _, _, _, Final).
 
@@ -560,8 +560,7 @@ regla3Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, Count, ListaAux):-
     number(Elem);
     (not(number(Elem)),
     length(Elem, Longitud),
-    not(
-    Longitud is 3) )),
+    not(Longitud is 3) )),
     write('Primera condicion '), write(Elem), write(' -- '), write(N),nl,
     N >= 1,
     N1 is N - 1,
@@ -578,24 +577,107 @@ regla3Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, Count, ListaAux):-
     member(Y2, Sig),
     nth1(3, X, Y3),
     member(Y3, Sig),
-    write('MAMAMAMMAMAAMAMAMA - '), write(X), write(' - '), write(Count), nl,
     (
-    (write('Soy el responsable'),nl,
-    Count is 0,
-    Count1 is Count + 1,
+    (length(Count, 0),
+    Count1 = [Posicion | Count],
     N1 is N - 1,
     regla3Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, Count1, ListaAux),!)
     ;
-    (write('Soy yooooooooo'),nl,
-    N1 is N - 1,
-    write('YO SI QUE LLEGOOOOOOOOOOOOOOOOOO'),nl,
-    regla3Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, Count, ListaAux),!)
+    (N1 is N - 1,
+    Count1 = [Pos | [Posicion | Count]],
+    borrarTrioCuadrante(Sudoku, Count1, Fila, Columna, 3, 3, ListaSin),
+    regla3Cuadrante(ListaSin, Pos, X, N1, M, Fila, Columna, Count, ListaAux),!)
     ).
-    %borrarParejaCuadrante(Sudoku, Pos, Posicion, Fila, Columna, 3, 3, ListaSin),
 
 regla3Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, Count, ListaAux):-
     N1 is N - 1,
     regla3Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, Count, ListaAux),!.
+%-------------------------------------------------------------------------------
+borrarTrioCuadrante(Final, _, _, _, _, 0, Final).
+
+borrarTrioCuadrante(Sudoku, Count, Fila, Columna, N, M, SudokuAux):-
+    N is 0,
+    M1 is M - 1,
+    borrarTrioCuadrante(Sudoku, Count, Fila, Columna, 3, M1, SudokuAux),!.
+
+borrarTrioCuadrante(Sudoku, Count, Fila, Columna, N, M, SudokuAux):-
+    InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
+    InicioColumna is ((Columna - 1) // 3 * 3) + M,
+    Posicion is InicioFila * 9 + InicioColumna,
+    nth1(Posicion, Sudoku, Elem),
+    nth1(1, Count, Pos1),
+    nth1(2, Count, Pos2),
+    nth1(3, Count, Pos3),
+    (Pos1 is Posicion;
+    Pos2 is Posicion;
+    Pos3 is Posicion;
+    number(Elem)),
+    N1 is N - 1,
+    borrarTrioCuadrante(Sudoku, Count, Fila, Columna, N1, M, SudokuAux),!.
+
+borrarTrioCuadrante(Sudoku, Count, Fila, Columna, N, M, SudokuAux):-
+    InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
+    InicioColumna is ((Columna - 1) // 3 * 3) + M,
+    Posicion is InicioFila * 9 + InicioColumna,
+    nth1(1, Count, Pos1),
+    borrarTrioGeneral(Sudoku, Posicion, Pos1, 3, SudokuSin),
+    N1 is N - 1,
+    borrarTrioCuadrante(SudokuSin, Count, Fila, Columna, N1, M, SudokuAux),!.
+
+borrarTrioCuadrante(Sudoku, Count, Fila, Columna, N, M, SudokuAux):-
+    N1 is N - 1,
+    borrarTrioCuadrante(Sudoku, Count, Fila, Columna, N1, M, SudokuAux),!.
+%-------------------------------------------------------------------------------
+borrarTrioGeneral(Final, _, _, 0, Final).
+
+borrarTrioGeneral(Sudoku, Index, Pos1, N, SudokuAux):-
+    N is 3,
+    nth1(Index, Sudoku, Elem),
+    nth1(Pos1, Sudoku, Pos),
+    nth1(N, Pos, X),
+    (
+    (member(X, Elem),
+    select(X, Elem, Borrada),
+    sustituir_elemento(Sudoku, Index, Borrada, SudokuSin),
+    N1 is N - 1,
+    borrarTrioGeneral(SudokuSin, Index, Pos1, N1, SudokuAux),!)
+    ;
+    (N1 is N - 1,
+    borrarTrioGeneral(Sudoku, Index, Pos1, N1, SudokuAux),!)
+    ).
+    
+borrarTrioGeneral(Sudoku, Index, Pos1, N, SudokuAux):-
+    N is 2,
+    nth1(Index, Sudoku, Elem),
+    nth1(Pos1, Sudoku, Pos),
+    nth1(N, Pos, X),
+    (
+    (member(X, Elem),
+    select(X, Elem, Borrada),
+    sustituir_elemento(Sudoku, Index, Borrada, SudokuSin),
+    N1 is N - 1,
+    borrarTrioGeneral(SudokuSin, Index, Pos1, N1, SudokuAux),!)
+    ;
+    (N1 is N - 1,
+    borrarTrioGeneral(Sudoku, Index, Pos1, N1, SudokuAux),!)
+    ).
+    
+borrarTrioGeneral(Sudoku, Index, Pos1, N, SudokuAux):-
+    N is 1,
+    nth1(Index, Sudoku, Elem),
+    nth1(Pos1, Sudoku, Pos),
+    nth1(N, Pos, X),
+    (
+    (member(X, Elem),
+    select(X, Elem, Borrada),
+    sustituir_elemento(Sudoku, Index, Borrada, SudokuSin),
+    N1 is N - 1,
+    borrarTrioGeneral(SudokuSin, Index, Pos1, N1, SudokuAux),!)
+    ;
+    (N1 is N - 1,
+    borrarTrioGeneral(Sudoku, Index, Pos1, N1, SudokuAux),!)
+    ).
+
 %-------------------------------------------------------------------------------
 buscar(Sudoku, N, Resultado):-
     buscar_posibilidades(Sudoku, SudokuAux),
