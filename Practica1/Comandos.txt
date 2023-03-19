@@ -2,7 +2,15 @@ sudoku_prueba1(L), mostrar_sudoku(L).
 
 sudoku_prueba1(L), buscar_posibilidades(L, L1).
 
-sudoku_prueba1(L), buscar_posibilidades(L, L1), regla0(L1).
+sudoku_prueba1(L), buscar_posibilidades(L, L1), regla0(L1, S).
 
 
 predicado time(predicado a llvear a cabo) --> Saca el tiempo (tiempo CPU utilizado)
+
+
+------------------------------------------------------------
+Mejora --> usar time(predicado sudoku) para sacar el tiempo de ejecucion y poner datos en excel para analizar resultados (hacer grafico)
+Interpretarlo un poco
+
+time(test1) --> saca tiempo ejecutando predicado --> interesandte numero de milisisegundos
+test1:- sudoku_prueba1(L), simplificar_sudoku(L, _)
