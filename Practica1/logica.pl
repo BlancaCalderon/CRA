@@ -445,7 +445,7 @@ borrarParejaCuadrante(Sudoku, Pos1, Pos2, Fila, Columna, N, M, SudokuAux):-
     InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
     InicioColumna is ((Columna - 1) // 3 * 3) + M,
     Posicion is InicioFila * 9 + InicioColumna,
-    borrarParejaGeneral(Sudoku, Posicion, Pos1, SudokuSin),
+    borrarTrioGeneral(Sudoku, Posicion, Pos1, 2, SudokuSin),
     N1 is N - 1,
     borrarParejaCuadrante(SudokuSin, Pos1, Pos2, Fila, Columna, N1, M, SudokuAux),!.
     
@@ -466,7 +466,7 @@ borrarParejaColumna(Sudoku, Pos1, Pos2, Columna, N, SudokuAux):-
 
 borrarParejaColumna(Sudoku, Pos1, Pos2, Columna, N, SudokuAux):-
     Index is (Columna) + (N - 1) * 9,
-    borrarParejaGeneral(Sudoku, Index, Pos1, SudokuSin),
+    borrarTrioGeneral(Sudoku, Index, Pos1, 2, SudokuSin),
     N1 is N - 1,
     borrarParejaColumna(SudokuSin, Pos1, Pos2, Columna, N1, SudokuAux),!.
 
@@ -487,33 +487,13 @@ borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N, SudokuAux):-
 
 borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N, SudokuAux):-
     Index is (Fila - 1) * 9 + N,
-    borrarParejaGeneral(Sudoku, Index, Pos1, SudokuSin),
+    borrarTrioGeneral(Sudoku, Index, Pos1, 2, SudokuSin),
     N1 is N - 1,
     borrarParejaFila(SudokuSin, Pos1, Pos2, Fila, N1, SudokuAux),!.
 
 borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N, SudokuAux):-
     N1 is N - 1,
     borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N1, SudokuAux),!.
-%-------------------------------------------------------------------------------
-borrarParejaGeneral(Sudoku, Index, Pos1, SudokuAux):-
-    nth1(Index, Sudoku, Elem),
-    nth1(Pos1, Sudoku, Pos),
-    nth1(1, Pos, X),
-    nth1(2, Pos, Y),
-    (
-    (member(X, Elem),
-    member(Y, Elem),
-    select(X, Elem, Borrada1),
-    select(Y, Borrada1, Borrada2)
-    );
-    (member(X, Elem),
-    select(X, Elem, Borrada2)
-    );
-    (member(Y, Elem),
-    select(Y, Elem, Borrada2)
-    )),
-    sustituir_elemento(Sudoku, Index, Borrada2, SudokuSin),
-    SudokuAux = SudokuSin.
 %-------------------------------------------------------------------------------
 regla3(Sudoku, Resultado):-
     regla3Aux(Sudoku, 81, Resultado).
@@ -631,39 +611,6 @@ borrarTrioCuadrante(Sudoku, Count, Fila, Columna, N, M, SudokuAux):-
 borrarTrioGeneral(Final, _, _, 0, Final).
 
 borrarTrioGeneral(Sudoku, Index, Pos1, N, SudokuAux):-
-    N is 3,
-    nth1(Index, Sudoku, Elem),
-    nth1(Pos1, Sudoku, Pos),
-    nth1(N, Pos, X),
-    (
-    (member(X, Elem),
-    select(X, Elem, Borrada),
-    sustituir_elemento(Sudoku, Index, Borrada, SudokuSin),
-    N1 is N - 1,
-    borrarTrioGeneral(SudokuSin, Index, Pos1, N1, SudokuAux),!)
-    ;
-    (N1 is N - 1,
-    borrarTrioGeneral(Sudoku, Index, Pos1, N1, SudokuAux),!)
-    ).
-    
-borrarTrioGeneral(Sudoku, Index, Pos1, N, SudokuAux):-
-    N is 2,
-    nth1(Index, Sudoku, Elem),
-    nth1(Pos1, Sudoku, Pos),
-    nth1(N, Pos, X),
-    (
-    (member(X, Elem),
-    select(X, Elem, Borrada),
-    sustituir_elemento(Sudoku, Index, Borrada, SudokuSin),
-    N1 is N - 1,
-    borrarTrioGeneral(SudokuSin, Index, Pos1, N1, SudokuAux),!)
-    ;
-    (N1 is N - 1,
-    borrarTrioGeneral(Sudoku, Index, Pos1, N1, SudokuAux),!)
-    ).
-    
-borrarTrioGeneral(Sudoku, Index, Pos1, N, SudokuAux):-
-    N is 1,
     nth1(Index, Sudoku, Elem),
     nth1(Pos1, Sudoku, Pos),
     nth1(N, Pos, X),
@@ -689,8 +636,9 @@ buscar_casos(Sudoku, N, Resultado):-
     regla0(Sudoku, ListaAux),
     regla1(ListaAux, ListaAux2),
     regla2(ListaAux2, ListaAux3),
+    regla3(ListaAux3, ListaAux4),
     N1 is N - 1,
-    buscar_casos(ListaAux3, N1, Resultado),!.
+    buscar_casos(ListaAux4, N1, Resultado),!.
     
 
 
