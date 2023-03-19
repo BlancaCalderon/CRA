@@ -516,11 +516,48 @@ regla3Aux(Sudoku, N, Resultado):-
 regla3Aux(Sudoku, N, Resultado):-
     obtener_ejes(N, J1, J2),
     nth1(N, Sudoku, X),
-    %regla3Fila(Sudoku, N, X, J1, 9, ListaAux),
-    regla3Columna(Sudoku, N, X, J2, 9, [], ListaAux2),
-    %regla3Cuadrante(Sudoku, N, X, 3, 3, J1, J2, [], ListaAux3),
+    regla3Fila(Sudoku, N, X, J1, 9, [], ListaAux),
+    regla3Columna(ListaAux, N, X, J2, 9, [], ListaAux2),
+    regla3Cuadrante(ListaAux2, N, X, 3, 3, J1, J2, [], ListaAux3),
     N1 is N - 1,
-    regla3Aux(ListaAux2, N1, Resultado),!.
+    regla3Aux(ListaAux3, N1, Resultado),!.
+%-------------------------------------------------------------------------------
+regla3Fila(Final, _, _, _, 0, _, Final).
+
+regla3Fila(Sudoku, Pos, X, Fila, N, Count, ListaAux):-
+    Index is (Fila - 1) * 9 + N,
+    nth1(Index, Sudoku, Elem),
+    (Pos is Index;
+    number(Elem);
+    (length(Elem, Longitud),
+    not(Longitud is 3))),
+    N1 is N - 1,
+    regla3Fila(Sudoku, Pos, X, Fila, N1, Count, ListaAux),!.
+
+regla3Fila(Sudoku, Pos, X, Fila, N, Count, ListaAux):-
+    Index is (Fila - 1) * 9 + N,
+    nth1(Index, Sudoku, Sig),
+    nth1(1, X, Y),
+    member(Y, Sig),
+    nth1(2, X, Y2),
+    member(Y2, Sig),
+    nth1(3, X, Y3),
+    member(Y3, Sig),
+    (
+    (length(Count, 0),
+    Count1 = [Index | Count],
+    N1 is N - 1,
+    regla3Fila(Sudoku, Pos, X, Fila, N1, Count1, ListaAux),!)
+    ;
+    (N1 is N - 1,
+    Count1 = [Pos | [Index | Count]],
+    borrarTrioFila(Sudoku, Count1, Fila, 9, ListaSin),
+    regla3Fila(ListaSin, Pos, X, Fila, N1, Count1, ListaAux),!)
+    ).
+
+regla3Fila(Sudoku, Pos, X, Fila, N, Count, ListaAux):-
+    N1 is N - 1,
+    regla3Fila(Sudoku, Pos, X, Fila, N1, Count, ListaAux),!.
 %-------------------------------------------------------------------------------
 regla3Columna(Final, _, _, _, 0, _, Final).
 
@@ -608,6 +645,32 @@ regla3Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, Count, ListaAux):-
     N1 is N - 1,
     regla3Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, Count, ListaAux),!.
 %-------------------------------------------------------------------------------
+borrarTrioFila(Final, _, _, 0, Final).
+
+borrarTrioFila(Sudoku, Count, Fila, N, SudokuAux):-
+    Index is (Fila - 1) * 9 + N,
+    nth1(Index, Sudoku, Elem),
+    nth1(1, Count, Pos1),
+    nth1(2, Count, Pos2),
+    nth1(3, Count , Pos3),
+    (Pos1 is Index;
+    Pos2 is Index;
+    Pos3 is Index;
+    number(Elem)),
+    N1 is N - 1,
+    borrarTrioFila(Sudoku, Count, Fila, N1, SudokuAux),!.
+
+borrarTrioFila(Sudoku, Count, Fila, N, SudokuAux):-
+    Index is (Fila - 1) * 9 + N,
+    nth1(1, Count, Pos1),
+    borrarTrioGeneral(Sudoku, Index, Pos1, 3, SudokuSin),
+    N1 is N - 1,
+    borrarTrioFila(SudokuSin, Count, Fila, N1, SudokuAux),!.
+
+borrarTrioFila(Sudoku, Count, Fila, N, SudokuAux):-
+    N1 is N - 1,
+    borrarTrioFila(Sudoku, Count, Fila, N1, SudokuAux),!.
+%-------------------------------------------------------------------------------
 borrarTrioColumna(Final, _, _, 0, Final).
 
 borrarTrioColumna(Sudoku, Count, Columna, N, SudokuAux):-
@@ -685,7 +748,6 @@ borrarTrioGeneral(Sudoku, Index, Pos1, N, SudokuAux):-
     (N1 is N - 1,
     borrarTrioGeneral(Sudoku, Index, Pos1, N1, SudokuAux),!)
     ).
-
 %-------------------------------------------------------------------------------
 buscar(Sudoku, N, Resultado):-
     buscar_posibilidades(Sudoku, SudokuAux),
@@ -697,15 +759,15 @@ buscar_casos(Sudoku, N, Resultado):-
     regla0(Sudoku, ListaAux),
     regla1(ListaAux, ListaAux2),
     regla2(ListaAux2, ListaAux3),
-    %regla3(ListaAux3, ListaAux4),
+    regla3(ListaAux3, ListaAux4),
     N1 is N - 1,
-    buscar_casos(ListaAux3, N1, Resultado),!.
+    buscar_casos(ListaAux4, N1, Resultado),!.
 %-------------------------------------------------------------------------------
 trampa(Sudoku, Resultado):-
-    sustituir_elemento(Sudoku, 14, [2, 3, 5], SudokuSin),
-    sustituir_elemento(SudokuSin, 41, [1, 3], SudokuSin2),
-    sustituir_elemento(SudokuSin2, 50, [4, 7], SudokuSin3),
-    sustituir_elemento(SudokuSin3, 77, [2, 3, 4, 6], SudokuSin4),
+    sustituir_elemento(Sudoku, 61, [2, 3, 6], SudokuSin),
+    sustituir_elemento(SudokuSin, 55, [2, 3, 8], SudokuSin2),
+    sustituir_elemento(SudokuSin2, 56, [6, 7], SudokuSin3),
+    sustituir_elemento(SudokuSin3, 62, [2, 3, 6, 9], SudokuSin4),
     Resultado = SudokuSin4.
 %-------------------------------------------------------------------------------
 
