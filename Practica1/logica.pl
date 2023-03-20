@@ -328,43 +328,43 @@ regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux, Parada, Parada1):-
 %-------------------------------------------------------------------------------
 %Regla 2 -> Si dos numeros aparecen solos en dos lugares distintos de una fila, columna o cuadro, los borramos del resto de lugares de la fila, columna o cuadro correspondiente.
 %-------------------------------------------------------------------------------
-regla2(Sudoku, Resultado):-
-    regla2Aux(Sudoku, 81, Resultado).                                           %Se recorre el sudoku al revés
+regla2(Sudoku, Resultado, Parada, Parada1):-
+    regla2Aux(Sudoku, 81, Resultado, Parada, Parada1).                                           %Se recorre el sudoku al revés
 
-regla2Aux(Final, 0, Final).                                                     %Termina recorrido del sudoku
+regla2Aux(Final, 0, Final, Cond, Cond).                                                     %Termina recorrido del sudoku
 
-regla2Aux(Sudoku, N, Resultado):-
+regla2Aux(Sudoku, N, Resultado, Parada, Parada1):-
     nth1(N, Sudoku, X),
     number(X),                                                                  %Comprueba si el elemento actual es un número ya establecido y si lo es pasa a revisar siguiente posición
     N1 is N - 1,
-    regla2Aux(Sudoku, N1, Resultado),!.
+    regla2Aux(Sudoku, N1, Resultado, Parada, Parada1),!.
 
-regla2Aux(Sudoku, N, Resultado):-
+regla2Aux(Sudoku, N, Resultado, Parada, Parada1):-
     nth1(N, Sudoku, X),
     length(X, Longitud),
     not(Longitud is 2),                                                         %Comprueba si la longitud del elemento actual no es 2 (no cumple regla) pasando a revisar el siguiente
     N1 is N - 1,
-    regla2Aux(Sudoku, N1, Resultado),!.
+    regla2Aux(Sudoku, N1, Resultado, Parada, Parada1),!.
 
 %Si el elemento no es un número y tiene longitud 2 cumpliendo requisitos de la regla se revisa si hay otro elemento igual en la fila, columna o cuadrante al que pertenece cumpliendo la regla
-regla2Aux(Sudoku, N, Resultado):-
+regla2Aux(Sudoku, N, Resultado, Parada, Parada1):-
     obtener_ejes(N, J1, J2),
     nth1(N, Sudoku, X),
-    regla2Fila(Sudoku, N, X, J1, 9, ListaAux),
-    regla2Columna(ListaAux, N, X, J2, 9, ListaAux2),
-    regla2Cuadrante(ListaAux2, N, X, 3, 3, J1, J2, ListaAux3),
+    regla2Fila(Sudoku, N, X, J1, 9, ListaAux, Parada, Parada2),
+    regla2Columna(ListaAux, N, X, J2, 9, ListaAux2, Parada2, Parada3),
+    regla2Cuadrante(ListaAux2, N, X, 3, 3, J1, J2, ListaAux3, Parada3, Parada4),
     N1 is N - 1,
-    regla2Aux(ListaAux3, N1, Resultado),!.
+    regla2Aux(ListaAux3, N1, Resultado, Parada4, Parada1),!.
 %-------------------------------------------------------------------------------
 %Recorre cuadrante comprobando si hay un elemento más igual al pasado (si se cumple regla)
-regla2Cuadrante(Final, _, _, _, 0, _, _, Final).
+regla2Cuadrante(Final, _, _, _, 0, _, _, Final, Cond, Cond).
 
-regla2Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, ListaAux):-
+regla2Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, ListaAux, Parada, Parada1):-
     N is 0,
     M1 is M - 1,                                                                %Se revisa siguiente columna de la misma fila
-    regla2Cuadrante(Sudoku, Pos, X, 3, M1, Fila, Columna, ListaAux),!.
+    regla2Cuadrante(Sudoku, Pos, X, 3, M1, Fila, Columna, ListaAux, Parada, Parada1),!.
     
-regla2Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, ListaAux):-
+regla2Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, ListaAux, Parada, Parada1):-
     InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
     InicioColumna is ((Columna - 1) // 3 * 3) + M,
     Posicion is InicioFila * 9 + InicioColumna,
@@ -377,10 +377,10 @@ regla2Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, ListaAux):-
     Longitud > 2)),
     N >= 1,
     N1 is N - 1,
-    regla2Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, ListaAux),!.
+    regla2Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, ListaAux, Parada, Parada1),!.
 
 %Si el elemento actual no es un número y su longitud es 2(cumple condiciones de la regla) comprobamos si es igual al elemento pasado
-regla2Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, ListaAux):-
+regla2Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, ListaAux, Parada, Parada1):-
     InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
     InicioColumna is ((Columna - 1) // 3 * 3) + M,
     Posicion is InicioFila * 9 + InicioColumna,
@@ -389,18 +389,18 @@ regla2Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, ListaAux):-
     member(Y, Sig),
     nth1(2, X, Y2),
     member(Y2, Sig),
-    borrarParejaCuadrante(Sudoku, Pos, Posicion, Fila, Columna, 3, 3, ListaSin),%Si los elementos son iguales se borran los elementos del cuadrante que tenga posibilidades iguales a las de la pareja
+    borrarParejaCuadrante(Sudoku, Pos, Posicion, Fila, Columna, 3, 3, ListaSin, Parada, Parada2),%Si los elementos son iguales se borran los elementos del cuadrante que tenga posibilidades iguales a las de la pareja
     N1 is N - 1,
-    regla2Cuadrante(ListaSin, Pos, X, N1, M, Fila, Columna, ListaAux),!.
+    regla2Cuadrante(ListaSin, Pos, X, N1, M, Fila, Columna, ListaAux, Parada2, Parada1),!.
     
-regla2Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, ListaAux):-                %Si no son iguales se revisa siguiente elemento
+regla2Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, ListaAux, Parada, Parada1):-                %Si no son iguales se revisa siguiente elemento
     N1 is N - 1,
-    regla2Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, ListaAux),!.
+    regla2Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, ListaAux, Parada, Parada1),!.
 %-------------------------------------------------------------------------------
 %Recorre colunmna comprobando si hay un elemento más igual al pasado (si se cumple regla)
-regla2Columna(Final, _, _, _, 0, Final).
+regla2Columna(Final, _, _, _, 0, Final, Cond, Cond).
 
-regla2Columna(Sudoku, Pos, [X | Y], Columna, N, ListaAux):-
+regla2Columna(Sudoku, Pos, [X | Y], Columna, N, ListaAux, Parada, Parada1):-
     Index is (Columna) + (N - 1) * 9,
     nth1(Index, Sudoku, Elem),
     (Pos is Index;                                                              %Si es la misma posición que la pasada (nosotros mismos), un numero o la longitud del elemento es mayor que 2 pasamos a revisar siguiente elementos ya que actual no es igual al pasado
@@ -408,27 +408,27 @@ regla2Columna(Sudoku, Pos, [X | Y], Columna, N, ListaAux):-
     (length(Elem, Longitud),
     not(Longitud is 2))),
     N1 is N - 1,
-    regla2Columna(Sudoku, Pos, [X | Y], Columna, N1, ListaAux).
+    regla2Columna(Sudoku, Pos, [X | Y], Columna, N1, ListaAux, Parada, Parada1).
     
 %Si el elemento actual no es un número y su longitud es 2(cumple condiciones de la regla) comprobamos si es igual al elemento pasado
-regla2Columna(Sudoku, Pos, [X | Y], Columna, N, ListaAux):-
+regla2Columna(Sudoku, Pos, [X | Y], Columna, N, ListaAux, Parada, Parada1):-
     Index is (Columna) + (N - 1) * 9,
     nth1(Index, Sudoku, Elem),
     member(X, Elem),
     nth1(1, Y, Y1),
     member(Y1, Elem),
-    borrarParejaColumna(Sudoku, Pos, Index, Columna, 9, ListaSin),              %Si los elementos son iguales se borran los elementos de la columna que tenga posibilidades iguales a las de la pareja
+    borrarParejaColumna(Sudoku, Pos, Index, Columna, 9, ListaSin, Parada, Parada2),              %Si los elementos son iguales se borran los elementos de la columna que tenga posibilidades iguales a las de la pareja
     N1 is N - 1,
-    regla2Columna(ListaSin, Pos, [X | Y], Columna, N1, ListaAux).
+    regla2Columna(ListaSin, Pos, [X | Y], Columna, N1, ListaAux, Parada2, Parada1).
 
-regla2Columna(Sudoku, Pos, [X | Y], Columna, N, ListaAux):-
+regla2Columna(Sudoku, Pos, [X | Y], Columna, N, ListaAux, Parada, Parada1):-
     N1 is N - 1,                                                                %Si no son iguales se revisa siguiente elemento
-    regla2Columna(Sudoku, Pos, [X | Y], Columna, N1, ListaAux).
+    regla2Columna(Sudoku, Pos, [X | Y], Columna, N1, ListaAux, Parada, Parada1).
 %-------------------------------------------------------------------------------
 %Recorre fila comprobando si hay un elemento más igual al pasado (si se cumple regla)
-regla2Fila(Final, _, _, _, 0, Final).
+regla2Fila(Final, _, _, _, 0, Final, Cond, Cond).
 
-regla2Fila(Sudoku, Pos, [X | Y], Fila, N, ListaAux):-
+regla2Fila(Sudoku, Pos, [X | Y], Fila, N, ListaAux, Parada, Parada1):-
     Index is (Fila - 1) * 9 + N,
     nth1(Index, Sudoku, Elem),
     (Pos is Index;                                                              %Si es la misma posición que la pasada (nosotros mismos), un numero o la longitud del elemento es mayor que 2 pasamos a revisar siguiente elementos ya que actual no es igual al pasado
@@ -436,32 +436,32 @@ regla2Fila(Sudoku, Pos, [X | Y], Fila, N, ListaAux):-
     (length(Elem, Longitud),
     not(Longitud is 2))),
     N1 is N - 1,
-    regla2Fila(Sudoku, Pos, [X | Y], Fila, N1, ListaAux),!.
+    regla2Fila(Sudoku, Pos, [X | Y], Fila, N1, ListaAux, Parada, Parada1),!.
 
 %Si el elemento actual no es un número y su longitud es 2(cumple condiciones de la regla) comprobamos si es igual al elemento pasado
-regla2Fila(Sudoku, Pos, [X | Y], Fila, N, ListaAux):-
+regla2Fila(Sudoku, Pos, [X | Y], Fila, N, ListaAux, Parada, Parada1):-
     Index is (Fila - 1) * 9 + N,
     nth1(Index, Sudoku, Elem),
     member(X, Elem),
     nth1(1, Y, Y1),
     member(Y1, Elem),
-    borrarParejaFila(Sudoku, Pos, Index, Fila, 9, ListaSin),                    %Si los elementos son iguales se borran los elementos de la columna que tenga posibilidades iguales a las de la pareja
+    borrarParejaFila(Sudoku, Pos, Index, Fila, 9, ListaSin, Parada, Parada2),                    %Si los elementos son iguales se borran los elementos de la columna que tenga posibilidades iguales a las de la pareja
     N1 is N - 1,
-    regla2Fila(ListaSin, Pos, [X | Y], Fila, N1, ListaAux),!. %X --> [X | Y]
+    regla2Fila(ListaSin, Pos, [X | Y], Fila, N1, ListaAux, Parada2, Parada1),!. %X --> [X | Y]
 
-regla2Fila(Sudoku, Pos, [X | Y], Fila, N, ListaAux):-
+regla2Fila(Sudoku, Pos, [X | Y], Fila, N, ListaAux, Parada, Parada1):-
     N1 is N - 1,                                                                %Si no son iguales se revisa siguiente elemento
-    regla2Fila(Sudoku, Pos, [X | Y], Fila, N1, ListaAux),!.
+    regla2Fila(Sudoku, Pos, [X | Y], Fila, N1, ListaAux, Parada, Parada1),!.
 %-------------------------------------------------------------------------------
 %Borra las posibilidades de los elementos del cuadrante que sean iguales que las del elemento pasado
-borrarParejaCuadrante(Final, _, _, _, _, _, 0, Final).
+borrarParejaCuadrante(Final, _, _, _, _, _, 0, Final, Cond, Cond).
 
-borrarParejaCuadrante(Sudoku, Pos1, Pos2, Fila, Columna, N, M, SudokuAux):-
+borrarParejaCuadrante(Sudoku, Pos1, Pos2, Fila, Columna, N, M, SudokuAux, Parada, Parada1):-
     N is 0,
     M1 is M - 1,
-    borrarParejaCuadrante(Sudoku, Pos1, Pos2, Fila, Columna, 3, M1, SudokuAux),!.
+    borrarParejaCuadrante(Sudoku, Pos1, Pos2, Fila, Columna, 3, M1, SudokuAux, Parada, Parada1),!.
 
-borrarParejaCuadrante(Sudoku, Pos1, Pos2, Fila, Columna, N, M, SudokuAux):-
+borrarParejaCuadrante(Sudoku, Pos1, Pos2, Fila, Columna, N, M, SudokuAux, Parada, Parada1):-
     InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
     InicioColumna is ((Columna - 1) // 3 * 3) + M,
     Posicion is InicioFila * 9 + InicioColumna,
@@ -470,98 +470,98 @@ borrarParejaCuadrante(Sudoku, Pos1, Pos2, Fila, Columna, N, M, SudokuAux):-
     Pos2 is Posicion;
     number(Elem)),
     N1 is N - 1,
-    borrarParejaCuadrante(Sudoku, Pos1, Pos2, Fila, Columna, N1, M, SudokuAux),!.
+    borrarParejaCuadrante(Sudoku, Pos1, Pos2, Fila, Columna, N1, M, SudokuAux, Parada, Parada1),!.
     
-borrarParejaCuadrante(Sudoku, Pos1, Pos2, Fila, Columna, N, M, SudokuAux):-
+borrarParejaCuadrante(Sudoku, Pos1, Pos2, Fila, Columna, N, M, SudokuAux, Parada, Parada1):-
     InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
     InicioColumna is ((Columna - 1) // 3 * 3) + M,
     Posicion is InicioFila * 9 + InicioColumna,
-    borrarGeneral(Sudoku, Posicion, Pos1, 2, SudokuSin),                    %Llama a predicado que borra la posibilidad del elemento que sea igual a alguna del elemento pasado
+    borrarGeneral(Sudoku, Posicion, Pos1, 2, SudokuSin, Parada, Parada2),                    %Llama a predicado que borra la posibilidad del elemento que sea igual a alguna del elemento pasado
     N1 is N - 1,
-    borrarParejaCuadrante(SudokuSin, Pos1, Pos2, Fila, Columna, N1, M, SudokuAux),!.
+    borrarParejaCuadrante(SudokuSin, Pos1, Pos2, Fila, Columna, N1, M, SudokuAux, Parada2, Parada1),!.
     
-borrarParejaCuadrante(Sudoku, Pos1, Pos2, Fila, Columna, N, M, SudokuAux):-
+borrarParejaCuadrante(Sudoku, Pos1, Pos2, Fila, Columna, N, M, SudokuAux, Parada, Parada1):-
     N1 is N - 1,
-    borrarParejaCuadrante(Sudoku, Pos1, Pos2, Fila, Columna, N1, M, SudokuAux),!.
+    borrarParejaCuadrante(Sudoku, Pos1, Pos2, Fila, Columna, N1, M, SudokuAux, Parada, Parada1),!.
 %-------------------------------------------------------------------------------
 %Borra las posibilidades de los elementos de la columna que sean iguales que las del elemento pasado
-borrarParejaColumna(Final, _, _, _, 0, Final).
+borrarParejaColumna(Final, _, _, _, 0, Final, Cond, Cond).
 
-borrarParejaColumna(Sudoku, Pos1, Pos2, Columna, N, SudokuAux):-
+borrarParejaColumna(Sudoku, Pos1, Pos2, Columna, N, SudokuAux, Parada, Parada1):-
     Index is (Columna) + (N - 1) * 9,
     nth1(Index, Sudoku, Elem),
     (Pos1 is Index;                                                             %Si la posición a revisar es una de las dos encontradas al aplicar la regla ni un número ya establecido no hacemos nada y pasamos a revisar la siguiente
     Pos2 is Index;
     number(Elem)),
     N1 is N - 1,
-    borrarParejaColumna(Sudoku, Pos1, Pos2, Columna, N1, SudokuAux),!.
+    borrarParejaColumna(Sudoku, Pos1, Pos2, Columna, N1, SudokuAux, Parada, Parada1),!.
 
-borrarParejaColumna(Sudoku, Pos1, Pos2, Columna, N, SudokuAux):-
+borrarParejaColumna(Sudoku, Pos1, Pos2, Columna, N, SudokuAux, Parada, Parada1):-
     Index is (Columna) + (N - 1) * 9,
-    borrarGeneral(Sudoku, Index, Pos1, 2, SudokuSin),                           %Llama a predicado que borra la posibilidad del elemento que sea igual a alguna del elemento pasado
+    borrarGeneral(Sudoku, Index, Pos1, 2, SudokuSin, Parada, Parada2),                           %Llama a predicado que borra la posibilidad del elemento que sea igual a alguna del elemento pasado
     N1 is N - 1,
-    borrarParejaColumna(SudokuSin, Pos1, Pos2, Columna, N1, SudokuAux),!.
+    borrarParejaColumna(SudokuSin, Pos1, Pos2, Columna, N1, SudokuAux, Parada2, Parada1),!.
 
-borrarParejaColumna(Sudoku, Pos1, Pos2, Columna, N, SudokuAux):-
+borrarParejaColumna(Sudoku, Pos1, Pos2, Columna, N, SudokuAux, Parada, Parada1):-
     N1 is N - 1,
-    borrarParejaColumna(Sudoku, Pos1, Pos2, Columna, N1, SudokuAux),!.
+    borrarParejaColumna(Sudoku, Pos1, Pos2, Columna, N1, SudokuAux, Parada, Parada1),!.
 %-------------------------------------------------------------------------------
 %Borra las posibilidades de los elementos de la fila que sean iguales que las del elemento pasado
-borrarParejaFila(Final, _, _, _, 0, Final).
+borrarParejaFila(Final, _, _, _, 0, Final, Cond, Cond).
 
-borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N, SudokuAux):-
+borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N, SudokuAux, Parada, Parada1):-
     Index is (Fila - 1) * 9 + N,
     nth1(Index, Sudoku, Elem),
     (Pos1 is Index;
     Pos2 is Index;
     number(Elem)),                                                              %Si la posición a revisar es una de las dos encontradas al aplicar la regla ni un número ya establecido no hacemos nada y pasamos a revisar la siguiente
     N1 is N - 1,
-    borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N1, SudokuAux),!.
+    borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N1, SudokuAux, Parada, Parada1),!.
 
-borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N, SudokuAux):-
+borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N, SudokuAux, Parada, Parada1):-
     Index is (Fila - 1) * 9 + N,
-    borrarGeneral(Sudoku, Index, Pos1, 2, SudokuSin),                           %Llama a predicado que borra la posibilidad del elemento que sea igual a alguna del elemento pasado
+    borrarGeneral(Sudoku, Index, Pos1, 2, SudokuSin, Parada, Parada2),                           %Llama a predicado que borra la posibilidad del elemento que sea igual a alguna del elemento pasado
     N1 is N - 1,
-    borrarParejaFila(SudokuSin, Pos1, Pos2, Fila, N1, SudokuAux),!.
+    borrarParejaFila(SudokuSin, Pos1, Pos2, Fila, N1, SudokuAux, Parada2, Parada1),!.
 
-borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N, SudokuAux):-
+borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N, SudokuAux, Parada, Parada1):-
     N1 is N - 1,
-    borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N1, SudokuAux),!.
+    borrarParejaFila(Sudoku, Pos1, Pos2, Fila, N1, SudokuAux, Parada, Parada1),!.
 %-------------------------------------------------------------------------------
 %Regla 3 -> Si en tres lugares de una fila, columna o cuadro solo aparecen tres numeros distintos, borramos los numeros de las restantes listas de la fila, columna o cuadro.
 %-------------------------------------------------------------------------------
-regla3(Sudoku, Resultado):-
-    regla3Aux(Sudoku, 81, Resultado).                                           %Recorre sudoku
+regla3(Sudoku, Resultado, Parada, Parada1):-
+    regla3Aux(Sudoku, 81, Resultado, Parada, Parada1).                                           %Recorre sudoku
 
-regla3Aux(Final, 0, Final).                                                     %Termina recorrido
+regla3Aux(Final, 0, Final, Cond, Cond).                                                     %Termina recorrido
 
-regla3Aux(Sudoku, N, Resultado):-
+regla3Aux(Sudoku, N, Resultado, Parada, Parada1):-
     nth1(N, Sudoku, X),
     number(X),                                                                  %Comprueba si el elemento actual es un numero y si lo es pasa a revisar siguiente posicion
     N1 is N - 1,
-    regla3Aux(Sudoku, N1, Resultado),!.
+    regla3Aux(Sudoku, N1, Resultado, Parada, Parada1),!.
 
-regla3Aux(Sudoku, N, Resultado):-
+regla3Aux(Sudoku, N, Resultado, Parada, Parada1):-
     nth1(N, Sudoku, X),
     length(X, Longitud),
     not(Longitud is 3),                                                         %Si la longitud del elemento actual no es 3 (no cumple la regla) pasamos a revisar siguiente elemento
     N1 is N - 1,
-    regla3Aux(Sudoku, N1, Resultado),!.
+    regla3Aux(Sudoku, N1, Resultado, Parada, Parada1),!.
 
 %Si elemento actual no es un número y su longitud es 3(cumple requisitos de la regla) comprobamos si en su fila, columna o cuadrante hay dos elementos mas iguales a el
-regla3Aux(Sudoku, N, Resultado):-
+regla3Aux(Sudoku, N, Resultado, Parada, Parada1):-
     obtener_ejes(N, J1, J2),
     nth1(N, Sudoku, X),
-    regla3Fila(Sudoku, N, X, J1, 9, [], ListaAux),
-    regla3Columna(ListaAux, N, X, J2, 9, [], ListaAux2),
-    regla3Cuadrante(ListaAux2, N, X, 3, 3, J1, J2, [], ListaAux3),
+    regla3Fila(Sudoku, N, X, J1, 9, [], ListaAux, Parada, Parada2),
+    regla3Columna(ListaAux, N, X, J2, 9, [], ListaAux2, Parada2, Parada3),
+    regla3Cuadrante(ListaAux2, N, X, 3, 3, J1, J2, [], ListaAux3, Parada3, Parada4),
     N1 is N - 1,
-    regla3Aux(ListaAux3, N1, Resultado),!.
+    regla3Aux(ListaAux3, N1, Resultado, Parada4, Parada1),!.
 %-------------------------------------------------------------------------------
 %Recorre la fila correspondiente revisando si hay dos elementos más igual al pasado
-regla3Fila(Final, _, _, _, 0, _, Final).
+regla3Fila(Final, _, _, _, 0, _, Final, Cond, Cond).
 
-regla3Fila(Sudoku, Pos, X, Fila, N, Count, ListaAux):-
+regla3Fila(Sudoku, Pos, X, Fila, N, Count, ListaAux, Parada, Parada1):-
     Index is (Fila - 1) * 9 + N,
     nth1(Index, Sudoku, Elem),
     (Pos is Index;                                                              %Si no somos nosotros mismos, el elemento no es un número y su longitud no es 3(no cumple condiciones de la regla) se pasa arevisar siguiente posición
@@ -569,10 +569,10 @@ regla3Fila(Sudoku, Pos, X, Fila, N, Count, ListaAux):-
     (length(Elem, Longitud),
     not(Longitud is 3))),
     N1 is N - 1,
-    regla3Fila(Sudoku, Pos, X, Fila, N1, Count, ListaAux),!.
+    regla3Fila(Sudoku, Pos, X, Fila, N1, Count, ListaAux, Parada, Parada1),!.
 
 %Si la longitud del elemento es 3 revisamos si es igual al pasado
-regla3Fila(Sudoku, Pos, X, Fila, N, Count, ListaAux):-
+regla3Fila(Sudoku, Pos, X, Fila, N, Count, ListaAux, Parada, Parada1):-
     Index is (Fila - 1) * 9 + N,
     nth1(Index, Sudoku, Sig),
     nth1(1, X, Y),
@@ -585,22 +585,22 @@ regla3Fila(Sudoku, Pos, X, Fila, N, Count, ListaAux):-
     (length(Count, 0),
     Count1 = [Index | Count],                                                   %Guarda posición del elemento igual encontrado
     N1 is N - 1,
-    regla3Fila(Sudoku, Pos, X, Fila, N1, Count1, ListaAux),!)
+    regla3Fila(Sudoku, Pos, X, Fila, N1, Count1, ListaAux, Parada, Parada1),!)
     ;
     (N1 is N - 1,
     Count1 = [Pos | [Index | Count]],
-    borrarTrioFila(Sudoku, Count1, Fila, 9, ListaSin),                          %Llama a predicado para borrar las posibilidades de los elementos de la fila que sean iguales a los del elemento encontrado
-    regla3Fila(ListaSin, Pos, X, Fila, N1, Count1, ListaAux),!)
+    borrarTrioFila(Sudoku, Count1, Fila, 9, ListaSin, Parada, Parada2),                          %Llama a predicado para borrar las posibilidades de los elementos de la fila que sean iguales a los del elemento encontrado
+    regla3Fila(ListaSin, Pos, X, Fila, N1, Count1, ListaAux, Parada2, Parada1),!)
     ).
 
-regla3Fila(Sudoku, Pos, X, Fila, N, Count, ListaAux):-
+regla3Fila(Sudoku, Pos, X, Fila, N, Count, ListaAux, Parada, Parada1):-
     N1 is N - 1,
-    regla3Fila(Sudoku, Pos, X, Fila, N1, Count, ListaAux),!.
+    regla3Fila(Sudoku, Pos, X, Fila, N1, Count, ListaAux, Parada, Parada1),!.
 %-------------------------------------------------------------------------------
 %Recorre la columna correspondiente revisando si hay dos elementos más igual al pasado
-regla3Columna(Final, _, _, _, 0, _, Final).
+regla3Columna(Final, _, _, _, 0, _, Final, Cond, Cond).
 
-regla3Columna(Sudoku, Pos, X, Columna, N, Count, ListaAux):-
+regla3Columna(Sudoku, Pos, X, Columna, N, Count, ListaAux, Parada, Parada1):-
     Index is (Columna) + (N - 1) * 9,
     nth1(Index, Sudoku, Elem),
     (Pos is Index;
@@ -608,10 +608,10 @@ regla3Columna(Sudoku, Pos, X, Columna, N, Count, ListaAux):-
     (length(Elem, Longitud),                                                    %Si no somos nosotros mismos, el elemento no es un número y su longitud no es 3(no cumple condiciones de la regla) se pasa arevisar siguiente posición
     not(Longitud is 3))),
     N1 is N - 1,
-    regla3Columna(Sudoku, Pos, X, Columna, N1, Count, ListaAux),!.
+    regla3Columna(Sudoku, Pos, X, Columna, N1, Count, ListaAux, Parada, Parada1),!.
 
 %Si la longitud del elemento es 3 revisamos si es igual al pasado
-regla3Columna(Sudoku, Pos, X, Columna, N, Count, ListaAux):-
+regla3Columna(Sudoku, Pos, X, Columna, N, Count, ListaAux, Parada, Parada1):-
     Index is (Columna) + (N - 1) * 9,
     nth1(Index, Sudoku, Sig),
     nth1(1, X, Y),
@@ -624,28 +624,28 @@ regla3Columna(Sudoku, Pos, X, Columna, N, Count, ListaAux):-
     (length(Count, 0),                                                          %Guarda posición del elemento igual encontrado(igual al pasado)
     Count1 = [Index | Count],
     N1 is N - 1,
-    regla3Columna(Sudoku, Pos, X, Columna, N1, Count1, ListaAux),!)
+    regla3Columna(Sudoku, Pos, X, Columna, N1, Count1, ListaAux, Parada, Parada1),!)
     ;
     (N1 is N - 1,
     Count1 = [Pos | [Index | Count]],
-    borrarTrioColumna(Sudoku, Count1, Columna, 9, ListaSin),                    %Llama a predicado para borrar las posibilidades de los elementos de la columna que sean iguales a los del elemento encontrado
-    regla3Columna(ListaSin, Pos, X, Columna, N1, Count1, ListaAux),!)
+    borrarTrioColumna(Sudoku, Count1, Columna, 9, ListaSin, Parada, Parada2),                    %Llama a predicado para borrar las posibilidades de los elementos de la columna que sean iguales a los del elemento encontrado
+    regla3Columna(ListaSin, Pos, X, Columna, N1, Count1, ListaAux, Parada2, Parada1),!)
     ).
 
-regla3Columna(Sudoku, Pos, X, Columna, N, Count, ListaAux):-
+regla3Columna(Sudoku, Pos, X, Columna, N, Count, ListaAux, Parada, Parada1):-
     N1 is N - 1,
-    regla3Columna(Sudoku, Pos, X, Columna, N1, Count, ListaAux),!.
+    regla3Columna(Sudoku, Pos, X, Columna, N1, Count, ListaAux, Parada, Parada1),!.
 
 %-------------------------------------------------------------------------------
 %Recorre el cuadrante correspondiente revisando si hay dos elementos más igual al pasado
-regla3Cuadrante(Final, _, _, _, 0, _, _, _, Final).
+regla3Cuadrante(Final, _, _, _, 0, _, _, _, Final, Cond, Cond).
 
-regla3Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, Count, ListaAux):-
+regla3Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, Count, ListaAux, Parada, Parada1):-
     N is 0,
     M1 is M - 1,
-    regla3Cuadrante(Sudoku, Pos, X, 3, M1, Fila, Columna, Count, ListaAux),!.
+    regla3Cuadrante(Sudoku, Pos, X, 3, M1, Fila, Columna, Count, ListaAux, Parada, Parada1),!.
 
-regla3Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, Count, ListaAux):-
+regla3Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, Count, ListaAux, Parada, Parada1):-
     InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
     InicioColumna is ((Columna - 1) // 3 * 3) + M,
     Posicion is InicioFila * 9 + InicioColumna,
@@ -657,10 +657,10 @@ regla3Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, Count, ListaAux):-
     not(Longitud is 3) )),
     N >= 1,
     N1 is N - 1,
-    regla3Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, Count, ListaAux),!.
+    regla3Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, Count, ListaAux, Parada, Parada1),!.
 
 %Si la longitud del elemento es 3 revisamos si es igual al pasado
-regla3Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, Count, ListaAux):-
+regla3Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, Count, ListaAux, Parada, Parada1):-
     InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
     InicioColumna is ((Columna - 1) // 3 * 3) + M,
     Posicion is InicioFila * 9 + InicioColumna,
@@ -675,22 +675,22 @@ regla3Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, Count, ListaAux):-
     (length(Count, 0),                                                          %Guarda posición del elemento igual encontrado(igual al pasado)
     Count1 = [Posicion | Count],
     N1 is N - 1,
-    regla3Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, Count1, ListaAux),!)  %Llama a predicado para borrar las posibilidades de los elementos del cuadrante que sean iguales a los del elemento encontrado
+    regla3Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, Count1, ListaAux, Parada, Parada1),!)  %Llama a predicado para borrar las posibilidades de los elementos del cuadrante que sean iguales a los del elemento encontrado
     ;
     (N1 is N - 1,
     Count1 = [Pos | [Posicion | Count]],
-    borrarTrioCuadrante(Sudoku, Count1, Fila, Columna, 3, 3, ListaSin),
-    regla3Cuadrante(ListaSin, Pos, X, N1, M, Fila, Columna, Count1, ListaAux),!)
+    borrarTrioCuadrante(Sudoku, Count1, Fila, Columna, 3, 3, ListaSin, Parada, Parada2),
+    regla3Cuadrante(ListaSin, Pos, X, N1, M, Fila, Columna, Count1, ListaAux, Parada2, Parada1),!)
     ).
 
-regla3Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, Count, ListaAux):-
+regla3Cuadrante(Sudoku, Pos, X, N, M, Fila, Columna, Count, ListaAux, Parada, Parada1):-
     N1 is N - 1,
-    regla3Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, Count, ListaAux),!.
+    regla3Cuadrante(Sudoku, Pos, X, N1, M, Fila, Columna, Count, ListaAux, Parada, Parada1),!.
 %-------------------------------------------------------------------------------
 %Borra los elementos de la fila que tengas posibilidades iguales al del elemento encontrado
-borrarTrioFila(Final, _, _, 0, Final).
+borrarTrioFila(Final, _, _, 0, Final, Cond, Cond).
 
-borrarTrioFila(Sudoku, Count, Fila, N, SudokuAux):-
+borrarTrioFila(Sudoku, Count, Fila, N, SudokuAux, Parada, Parada1):-
     Index is (Fila - 1) * 9 + N,
     nth1(Index, Sudoku, Elem),
     nth1(1, Count, Pos1),
@@ -701,23 +701,23 @@ borrarTrioFila(Sudoku, Count, Fila, N, SudokuAux):-
     Pos3 is Index;
     number(Elem)),
     N1 is N - 1,
-    borrarTrioFila(Sudoku, Count, Fila, N1, SudokuAux),!.
+    borrarTrioFila(Sudoku, Count, Fila, N1, SudokuAux, Parada, Parada1),!.
 
-borrarTrioFila(Sudoku, Count, Fila, N, SudokuAux):-
+borrarTrioFila(Sudoku, Count, Fila, N, SudokuAux, Parada, Parada1):-
     Index is (Fila - 1) * 9 + N,
     nth1(1, Count, Pos1),
-    borrarGeneral(Sudoku, Index, Pos1, 3, SudokuSin),                           %Comprueba si alguna posibilidad es igual a alguna de los del elemento pasado y la borra si lo es
+    borrarGeneral(Sudoku, Index, Pos1, 3, SudokuSin, Parada, Parada2),                           %Comprueba si alguna posibilidad es igual a alguna de los del elemento pasado y la borra si lo es
     N1 is N - 1,
-    borrarTrioFila(SudokuSin, Count, Fila, N1, SudokuAux),!.
+    borrarTrioFila(SudokuSin, Count, Fila, N1, SudokuAux, Parada2, Parada1),!.
 
-borrarTrioFila(Sudoku, Count, Fila, N, SudokuAux):-
+borrarTrioFila(Sudoku, Count, Fila, N, SudokuAux, Parada, Parada1):-
     N1 is N - 1,
-    borrarTrioFila(Sudoku, Count, Fila, N1, SudokuAux),!.
+    borrarTrioFila(Sudoku, Count, Fila, N1, SudokuAux, Parada, Parada1),!.
 %-------------------------------------------------------------------------------
 %Borra los elementos de la columna que tengas posibilidades iguales al del elemento encontrado
-borrarTrioColumna(Final, _, _, 0, Final).
+borrarTrioColumna(Final, _, _, 0, Final, Cond, Cond).
 
-borrarTrioColumna(Sudoku, Count, Columna, N, SudokuAux):-
+borrarTrioColumna(Sudoku, Count, Columna, N, SudokuAux, Parada, Parada1):-
     Index is (Columna) + (N - 1) * 9,
     nth1(Index, Sudoku, Elem),
     nth1(1, Count, Pos1),
@@ -728,28 +728,28 @@ borrarTrioColumna(Sudoku, Count, Columna, N, SudokuAux):-
     Pos3 is Index;
     number(Elem)),
     N1 is N - 1,
-    borrarTrioColumna(Sudoku, Count, Columna, N1, SudokuAux),!.
+    borrarTrioColumna(Sudoku, Count, Columna, N1, SudokuAux, Parada, Parada1),!.
 
-borrarTrioColumna(Sudoku, Count, Columna, N, SudokuAux):-
+borrarTrioColumna(Sudoku, Count, Columna, N, SudokuAux, Parada, Parada1):-
     Index is (Columna) + (N - 1) * 9,
     nth1(1, Count, Pos1),                                                       %Comprueba si alguna posibilidad es igual a alguna de los del elemento pasado y la borra si lo es
-    borrarGeneral(Sudoku, Index, Pos1, 3, SudokuSin),
+    borrarGeneral(Sudoku, Index, Pos1, 3, SudokuSin, Parada, Parada2),
     N1 is N - 1,
-    borrarTrioColumna(SudokuSin, Count, Columna, N1, SudokuAux),!.
+    borrarTrioColumna(SudokuSin, Count, Columna, N1, SudokuAux, Parada2, Parada1),!.
 
-borrarTrioColumna(Sudoku, Count, Columna, N, SudokuAux):-
+borrarTrioColumna(Sudoku, Count, Columna, N, SudokuAux, Parada, Parada1):-
     N1 is N - 1,
-    borrarTrioColumna(Sudoku, Count, Columna, N1, SudokuAux),!.
+    borrarTrioColumna(Sudoku, Count, Columna, N1, SudokuAux, Parada, Parada1),!.
 %-------------------------------------------------------------------------------
 %Borra los elementos delcuadrante que tengas posibilidades iguales al del elemento encontrado
-borrarTrioCuadrante(Final, _, _, _, _, 0, Final).
+borrarTrioCuadrante(Final, _, _, _, _, 0, Final, Cond, Cond).
 
-borrarTrioCuadrante(Sudoku, Count, Fila, Columna, N, M, SudokuAux):-
+borrarTrioCuadrante(Sudoku, Count, Fila, Columna, N, M, SudokuAux, Parada, Parada1):-
     N is 0,
     M1 is M - 1,
-    borrarTrioCuadrante(Sudoku, Count, Fila, Columna, 3, M1, SudokuAux),!.
+    borrarTrioCuadrante(Sudoku, Count, Fila, Columna, 3, M1, SudokuAux, Parada, Parada1),!.
 
-borrarTrioCuadrante(Sudoku, Count, Fila, Columna, N, M, SudokuAux):-
+borrarTrioCuadrante(Sudoku, Count, Fila, Columna, N, M, SudokuAux, Parada, Parada1):-
     InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
     InicioColumna is ((Columna - 1) // 3 * 3) + M,
     Posicion is InicioFila * 9 + InicioColumna,
@@ -762,25 +762,25 @@ borrarTrioCuadrante(Sudoku, Count, Fila, Columna, N, M, SudokuAux):-
     Pos3 is Posicion;
     number(Elem)),
     N1 is N - 1,
-    borrarTrioCuadrante(Sudoku, Count, Fila, Columna, N1, M, SudokuAux),!.
+    borrarTrioCuadrante(Sudoku, Count, Fila, Columna, N1, M, SudokuAux, Parada, Parada1),!.
 
-borrarTrioCuadrante(Sudoku, Count, Fila, Columna, N, M, SudokuAux):-
+borrarTrioCuadrante(Sudoku, Count, Fila, Columna, N, M, SudokuAux, Parada, Parada1):-
     InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
     InicioColumna is ((Columna - 1) // 3 * 3) + M,
     Posicion is InicioFila * 9 + InicioColumna,
     nth1(1, Count, Pos1),                                                       %Comprueba si alguna posibilidad es igual a alguna de los del elemento pasado y la borra si lo es
-    borrarGeneral(Sudoku, Posicion, Pos1, 3, SudokuSin),
+    borrarGeneral(Sudoku, Posicion, Pos1, 3, SudokuSin, Parada, Parada2),
     N1 is N - 1,
-    borrarTrioCuadrante(SudokuSin, Count, Fila, Columna, N1, M, SudokuAux),!.
+    borrarTrioCuadrante(SudokuSin, Count, Fila, Columna, N1, M, SudokuAux, Parada2, Parada1),!.
 
-borrarTrioCuadrante(Sudoku, Count, Fila, Columna, N, M, SudokuAux):-
+borrarTrioCuadrante(Sudoku, Count, Fila, Columna, N, M, SudokuAux, Parada, Parada1):-
     N1 is N - 1,
-    borrarTrioCuadrante(Sudoku, Count, Fila, Columna, N1, M, SudokuAux),!.
+    borrarTrioCuadrante(Sudoku, Count, Fila, Columna, N1, M, SudokuAux, Parada, Parada1),!.
 %-------------------------------------------------------------------------------
 %Comprueba si el elemento actual tiene alguna posibilidad igual al del elemento que cumple la regla y si lo hay lo elimina sustituyendo elemento
-borrarGeneral(Final, _, _, 0, Final).
+borrarGeneral(Final, _, _, 0, Final, Cond, Cond).
 
-borrarGeneral(Sudoku, Index, Pos1, N, SudokuAux):-
+borrarGeneral(Sudoku, Index, Pos1, N, SudokuAux, Parada, Parada1):-
     nth1(Index, Sudoku, Elem),
     nth1(Pos1, Sudoku, Pos),
     nth1(N, Pos, X),
@@ -789,10 +789,10 @@ borrarGeneral(Sudoku, Index, Pos1, N, SudokuAux):-
     select(X, Elem, Borrada),
     sustituir_elemento(Sudoku, Index, Borrada, SudokuSin),
     N1 is N - 1,
-    borrarGeneral(SudokuSin, Index, Pos1, N1, SudokuAux),!)
+    borrarGeneral(SudokuSin, Index, Pos1, N1, SudokuAux, 0, Parada1),!)
     ;
     (N1 is N - 1,
-    borrarGeneral(Sudoku, Index, Pos1, N1, SudokuAux),!)
+    borrarGeneral(Sudoku, Index, Pos1, N1, SudokuAux, Parada, Parada1),!)
     ).
 %-------------------------------------------------------------------------------
 
@@ -801,36 +801,23 @@ simplificar_sudoku(Sudoku, Resultado):-
     mostrar_sudoku(Sudoku),
     buscar_posibilidades(Sudoku, SudokuAux),
     mostrar_sudoku(SudokuAux),
-
     buscar_casos(SudokuAux, 0, SudokuAux2),
     Resultado = SudokuAux2,
-    mostrar_sudoku(SudokuAux2).
+    dibujar_sudoku(SudokuAux2).
 %-------------------------------------------------------------------------------
 buscar_casos(Final, 1, Final).
 
 buscar_casos(Sudoku, _, Resultado):-
     Parada is 1,
     regla0(Sudoku, ListaAux, Parada, Parada1),
-    write('Regla0 = '), write(Parada1),nl,
-    regla1(ListaAux, ListaAux2, 1, Parada2),
-    write('Regla1 = '), write(Parada2),nl,
-    %regla2(ListaAux2, ListaAux3, Parada),
-    %regla3(ListaAux3, ListaAux4, Parada),
-    write('-------------------> '),write(Parada2),nl,
+    regla1(ListaAux, ListaAux2, Parada1, Parada2),
+    regla2(ListaAux2, ListaAux3, Parada2, Parada3),
+    regla3(ListaAux3, ListaAux4, Parada3, Parada4),
     (
-    (Parada2 is 1,
-    buscar_casos(ListaAux2, Parada2, Resultado),!)
+    (Parada4 is 1,
+    buscar_casos(ListaAux4, Parada4, Resultado),!)
     ;
-    (buscar_casos(ListaAux2, 0, Resultado),!)
+    (buscar_casos(ListaAux4, 0, Resultado),!)
     ).
 %-------------------------------------------------------------------------------
-trampa(Sudoku, Resultado):-
-    sustituir_elemento(Sudoku, 61, [2, 3, 6], SudokuSin),
-    sustituir_elemento(SudokuSin, 55, [2, 3, 8], SudokuSin2),
-    sustituir_elemento(SudokuSin2, 56, [6, 7], SudokuSin3),
-    sustituir_elemento(SudokuSin3, 62, [2, 3, 6, 9], SudokuSin4),
-    Resultado = SudokuSin4.
-%-------------------------------------------------------------------------------
-
-
 
