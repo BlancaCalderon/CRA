@@ -194,7 +194,7 @@ regla0Aux(Sudoku, N, Resultado, Parada, Parada1):-
     regla0Aux(Sudoku, N1, Resultado, Parada, Parada1),!.                                         %lLamada recursiva para revisar siguiente posición
 
 %Cuando tamaño de la lista de posibilidades es 1 y no es un número ya establecido se sustituye elemento y actualiza sudoku
-regla0Aux(Sudoku, N, Resultado, Parada, Parada1):-
+regla0Aux(Sudoku, N, Resultado, _, Parada1):-
     nth1(N, Sudoku, X),
     N1 is N - 1,
     nth1(1, X, X1),
@@ -205,56 +205,56 @@ regla0Aux(Sudoku, N, Resultado, Parada, Parada1):-
 %-------------------------------------------------------------------------------
 %Regla 1 -> Si hay un numero que aparece en una sola de las listas que aparecen en una fila, columna o cuadro, cambiamos la lista por el numero y borramos el numero del resto de listas de la fila, columna o cuadro.
 %-------------------------------------------------------------------------------
-regla1(Sudoku, Resultado):-
-    regla1Aux(Sudoku, 81, Resultado).                                           %Se recorre el sudoku al revés
+regla1(Sudoku, Resultado, Parada, Parada1):-
+    regla1Aux(Sudoku, 81, Resultado, Parada, Parada1).                                           %Se recorre el sudoku al revés
 
-regla1Aux(Resultado, 0, Resultado).                                             %Termina recorrido del sudoku
+regla1Aux(Resultado, 0, Resultado, Cond, Cond).                                             %Termina recorrido del sudoku
 
-regla1Aux(Sudoku, N, Resultado):-
+regla1Aux(Sudoku, N, Resultado, Parada, Parada1):-
     nth1(N, Sudoku, X),
     valoresPosibles(Num),
     member(X, Num),                                                             %Comprueba si elemento actual es uno de los valores posibles(es un número y no una lista de posibilidades)
     N1 is N - 1,
-    regla1Aux(Sudoku, N1, Resultado),!.                                         %lLamada recursiva para revisar siguiente posición
+    regla1Aux(Sudoku, N1, Resultado, Parada, Parada1),!.                                         %lLamada recursiva para revisar siguiente posición
 
 %Si el elemento no es un número ya establecido se comprueba si es el único en la fila, columna y cuadrante (se cumple la regla)
-regla1Aux(Sudoku, N, Resultado):-
+regla1Aux(Sudoku, N, Resultado, Parada, Parada1):-
     obtener_ejes(N, J1, J2),
     nth1(N, Sudoku, X),
     length(X, Tam),
-    regla1Fila(Sudoku, N, X, Tam, 9, J1, ListaAux),
-    regla1Columna(ListaAux, N, X, Tam, 9, J2, ListaAux2),
-    regla1Cuadrante(ListaAux2, N, X, Tam, 3, 3, J1, J2, ListaAux3),
+    regla1Fila(Sudoku, N, X, Tam, 9, J1, ListaAux, Parada, Parada2),
+    regla1Columna(ListaAux, N, X, Tam, 9, J2, ListaAux2, Parada2, Parada3),
+    regla1Cuadrante(ListaAux2, N, X, Tam, 3, 3, J1, J2, ListaAux3, Parada3, Parada4),
     N1 is N - 1,
-    regla1Aux(ListaAux3, N1, Resultado),!.
+    regla1Aux(ListaAux3, N1, Resultado, Parada4, Parada1),!.
 %-------------------------------------------------------------------------------
 %Recorre cuadrante correspondiente a la posición pasda comprobando si el elemento no se repite en ese cuadrante
-regla1Cuadrante(Final, _, _, 0, _, _, _, _, Final).
+regla1Cuadrante(Final, _, _, 0, _, _, _, _, Final, Cond, Cond).
 
 %Si se llega al final del cuadrante sin haber encontrado otro elemento igual se sustituye y actualiza sudoku
-regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux):-
+regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux, _, Parada1):-
     M is 0,
     N is 0,
     nth1(Tam, X, Y),
     sustituir_elemento(Sudoku, Pos, Y, SudokuAux),
     actualizar_sudoku(SudokuAux, Pos, Resultado),
-    regla1Cuadrante(Resultado, Pos, X, 0, N, M, Fila, Columna, ListaAux),!.
+    regla1Cuadrante(Resultado, Pos, X, 0, N, M, Fila, Columna, ListaAux, 0, Parada1),!.
 
-regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux):-
+regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux, Parada, Parada1):-
     InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
     InicioColumna is ((Columna - 1) // 3 * 3) + M,
     Posicion is InicioFila * 9 + InicioColumna,
     Pos is Posicion,                                                            %Si nos encontramos en la posición pasada y no es la última se pasa a revisar siguiente posición
     N > 0,
     N1 is N - 1,
-    regla1Cuadrante(Sudoku, Pos, X, Tam, N1, M, Fila, Columna, ListaAux),!.
+    regla1Cuadrante(Sudoku, Pos, X, Tam, N1, M, Fila, Columna, ListaAux, Parada, Parada1),!.
 
-regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux):-
+regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux, Parada, Parada1):-
     N is 0,
     M1 is M - 1,
-    regla1Cuadrante(Sudoku, Pos, X, Tam, 3, M1, Fila, Columna, ListaAux),!.
+    regla1Cuadrante(Sudoku, Pos, X, Tam, 3, M1, Fila, Columna, ListaAux, Parada, Parada1),!.
 
-regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux):-
+regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux, Parada, Parada1):-
     InicioFila is ((Fila - 1) // 3 * 3) + N - 1,
     InicioColumna is ((Columna - 1) // 3 * 3) + M,
     Posicion is InicioFila * 9 + InicioColumna,
@@ -262,69 +262,69 @@ regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux):-
     nth1(Posicion, Sudoku, Sig),
     member(Y, Sig),                                                             %Si una posibilidad del elemento a revisar es igual que el del pasado pasamos a comprobar siguiente valor posible
     Tam1 is Tam - 1,                                                            %Disminuye tamaño para revisar siguiente posibilidad de la lista
-    regla1Cuadrante(Sudoku, Pos, X, Tam1, 3, 3, Fila, Columna, ListaAux),!.
+    regla1Cuadrante(Sudoku, Pos, X, Tam1, 3, 3, Fila, Columna, ListaAux, Parada, Parada1),!.
 
-regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux):-
+regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux, Parada, Parada1):-
     N1 is N - 1,
-    regla1Cuadrante(Sudoku, Pos, X, Tam, N1, M, Fila, Columna, ListaAux),!.
+    regla1Cuadrante(Sudoku, Pos, X, Tam, N1, M, Fila, Columna, ListaAux, Parada, Parada1),!.
 %-------------------------------------------------------------------------------
 %Recorre columna correspondiente a la posición pasda comprobando si el elemento no se repite en ese cuadrante
-regla1Columna(Final, _, _, 0, _, _, Final).
+regla1Columna(Final, _, _, 0, _, _, Final, Cond, Cond).
 
-regla1Columna(Sudoku, Pos, X, Tam, N, Columna, ListaAux):-
+regla1Columna(Sudoku, Pos, X, Tam, N, Columna, ListaAux, Parada, Parada1):-
     Index is (Columna) + (N - 1) * 9,
     Pos is Index,                                                               %Si nos encontramos en la posición pasada (nosotros mismos) y no es la última se pasa a revisar siguiente posición
     N1 is N - 1,
-    regla1Columna(Sudoku, Pos, X, Tam, N1, Columna, ListaAux),!.
+    regla1Columna(Sudoku, Pos, X, Tam, N1, Columna, ListaAux, Parada, Parada1),!.
     
 %Si se llega al final de la columna sin haber encontrado otro elemento igual se sustituye y actualiza sudoku
-regla1Columna(Sudoku, Pos, X, Tam, N, Columna, ListaAux):-
+regla1Columna(Sudoku, Pos, X, Tam, N, Columna, ListaAux, _, Parada1):-
     N is 0,
     nth1(Tam, X, Y),
     sustituir_elemento(Sudoku, Pos, Y, SudokuAux),
     actualizar_sudoku(SudokuAux, Pos, Resultado),
-    regla1Columna(Resultado, Pos, X, 0, 9, Columna, ListaAux),!.
+    regla1Columna(Resultado, Pos, X, 0, 9, Columna, ListaAux, 0, Parada1),!.
 
-regla1Columna(Sudoku, Pos, X, Tam, N, Columna, ListaAux):-
+regla1Columna(Sudoku, Pos, X, Tam, N, Columna, ListaAux, Parada, Parada1):-
     Index is (Columna) + (N - 1) * 9,
     nth1(Index, Sudoku, Sig),
     nth1(Tam, X, Y),
     member(Y, Sig),                                                             %Si una posibilidad del elemento a revisar es igual que el del pasado pasamos a comprobar siguiente valor posible
     Tam1 is Tam - 1,
-    regla1Columna(Sudoku, Pos, X, Tam1, 9, Columna, ListaAux),!.
+    regla1Columna(Sudoku, Pos, X, Tam1, 9, Columna, ListaAux, Parada, Parada1),!.
 
-regla1Columna(Sudoku, Pos, X, Tam, N, Columna, ListaAux):-
+regla1Columna(Sudoku, Pos, X, Tam, N, Columna, ListaAux, Parada, Parada1):-
     N1 is N - 1,
-    regla1Columna(Sudoku, Pos, X, Tam, N1, Columna, ListaAux),!.
+    regla1Columna(Sudoku, Pos, X, Tam, N1, Columna, ListaAux, Parada, Parada1),!.
 %-------------------------------------------------------------------------------
 %Recorre Fila correspondiente a la posición pasda comprobando si el elemento no se repite en ese cuadrante
-regla1Fila(Final, _, _, 0, _, _, Final).
+regla1Fila(Final, _, _, 0, _, _, Final, Cond, Cond).
 
-regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux):-
+regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux, Parada, Parada1):-
     Index is (Fila - 1) * 9 + N,                                                %Si nos encontramos en la posición pasada y no es la última se pasa a revisar siguiente posición
     Pos is Index,
     N1 is N - 1,
-    regla1Fila(Sudoku, Pos, X, Tam, N1, Fila, ListaAux),!.
+    regla1Fila(Sudoku, Pos, X, Tam, N1, Fila, ListaAux, Parada, Parada1),!.
 
 %Si se llega al final de la fila sin haber encontrado otro elemento igual se sustituye y actualiza sudoku
-regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux):-
+regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux, _, Parada1):-
     N is 0,
     nth1(Tam, X, Y),
     sustituir_elemento(Sudoku, Pos, Y, SudokuAux),
     actualizar_sudoku(SudokuAux, Pos, Resultado),
-    regla1Fila(Resultado, Pos, X, 0, 9, Fila, ListaAux),!.
+    regla1Fila(Resultado, Pos, X, 0, 9, Fila, ListaAux, 0, Parada1),!.
 
-regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux):-
+regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux, Parada, Parada1):-
     Index is (Fila - 1) * 9 + N,
     nth1(Index, Sudoku, Sig),
     nth1(Tam, X, Y),
     member(Y, Sig),                                                             %Si una posibilidad del elemento a revisar es igual que el del pasado pasamos a comprobar siguiente valor posible
     Tam1 is Tam - 1,
-    regla1Fila(Sudoku, Pos, X, Tam1, 9, Fila, ListaAux),!.
+    regla1Fila(Sudoku, Pos, X, Tam1, 9, Fila, ListaAux, Parada, Parada1),!.
 
-regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux):-
+regla1Fila(Sudoku, Pos, X, Tam, N, Fila, ListaAux, Parada, Parada1):-
     N1 is N - 1,
-    regla1Fila(Sudoku, Pos, X, Tam, N1, Fila, ListaAux),!.
+    regla1Fila(Sudoku, Pos, X, Tam, N1, Fila, ListaAux, Parada, Parada1),!.
 %-------------------------------------------------------------------------------
 %Regla 2 -> Si dos numeros aparecen solos en dos lugares distintos de una fila, columna o cuadro, los borramos del resto de lugares de la fila, columna o cuadro correspondiente.
 %-------------------------------------------------------------------------------
@@ -809,18 +809,19 @@ simplificar_sudoku(Sudoku, Resultado):-
 buscar_casos(Final, 1, Final).
 
 buscar_casos(Sudoku, _, Resultado):-
-write('aqui si'),nl,
     Parada is 1,
     regla0(Sudoku, ListaAux, Parada, Parada1),
-    %regla1(ListaAux, ListaAux2, Parada),
+    write('Regla0 = '), write(Parada1),nl,
+    regla1(ListaAux, ListaAux2, 1, Parada2),
+    write('Regla1 = '), write(Parada2),nl,
     %regla2(ListaAux2, ListaAux3, Parada),
     %regla3(ListaAux3, ListaAux4, Parada),
-    write('-------------------> '),write(Parada1),nl,
+    write('-------------------> '),write(Parada2),nl,
     (
-    (Parada1 is 1,
-    buscar_casos(ListaAux, Parada1, Resultado),!)
+    (Parada2 is 1,
+    buscar_casos(ListaAux2, Parada2, Resultado),!)
     ;
-    (buscar_casos(ListaAux, 0, Resultado),!)
+    (buscar_casos(ListaAux2, 0, Resultado),!)
     ).
 %-------------------------------------------------------------------------------
 trampa(Sudoku, Resultado):-
