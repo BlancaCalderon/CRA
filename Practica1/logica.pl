@@ -174,33 +174,33 @@ actualizarCuadrado(Sudoku, X, Fila, Columna, ContF, ContC, ListaFinal):-
 %-------------------------------------------------------------------------------
 %Regla 0 --> Si hay un lugar donde solo cabe un numero, lo escribimos en el lugar correspondiente y lo eliminamos de los lugares en los que aparezca de los que son conflictivos
 %-------------------------------------------------------------------------------
-regla0(Sudoku, Resultado):-
-    regla0Aux(Sudoku, 81, Resultado).                                           %Se recorre el sudoku al revés
+regla0(Sudoku, Resultado, Parada, Parada1):-
+    regla0Aux(Sudoku, 81, Resultado, Parada, Parada1).                          %Se recorre el sudoku al revés
                                                                                 %Termina recorrido del sudoku
-regla0Aux(Resultado, 0, Resultado).
+regla0Aux(Resultado, 0, Resultado, Cond, Cond).
 
-regla0Aux(Sudoku, N, Resultado):-
+regla0Aux(Sudoku, N, Resultado, Parada, Parada1):-
     nth1(N, Sudoku, X),
     valoresPosibles(Num),
     member(X, Num),                                                             %Comprueba si elemento actual es uno de los valores posibles(es un número y no una lista de posibilidades)
     N1 is N - 1,
-    regla0Aux(Sudoku, N1, Resultado),!.                                         %lLamada recursiva para revisar siguiente posición
+    regla0Aux(Sudoku, N1, Resultado, Parada, Parada1),!.                        %lLamada recursiva para revisar siguiente posición
 
-regla0Aux(Sudoku, N, Resultado):-
+regla0Aux(Sudoku, N, Resultado, Parada, Parada1):-
     nth1(N, Sudoku, X),
     length(X, Tam),
     Tam > 1,                                                                    %Si tamaño del elemento actual es mayor que 1(hay mas de una posibilidad en la lista)
     N1 is N - 1,                                                                %Se pasa a revisar siguiente elemento al no cumplir la regla
-    regla0Aux(Sudoku, N1, Resultado),!.                                         %lLamada recursiva para revisar siguiente posición
+    regla0Aux(Sudoku, N1, Resultado, Parada, Parada1),!.                                         %lLamada recursiva para revisar siguiente posición
 
 %Cuando tamaño de la lista de posibilidades es 1 y no es un número ya establecido se sustituye elemento y actualiza sudoku
-regla0Aux(Sudoku, N, Resultado):-
+regla0Aux(Sudoku, N, Resultado, Parada, Parada1):-
     nth1(N, Sudoku, X),
     N1 is N - 1,
     nth1(1, X, X1),
     sustituir_elemento(Sudoku, N, X1, SudokuAux),
     actualizar_sudoku(SudokuAux, N, Prueba),
-    regla0Aux(Prueba, N1, Resultado),!.                                         %lLamada recursiva para revisar siguiente posición
+    regla0Aux(Prueba, N1, Resultado, 0, Parada1),!.                                         %lLamada recursiva para revisar siguiente posición
 
 %-------------------------------------------------------------------------------
 %Regla 1 -> Si hay un numero que aparece en una sola de las listas que aparecen en una fila, columna o cuadro, cambiamos la lista por el numero y borramos el numero del resto de listas de la fila, columna o cuadro.
@@ -797,19 +797,31 @@ borrarGeneral(Sudoku, Index, Pos1, N, SudokuAux):-
 %-------------------------------------------------------------------------------
 
 %-------------------------------------------------------------------------------
-buscar(Sudoku, N, Resultado):-
+simplificar_sudoku(Sudoku, Resultado):-
+    mostrar_sudoku(Sudoku),
     buscar_posibilidades(Sudoku, SudokuAux),
-    buscar_casos(SudokuAux, N, Resultado).
+    mostrar_sudoku(SudokuAux),
 
-buscar_casos(Final, 0, Final).
+    buscar_casos(SudokuAux, 0, SudokuAux2),
+    Resultado = SudokuAux2,
+    mostrar_sudoku(SudokuAux2).
+%-------------------------------------------------------------------------------
+buscar_casos(Final, 1, Final).
 
-buscar_casos(Sudoku, N, Resultado):-
-    regla0(Sudoku, ListaAux),
-    regla1(ListaAux, ListaAux2),
-    regla2(ListaAux2, ListaAux3),
-    regla3(ListaAux3, ListaAux4),
-    N1 is N - 1,
-    buscar_casos(ListaAux4, N1, Resultado),!.
+buscar_casos(Sudoku, _, Resultado):-
+write('aqui si'),nl,
+    Parada is 1,
+    regla0(Sudoku, ListaAux, Parada, Parada1),
+    %regla1(ListaAux, ListaAux2, Parada),
+    %regla2(ListaAux2, ListaAux3, Parada),
+    %regla3(ListaAux3, ListaAux4, Parada),
+    write('-------------------> '),write(Parada1),nl,
+    (
+    (Parada1 is 1,
+    buscar_casos(ListaAux, Parada1, Resultado),!)
+    ;
+    (buscar_casos(ListaAux, 0, Resultado),!)
+    ).
 %-------------------------------------------------------------------------------
 trampa(Sudoku, Resultado):-
     sustituir_elemento(Sudoku, 61, [2, 3, 6], SudokuSin),
