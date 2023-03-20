@@ -264,7 +264,7 @@ regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux, Parada, Para
     Tam1 is Tam - 1,                                                            %Disminuye tamaño para revisar siguiente posibilidad de la lista
     regla1Cuadrante(Sudoku, Pos, X, Tam1, 3, 3, Fila, Columna, ListaAux, Parada, Parada1),!.
 
-regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columsimna, ListaAux, Parada, Parada1):-
+regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux, Parada, Parada1):-
     N1 is N - 1,
     regla1Cuadrante(Sudoku, Pos, X, Tam, N1, M, Fila, Columna, ListaAux, Parada, Parada1),!.
 %-------------------------------------------------------------------------------
