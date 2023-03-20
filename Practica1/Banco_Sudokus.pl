@@ -1,3 +1,4 @@
+%Listado de 300 sudokus de disinta dificultad (100 faciles, 100 medios y 100 dificiles) (Facil = 65 casillas con solución. Medio = 50 casillas con solución. Dificil = 35 casillas con solución)
 sudoku_facil00([9,6,2,1,3,5,4,7,8,  
                 8,.,.,4,7,2,6,.,9,  
                 .,7,4,9,.,8,2,1,5,  
