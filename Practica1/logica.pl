@@ -264,7 +264,7 @@ regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux, Parada, Para
     Tam1 is Tam - 1,                                                            %Disminuye tamaño para revisar siguiente posibilidad de la lista
     regla1Cuadrante(Sudoku, Pos, X, Tam1, 3, 3, Fila, Columna, ListaAux, Parada, Parada1),!.
 
-regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columna, ListaAux, Parada, Parada1):-
+regla1Cuadrante(Sudoku, Pos, X, Tam, N, M, Fila, Columsimna, ListaAux, Parada, Parada1):-
     N1 is N - 1,
     regla1Cuadrante(Sudoku, Pos, X, Tam, N1, M, Fila, Columna, ListaAux, Parada, Parada1),!.
 %-------------------------------------------------------------------------------
@@ -795,29 +795,30 @@ borrarGeneral(Sudoku, Index, Pos1, N, SudokuAux, Parada, Parada1):-
     borrarGeneral(Sudoku, Index, Pos1, N1, SudokuAux, Parada, Parada1),!)
     ).
 %-------------------------------------------------------------------------------
-
+%Predicados que llama a buscar_posibilidades y a las cuatro reglas implementadas hasta no poder aplicarlas más o resolver eel sudoku, mostrandolo por pantalla
 %-------------------------------------------------------------------------------
 simplificar_sudoku(Sudoku, Resultado):-
     mostrar_sudoku(Sudoku),
-    buscar_posibilidades(Sudoku, SudokuAux),
+    buscar_posibilidades(Sudoku, SudokuAux),                                    %Busca posibilidades del sudoku
     mostrar_sudoku(SudokuAux),
-    buscar_casos(SudokuAux, 0, SudokuAux2),
+    buscar_casos(SudokuAux, 0, SudokuAux2),                                     %Aplica las 4 reglas hasta que no se pueda mas
     Resultado = SudokuAux2,
     dibujar_sudoku(SudokuAux2).
 %-------------------------------------------------------------------------------
+%Llama a las cuatro reglas de simplificación hasta que no se pueda aplicar ninguna de ellas (el contador sea 1)
 buscar_casos(Final, 1, Final).
 
 buscar_casos(Sudoku, _, Resultado):-
-    Parada is 1,
+    Parada is 1,                                                                %Condición de parada se inicializa a 1
     regla0(Sudoku, ListaAux, Parada, Parada1),
     regla1(ListaAux, ListaAux2, Parada1, Parada2),
     regla2(ListaAux2, ListaAux3, Parada2, Parada3),
     regla3(ListaAux3, ListaAux4, Parada3, Parada4),
-    (
+    (                                                                           %Si contador es 1 tras aplicar las 4 reglas significa que ninguna se a cumplido por lo que se termina la ejecución
     (Parada4 is 1,
     buscar_casos(ListaAux4, Parada4, Resultado),!)
     ;
-    (buscar_casos(ListaAux4, 0, Resultado),!)
+    (buscar_casos(ListaAux4, 0, Resultado),!)                                   %Si al menos una regla se ha cumplido se hace una nueva iteración
     ).
 %-------------------------------------------------------------------------------
 
