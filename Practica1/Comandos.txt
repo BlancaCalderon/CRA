@@ -1,16 +1,15 @@
-sudoku_prueba1(L), mostrar_sudoku(L).
+Para ejecutar la resolución del Sudoku y abrir la interfaz visual: 
+  ?- sudoku_facil00(L), simplificar_sudoku(L, S).
+  ?- sudoku_facil01(L), simplificar_sudoku(L, S).
+  ?- sudoku_medio00(L), simplificar_sudoku(L, S).
+  ?- sudoku_medio01(L), simplificar_sudoku(L, S).
+  ?- sudoku_hard000(L), simplificar_sudoku(L, S).
+  ?- sudoku_hard001(L), simplificar_sudoku(L, S).
 
-sudoku_prueba1(L), buscar_posibilidades(L, L1).
-
-sudoku_prueba1(L), buscar_posibilidades(L, L1), regla0(L1, S).
-
-
-predicado time(predicado a llvear a cabo) --> Saca el tiempo (tiempo CPU utilizado)
-
-
-------------------------------------------------------------
-Mejora --> usar time(predicado sudoku) para sacar el tiempo de ejecucion y poner datos en excel para analizar resultados (hacer grafico)
-Interpretarlo un poco
-
-time(test1) --> saca tiempo ejecutando predicado --> interesandte numero de milisisegundos
-test1:- sudoku_prueba1(L), simplificar_sudoku(L, _)
+Para ejecutar un test sobre el sudoku:
+  ?- time(test_facil0).
+  ?- time(test_facil1).
+  ?- time(test_medio0).
+  ?- time(test_medio1).
+  ?- time(test_hard0).
+  ?- time(test_hard1).
