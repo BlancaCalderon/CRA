@@ -54,21 +54,21 @@ g_nominal(gn(GNA, Conj, GN)) --> g_nominal(GNA), conjuncion_coordinada(Conj), g_
 %g_verbal(gv(GAdv, GV, GAdv)) --> g_adverbial(GAdv), g_verbal(GV), g_adverbial(GAdv),!.
 %g_verbal(gv(GPrep, GV, GPrep)) --> g_preposicional(GPrep), g_verbal(GV), g_preposicional(GPrep),!.
 
-g_verbal(gv(V)) --> verbo(V).
-g_verbal(gv(V, GN)) --> verbo(V), g_nominal(GN).
-g_verbal(gv(V, GV)) --> verbo(V), g_verbal(GV).
 
-%g_verbal(gv(V, GAdj)) --> verbo(V), g_adjetival(GAdj),!.
+
+g_verbal(gv(V, GV)) --> verbo(V), g_verbal(GV),!.
+g_verbal(gv(V, GAdj)) --> verbo(V), g_adjetival(GAdj).
+%g_verbal(gv(V, GN)) --> verbo(V), g_nominal(GN),!.
 %g_verbal(gv(GAdv, GV)) --> g_adverbial(GAdv), g_verbal(GV).
 %g_verbal(gv(GPrep, GV)) --> g_preposicional(GPrep), g_verbal(GV).
 %g_verbal(gv(GV, GAdv)) --> g_verbal(GV), g_adverbial(GAdv).
 %g_verbal(gv(GV, GPrep)) --> g_verbal(GV), g_preposicional(GPrep).
-
+g_verbal(gv(V)) --> verbo(V).
 
 
 %Grupo adjetival
 g_adjetival(gadj(Adj)) --> adjetivo(Adj).
-g_adjetival(gadj(Adj, Conj, GAdj)) --> adjetivo(Adj), conjuncion_coordinada(Conj), g_adjetival(GAdj).
+g_adjetival(gadj(Adj, Conj, GAdj)) --> adjetivo(Adj), conjuncion_coordinada(Conj), g_adjetival(GAdj),!.
 
 
 
@@ -80,8 +80,8 @@ g_adverbial(gadv(Adv, GAdv)) --> adverbio(Adv), g_adverbial(GAdv).
 
 %Grupo preposicional
 g_preposicional(gp(Prep)) -->  preposicion(Prep).
-
 %g_preposicional(gp(Prep, GN, Conj, GP)) -->  preposicion(Prep), g_nominal(GN), conjuncion_coordinada(Conj), g_preposicional(GP),!.
+
 
 %-------------------------------------------------------------------------------
 %Elementos
