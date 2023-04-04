@@ -136,6 +136,8 @@ adv('early').
 adv('late').
 adv('happily').
 adv('softly').
+adv('very').
+adv('only').
 
 %-------------------------------------------------------------------------------
 %Conjunciones Coordinadas

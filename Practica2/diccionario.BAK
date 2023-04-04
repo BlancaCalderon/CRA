@@ -136,16 +136,41 @@ adv('early').
 adv('late').
 adv('happily').
 adv('softly').
+adv('very').
 
 %-------------------------------------------------------------------------------
 %Conjunciones Coordinadas
 %-------------------------------------------------------------------------------
-conjc().
+conjc('and').
+conjc(',').
+conjc('but').
+conjc('or').
+conjc('so').
+conjc('yet').
+conjc('for').
+conjc('nor').
 
 %-------------------------------------------------------------------------------
 %Conjunciones Subordinadas
 %-------------------------------------------------------------------------------
-conjs().
+conjs('after').
+conjs('although').
+conjs('as').
+conjs('as if').
+conjs('because').
+conjs('before').
+conjs('even though').
+conjs('if').
+conjs('in order that').
+conjs('once').
+conjs('provided that').
+conjs('rather than').
+conjs('than').
+conjs('though').
+conjs('when').
+conjs('where').
+conjs('wherever').
+conjs('while').
 
 %-------------------------------------------------------------------------------
 %Preposiciones
