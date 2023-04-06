@@ -5,6 +5,7 @@
 det('a').
 det('an').
 det('the').
+det('The').
 det('my').
 det('your').
 det('that').
@@ -67,12 +68,19 @@ n('juice').
 n('wall').
 n('apples').
 n('word processor').
+n('word').
+n('processor').
 n('documents').
 n('mouse').
 n('cat').
 n('neighbor').
 n('evenings').
 n('tool').
+n('who').
+n('which').
+n('it').
+n('yesterday').
+n('we').
 
 %-------------------------------------------------------------------------------
 %Nombres propios
@@ -105,6 +113,8 @@ v('writing').
 v('caught').
 v('was').
 v('saw').
+v('climbs').
+v('is used').
 
 %-------------------------------------------------------------------------------
 %Adjetivos
@@ -119,6 +129,7 @@ adj('red').
 adj('powerful').
 adj('slow').
 adj('gray').
+adj('writing').
 
 %-------------------------------------------------------------------------------
 %Adverbios
@@ -143,6 +154,37 @@ adv('very').
 adv('only').
 
 %-------------------------------------------------------------------------------
+%Conjunciones
+%-------------------------------------------------------------------------------
+conj('and').
+conj(',').
+conj('but').
+conj('or').
+conj('so').
+conj('yet').
+conj('for').
+conj('nor').
+conj('after').
+conj('although').
+conj('as').
+conj('as if').
+conj('because').
+conj('before').
+conj('even though').
+conj('if').
+conj('in order that').
+conj('once').
+conj('provided that').
+conj('rather than').
+conj('than').
+conj('though').
+conj('when').
+conj('where').
+conj('wherever').
+conj('while').
+conj('that').
+
+%-------------------------------------------------------------------------------
 %Conjunciones Coordinadas
 %-------------------------------------------------------------------------------
 conjc('and').
@@ -153,6 +195,7 @@ conjc('so').
 conjc('yet').
 conjc('for').
 conjc('nor').
+conjc('that').
 
 %-------------------------------------------------------------------------------
 %Conjunciones Subordinadas
@@ -226,14 +269,14 @@ oracion1(['Jose', 'is', 'dark-haired', 'and', 'Maria', 'is', 'tall']).
 oracion2(['Jose', 'studies', 'Philosophy', 'but', 'Maria', 'studies', 'Law']).
 oracion3(['Maria', 'is having', 'a', 'coffee', 'while', 'Jose', 'clears', 'the', 'table']).
 oracion4(['Jose', 'drinks', 'coffee', 'and', 'reads', 'the', 'newspaper']).
-oracion5(['Jose', 'and', 'Hector', 'eat', 'french', 'fries', 'and', 'drink', 'beer']).
-oracion6(['Jose', 'eats', 'french', 'fries', 'but', 'Maria', 'prefers', 'paella', 'although', 'Hector', 'drinks', 'coffee', 'and', 'Irene', 'reads', 'a', 'novel']).
+oracion5(['Jose', 'and', 'Hector', 'eat', 'french fries', 'and', 'drink', 'beer']).
+oracion6(['Jose', 'eats', 'french fries', 'but', 'Maria', 'prefers', 'paella', 'although', 'Hector', 'drinks', 'coffee', 'and', 'Irene', 'reads', 'a', 'novel']).
 oracion7(['Irene', 'sings', 'and', 'jumps', 'while', 'Jose', 'studies']).
-oracion8(['Hector', 'eats', 'french', 'fries', 'and', 'drinks', 'juice', 'while', 'Jose', 'sings', 'and', 'jumps', 'although', 'Maria', 'reads', 'a', 'novel']).
-oracion9(['Jose',' who','is' ,'agile', 'climbs', 'at' ,'the' ,'climbing' ,'wall' ,'in' ,'the' ,'evenings']).
-oracion10(['Jose', 'who', 'is','very', 'picky', ', ', 'only' ,'eats', 'red' ,'apples']).
-oracion11(['The' ,'word' ,'processor', 'which', 'is', 'a', 'quite' ,'powerful', 'tool', 'is','used', 'for','writing', 'documents']).
-oracion12(['The' ,'word','processor', 'is' ,'a' ,'very' ,'powerful' ,'tool' ,'that' ,'is', 'used', 'for', 'writing', 'documents', 'but', 'it' ,'is','quite', 'slow']).
-oracion13(['The' ,'mouse', 'that', 'the' ,'cat', 'caught', 'was', 'gray']).
-oracion14(['The' ,'man' ,'we' ,'saw' ,'yesterday' ,'was', 'my' ,'neighbor']).
+oracion8(['Hector', 'eats', 'french fries', 'and', 'drinks', 'juice', 'while', 'Jose', 'sings', 'and', 'jumps', 'although', 'Maria', 'reads', 'a', 'novel']).
+oracion9(['Jose', 'who', 'is', 'agile', ',', 'climbs', 'at', 'the', 'climbing', 'wall', 'in', 'the', 'evenings']).
+oracion10(['Jose', 'who', 'is', 'very', 'picky', ',', 'only', 'eats', 'red', 'apples']).
+oracion11(['The', 'word', 'processor', 'which', 'is', 'a', 'quite', 'powerful', 'tool', ',', 'is used', 'for', 'writing', 'documents']).
+oracion12(['The', 'word', 'processor', 'is', 'a', 'very', 'powerful', 'tool', 'that', 'is used', 'for', 'writing', 'documents', 'but', 'it', 'is', 'quite', 'slow']).
+oracion13(['The', 'mouse', 'that', 'the', 'cat', 'caught', 'was', 'gray']).
+oracion14(['The', 'man', 'we', 'saw', 'yesterday', 'was', 'my', 'neighbor']).
 
