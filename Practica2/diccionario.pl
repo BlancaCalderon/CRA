@@ -51,10 +51,12 @@ det('what').
 %Nombres
 %-------------------------------------------------------------------------------
 n('law').
+n('Law').
 n('philosophy').
+n('Philosophy').
 n('man').
 n('woman').
-n('coffe').
+n('coffee').
 n('newspaper').
 n('table').
 n('french fries').
@@ -86,6 +88,7 @@ np('Irene').
 %Verbos
 %-------------------------------------------------------------------------------
 v('is').
+v('is having').
 v('studies').
 v('having').
 v('clears').
@@ -216,5 +219,21 @@ prep('without').
 sig('?').
 sig('!').
 
-
+%-------------------------------------------------------------------------------
+%Oraciones
+%-------------------------------------------------------------------------------
+oracion1(['Jose', 'is', 'dark-haired', 'and', 'Maria', 'is', 'tall']).
+oracion2(['Jose', 'studies', 'Philosophy', 'but', 'Maria', 'studies', 'Law']).
+oracion3(['Maria', 'is having', 'a', 'coffee', 'while', 'Jose', 'clears', 'the', 'table']).
+oracion4(['Jose', 'drinks', 'coffee', 'and', 'reads', 'the', 'newspaper']).
+oracion5(['Jose', 'and', 'Hector', 'eat', 'french', 'fries', 'and', 'drink', 'beer']).
+oracion6(['Jose', 'eats', 'french', 'fries', 'but', 'Maria', 'prefers', 'paella', 'although', 'Hector', 'drinks', 'coffee', 'and', 'Irene', 'reads', 'a', 'novel']).
+oracion7(['Irene', 'sings', 'and', 'jumps', 'while', 'Jose', 'studies']).
+oracion8(['Hector', 'eats', 'french', 'fries', 'and', 'drinks', 'juice', 'while', 'Jose', 'sings', 'and', 'jumps', 'although', 'Maria', 'reads', 'a', 'novel']).
+oracion9(['Jose',' who','is' ,'agile', 'climbs', 'at' ,'the' ,'climbing' ,'wall' ,'in' ,'the' ,'evenings']).
+oracion10(['Jose', 'who', 'is','very', 'picky', ', ', 'only' ,'eats', 'red' ,'apples']).
+oracion11(['The' ,'word' ,'processor', 'which', 'is', 'a', 'quite' ,'powerful', 'tool', 'is','used', 'for','writing', 'documents']).
+oracion12(['The' ,'word','processor', 'is' ,'a' ,'very' ,'powerful' ,'tool' ,'that' ,'is', 'used', 'for', 'writing', 'documents', 'but', 'it' ,'is','quite', 'slow']).
+oracion13(['The' ,'mouse', 'that', 'the' ,'cat', 'caught', 'was', 'gray']).
+oracion14(['The' ,'man' ,'we' ,'saw' ,'yesterday' ,'was', 'my' ,'neighbor']).
 
