@@ -44,9 +44,6 @@ det('ten').
 det('first').
 det('second').
 det('third').
-det('which').
-det('whose').
-det('what').
 
 %-------------------------------------------------------------------------------
 %Nombres
@@ -275,8 +272,8 @@ oracion7(['Irene', 'sings', 'and', 'jumps', 'while', 'Jose', 'studies']).
 oracion8(['Hector', 'eats', 'french fries', 'and', 'drinks', 'juice', 'while', 'Jose', 'sings', 'and', 'jumps', 'although', 'Maria', 'reads', 'a', 'novel']).
 oracion9(['Jose', 'who', 'is', 'agile', ',', 'climbs', 'at', 'the', 'climbing', 'wall', 'in', 'the', 'evenings']).
 oracion10(['Jose', 'who', 'is', 'very', 'picky', ',', 'only', 'eats', 'red', 'apples']).
-oracion11(['The', 'word', 'processor', 'which', 'is', 'a', 'quite', 'powerful', 'tool', ',', 'is used', 'for', 'writing', 'documents']).
-oracion12(['The', 'word', 'processor', 'is', 'a', 'very', 'powerful', 'tool', 'that', 'is used', 'for', 'writing', 'documents', 'but', 'it', 'is', 'quite', 'slow']).
+oracion11(['The', 'word processor', 'which', 'is', 'a', 'quite', 'powerful', 'tool', ',', 'is used', 'for', 'writing', 'documents']).
+oracion12(['The', 'word processor', 'is', 'a', 'very', 'powerful', 'tool', 'that', 'is used', 'for', 'writing', 'documents', 'but', 'it', 'is', 'quite', 'slow']).
 oracion13(['The', 'mouse', 'that', 'the', 'cat', 'caught', 'was', 'gray']).
 oracion14(['The', 'man', 'we', 'saw', 'yesterday', 'was', 'my', 'neighbor']).
 

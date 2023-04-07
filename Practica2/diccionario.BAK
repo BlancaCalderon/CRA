@@ -78,6 +78,9 @@ n('evenings').
 n('tool').
 n('who').
 n('which').
+n('it').
+n('yesterday').
+n('we').
 
 %-------------------------------------------------------------------------------
 %Nombres propios
@@ -179,6 +182,7 @@ conj('when').
 conj('where').
 conj('wherever').
 conj('while').
+conj('that').
 
 %-------------------------------------------------------------------------------
 %Conjunciones Coordinadas
@@ -191,6 +195,7 @@ conjc('so').
 conjc('yet').
 conjc('for').
 conjc('nor').
+conjc('that').
 
 %-------------------------------------------------------------------------------
 %Conjunciones Subordinadas
