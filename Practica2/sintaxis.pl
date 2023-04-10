@@ -15,6 +15,7 @@ oracion_aux(o(GV)) --> g_verbal(GV).
 
 oracion_coordinada(oc(O1, CC, O2)) --> oracion_simple(O1), conjuncion_coordinada(CC), oracion_simple(O2).
 oracion_coordinada(oc(O1, CC, OA)) --> oracion_simple(O1), conjuncion_coordinada(CC), oracion_aux(OA).
+
 oracion_subordinada(or(O1, CS, O2)) --> oracion_simple(O1), conjuncion_subordinada(CS), oracion_simple(O2).
 
 %Oraciones compuestas
@@ -133,7 +134,8 @@ signo(sig(X)) --> [X], {sig(X)}.
 pronoun(pron(X)) --> [X], {pron(X)}.
 
 
-prueba(L):-
+prueba():-
+   oracion7(L),
    oracion(X, L, []),
-   obtener_oraciones(X).
+   write(X).
 
