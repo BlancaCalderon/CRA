@@ -135,7 +135,7 @@ pronoun(pron(X)) --> [X], {pron(X)}.
 
 
 prueba():-
-   oracion7(L),
+   oracion8(L),
    oracion(X, L, []),
    write(X).
 
