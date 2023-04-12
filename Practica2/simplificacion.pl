@@ -1,7 +1,8 @@
 %Simplificacion
 %-------------------------------------------------------------------------------
 obtener(Oracion, L):-
-   obtener_oracion(Oracion, 1, [], L).
+   obtener_oracion(Oracion, 1, [], LSucia),
+   limpiar_oraciones(LSucia, [], L).
    
 obtener_oracion(_, 0, Fin, Fin).
     
@@ -45,19 +46,22 @@ obtener_oracion(Oracion, 1, Lista, Final):-
     obtener_oracion(Simple2, 1, Lista1, Lista2),!,
     obtener_oracion(Oracion, 0, Lista2, Final),!.
 
-arbol_a_lista(Arbol, Lista) :-
-    term_to_atom(Arbol, Atom),
-    atomic_list_concat(Atoms, ',', Atom),
-    maplist(atom_string, Atoms, Lista).
+
+%Metodos para limpiar oraciones
+limpiar_oraciones([ ], Final, Final).
+
+limpiar_oraciones([Head | Tail], Final, Aux):-
+    limpiar_oracion(Head, Resultado),
+    limpiar_oraciones(Tail, [Resultado | Final], Aux).
 
 
-limpiar_oracion(Oracion):-
+limpiar_oracion(Oracion, Cadena):-
     term_to_atom(Oracion, Atom),
     atomic_list_concat(Atoms, ',', Atom),
     maplist(atom_string, Atoms, Lista),
     procesar_elementos(Lista, [], Resultado),
-    atomic_list_concat(Resultado, ' ', Cadena),
-    write(Cadena).
+    atomic_list_concat(Resultado, ' ', Cad),
+    Cadena = Cad.
     
 procesar_elementos([ ], Final, Final).
 
