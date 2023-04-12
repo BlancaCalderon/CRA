@@ -61,7 +61,7 @@ g_nominal(gn(NP, GN)) --> nombre_propio(NP), g_nominal(GN).
 g_nominal(gn(GAdv, N)) --> g_adverbial(GAdv), nombre(N).
 g_nominal(gn(GAdv, NP)) --> g_adverbial(GAdv), nombre_propio(NP).
 g_nominal(gn(Det, N)) --> determinante(Det), nombre(N).
-g_nominal(gn(Det, GN)) --> determinante(Det), g_nominal(GN).
+g_nominal(gn(Det, N, GN)) --> determinante(Det), nombre(N), g_nominal(GN).
 g_nominal(gn(Det, GAdj, N)) --> determinante(Det), g_adjetival(GAdj), nombre(N).
 g_nominal(gn(Det, GAdv, N)) --> determinante(Det), g_adverbial(GAdv), nombre(N).
 g_nominal(gn(Det, GAdv, GAdj, N)) --> determinante(Det), g_adverbial(GAdv), g_adjetival(GAdj), nombre(N).
@@ -135,7 +135,7 @@ pronoun(pron(X)) --> [X], {pron(X)}.
 
 
 prueba():-
-   oracion8(L),
+   oracion14(L),
    oracion(X, L, []),
    write(X).
 
