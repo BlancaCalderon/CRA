@@ -1,45 +1,54 @@
+:-consult('diccionario.pl').
+:-consult('simplificacion.pl').
+
 %-------------------------------------------------------------------------------
 %Oraciones
 %-------------------------------------------------------------------------------
+oracion(O) --> oracion_simple(O).
+oracion(O) --> oracion_coordinada(O).
+oracion(O) --> oracion_subordinada(O).
+oracion(O) --> oracion_compuesta(O).
+
 oracion_simple(o(GN, GV)) --> g_nominal(GN), g_verbal(GV).
 oracion_simple(o(GV, GN, Sig)) --> g_verbal(GV), g_nominal(GN), signo(Sig).
 oracion_aux(o(GV)) --> g_verbal(GV).
 
 oracion_coordinada(oc(O1, CC, O2)) --> oracion_simple(O1), conjuncion_coordinada(CC), oracion_simple(O2).
 oracion_coordinada(oc(O1, CC, OA)) --> oracion_simple(O1), conjuncion_coordinada(CC), oracion_aux(OA).
+
 oracion_subordinada(or(O1, CS, O2)) --> oracion_simple(O1), conjuncion_subordinada(CS), oracion_simple(O2).
 
 %Oraciones compuestas
-%oracion_compuesta(ocm(OS, Conj, OS)) --> oracion_simple(OS), conjuncion(Conj), oracion_simple(OS).
-%oracion_compuesta(ocm(OS, Conj, OC)) --> oracion_simple(OS), conjuncion(Conj), oracion_coordinada(OC).
-%oracion_compuesta(ocm(OS, Conj, OR)) --> oracion_simple(OS), conjuncion(Conj), oracion_subordinada(OR).
+oracion_compuesta(ocm(OS1, Conj, OS2)) --> oracion_simple(OS1), conjuncion(Conj), oracion_simple(OS2).
+oracion_compuesta(ocm(OS, Conj, OC)) --> oracion_simple(OS), conjuncion(Conj), oracion_coordinada(OC).
+oracion_compuesta(ocm(OS, Conj, OR)) --> oracion_simple(OS), conjuncion(Conj), oracion_subordinada(OR).
 oracion_compuesta(ocm(OC1, Conj, OC2)) --> oracion_coordinada(OC1), conjuncion(Conj), oracion_coordinada(OC2).
-%oracion_compuesta(ocm(OC, Conj, OS)) --> oracion_coordinada(OC), conjuncion(Conj), oracion_simple(OS).
-%oracion_compuesta(ocm(OC, Conj, OR)) --> oracion_coordinada(OC), conjuncion(Conj), oracion_subordinada(OR).
-%oracion_compuesta(ocm(OR, Conj, OR)) --> oracion_subordinada(OR), conjuncion(Conj), oracion_subordinada(OR).
-%oracion_compuesta(ocm(OR, Conj, OS)) --> oracion_subordinada(OR), conjuncion(Conj), oracion_simple(OS).
-%oracion_compuesta(ocm(OR, Conj, OC)) --> oracion_subordinada(OR), conjuncion(Conj), oracion_coordinada(OC).
-%oracion_compuesta(ocm(OS, Conj, OCM)) --> oracion_simple(OS), conjuncion(Conj), oracion_compuesta(OCM).
-%oracion_compuesta(ocm(OC, Conj, OCM)) --> oracion_coordinada(OC), conjuncion(Conj), oracion_compuesta(OCM).
-%oracion_compuesta(ocm(OR, Conj, OCM)) --> oracion_subordinada(OR), conjuncion(Conj), oracion_compuesta(OCM).
+oracion_compuesta(ocm(OC, Conj, OS)) --> oracion_coordinada(OC), conjuncion(Conj), oracion_simple(OS).
+oracion_compuesta(ocm(OC, Conj, OR)) --> oracion_coordinada(OC), conjuncion(Conj), oracion_subordinada(OR).
+oracion_compuesta(ocm(OR1, Conj, OR2)) --> oracion_subordinada(OR1), conjuncion(Conj), oracion_subordinada(OR2).
+oracion_compuesta(ocm(OR, Conj, OS)) --> oracion_subordinada(OR), conjuncion(Conj), oracion_simple(OS).
+oracion_compuesta(ocm(OR, Conj, OC)) --> oracion_subordinada(OR), conjuncion(Conj), oracion_coordinada(OC).
+oracion_compuesta(ocm(OS, Conj, OCM)) --> oracion_simple(OS), conjuncion(Conj), oracion_compuesta(OCM).
+oracion_compuesta(ocm(OC, Conj, OCM)) --> oracion_coordinada(OC), conjuncion(Conj), oracion_compuesta(OCM).
+oracion_compuesta(ocm(OR, Conj, OCM)) --> oracion_subordinada(OR), conjuncion(Conj), oracion_compuesta(OCM).
 
-%oracion_compuesta(ocm(OS, OS)) --> oracion_simple(OS), oracion_simple(OS).
-%oracion_compuesta(ocm(OS, OC)) --> oracion_simple(OS), oracion_coordinada(OC).
-%oracion_compuesta(ocm(OS, OR)) --> oracion_simple(OS), oracion_subordinada(OR).
-%oracion_compuesta(ocm(OS, OA)) --> oracion_simple(OS), oracion_aux(OA).
-%oracion_compuesta(ocm(OC, OC)) --> oracion_coordinada(OC), oracion_coordinada(OC).
-%oracion_compuesta(ocm(OC, OS)) --> oracion_coordinada(OC), oracion_simple(OS).
-%oracion_compuesta(ocm(OC, OR)) --> oracion_coordinada(OC), oracion_subordinada(OR).
-%oracion_compuesta(ocm(OC, OA)) --> oracion_coordinada(OC), oracion_aux(OA).
-%oracion_compuesta(ocm(OR, OR)) --> oracion_subordinada(OR), oracion_subordinada(OR).
-%oracion_compuesta(ocm(OR, OS)) --> oracion_subordinada(OR), oracion_simple(OS).
-%oracion_compuesta(ocm(OR, OC)) --> oracion_subordinada(OR), oracion_coordinada(OC).
-%oracion_compuesta(ocm(OR, OA)) --> oracion_subordinada(OR), oracion_aux(OA).
+oracion_compuesta(ocm(OS1, OS2)) --> oracion_simple(OS1), oracion_simple(OS2).
+oracion_compuesta(ocm(OS, OC)) --> oracion_simple(OS), oracion_coordinada(OC).
+oracion_compuesta(ocm(OS, OR)) --> oracion_simple(OS), oracion_subordinada(OR).
+oracion_compuesta(ocm(OS, OA)) --> oracion_simple(OS), oracion_aux(OA).
+oracion_compuesta(ocm(OC1, OC2)) --> oracion_coordinada(OC1), oracion_coordinada(OC2).
+oracion_compuesta(ocm(OC, OS)) --> oracion_coordinada(OC), oracion_simple(OS).
+oracion_compuesta(ocm(OC, OR)) --> oracion_coordinada(OC), oracion_subordinada(OR).
+oracion_compuesta(ocm(OC, OA)) --> oracion_coordinada(OC), oracion_aux(OA).
+oracion_compuesta(ocm(OR1, OR2)) --> oracion_subordinada(OR1), oracion_subordinada(OR2).
+oracion_compuesta(ocm(OR, OS)) --> oracion_subordinada(OR), oracion_simple(OS).
+oracion_compuesta(ocm(OR, OC)) --> oracion_subordinada(OR), oracion_coordinada(OC).
+oracion_compuesta(ocm(OR, OA)) --> oracion_subordinada(OR), oracion_aux(OA).
 
-%oracion_compuesta(ocm(OS, OCM)) --> oracion_simple(OS), oracion_compuesta(OCM).
-%oracion_compuesta(ocm(OC, OCM)) --> oracion_coordinada(OC), oracion_compuesta(OCM).
-%oracion_compuesta(ocm(OR, OCM)) --> oracion_subordinada(OR), oracion_compuesta(OCM).
-%oracion_compuesta(ocm(OR, OA)) --> oracion_subordinada(OR), oracion_aux(OA).
+oracion_compuesta(ocm(OS, OCM)) --> oracion_simple(OS), oracion_compuesta(OCM).
+oracion_compuesta(ocm(OC, OCM)) --> oracion_coordinada(OC), oracion_compuesta(OCM).
+oracion_compuesta(ocm(OR, OCM)) --> oracion_subordinada(OR), oracion_compuesta(OCM).
+oracion_compuesta(ocm(OR, OA)) --> oracion_subordinada(OR), oracion_aux(OA).
 
 %-------------------------------------------------------------------------------
 %Grupos
@@ -52,7 +61,7 @@ g_nominal(gn(NP, GN)) --> nombre_propio(NP), g_nominal(GN).
 g_nominal(gn(GAdv, N)) --> g_adverbial(GAdv), nombre(N).
 g_nominal(gn(GAdv, NP)) --> g_adverbial(GAdv), nombre_propio(NP).
 g_nominal(gn(Det, N)) --> determinante(Det), nombre(N).
-g_nominal(gn(Det, GN)) --> determinante(Det), g_nominal(GN).
+g_nominal(gn(Det, N, GN)) --> determinante(Det), nombre(N), g_nominal(GN).
 g_nominal(gn(Det, GAdj, N)) --> determinante(Det), g_adjetival(GAdj), nombre(N).
 g_nominal(gn(Det, GAdv, N)) --> determinante(Det), g_adverbial(GAdv), nombre(N).
 g_nominal(gn(Det, GAdv, GAdj, N)) --> determinante(Det), g_adverbial(GAdv), g_adjetival(GAdj), nombre(N).
@@ -79,7 +88,6 @@ g_nominal(gn(GAdv, GAdj, N, Conj, GN)) --> g_adverbial(GAdv), g_adjetival(GAdj),
 g_nominal(gn(GAdv, GAdj, NP, Conj, GN)) --> g_adverbial(GAdv), g_adjetival(GAdj), nombre_propio(NP), conjuncion_coordinada(Conj), g_nominal(GN).
 g_nominal(gn(GPrep, GN1, Conj, GN2)) --> g_preposicional(GPrep), g_nominal(GN1), conjuncion_coordinada(Conj), g_nominal(GN2).
 
-%--------------------------
 %Grupo verbal
 g_verbal(gv(V)) --> verbo(V).
 g_verbal(gv(V, GV)) --> verbo(V), g_verbal(GV).
@@ -123,6 +131,4 @@ conjuncion_subordinada(conjs(X)) --> [X], {conjs(X)}.
 preposicion(prep(X)) --> [X], {prep(X)}.
 signo(sig(X)) --> [X], {sig(X)}.
 pronoun(pron(X)) --> [X], {pron(X)}.
-
-:-consult('diccionario.pl').
 
