@@ -379,10 +379,18 @@ obtener_oracion(_, 0, Fin, Fin).
 obtener_oracion(Oracion, 1, Lista, Final):-
     X = Oracion,
     (
-    o(Sujeto, _) = X,
-    es_subordinada(Sujeto, Continuar),
-    (Continuar is 1 ->
-    (write('Funciona'))
+    o(Sujeto, Predicado) = X,
+    term_to_atom(Sujeto, Atom),
+    atomic_list_concat(Atoms, 'or(', Atom),
+    length(Atoms, Continuar),
+    
+    (Continuar is 2 ->
+    (nth1(1, Atoms, S1),
+    nth1(2, Atoms, S2),
+    term_to_atom(Predicado, Atomo2),
+    atomic_list_concat([S1, Atomo2], ' ', Cad),
+    Y = [S2 | [Cad | Lista]],
+    obtener_oracion(Oracion, 0, Y, Final),!)
     ;
     (Y = [X | Lista],
     obtener_oracion(Oracion, 0, Y, Final),!))
@@ -412,20 +420,6 @@ obtener_oracion(Oracion, 1, Lista, Final):-
     obtener_oracion(Simple, 1, Lista, Lista1),!,
     obtener_oracion(Simple2, 1, Lista1, Lista2),!,
     obtener_oracion(Oracion, 0, Lista2, Final),!.
-    
-es_subordinada(Sujeto, Salida):-
-    term_to_atom(Sujeto, Atom),
-    atomic_list_concat(Atoms, 'or', Atom),
-    maplist(atom_string, Atoms, Lista),
-    length(Lista, Tam),
-    write(Lista), nl,
-    (Tam is 2,
-    Salida = 1;
-    Salida = 0).
-    
-%obtener_subordinadas(_, Final, Final).
-
-%obtener_subordinadas(Oracion, Lista, Final):-
 
 %Metodos para limpiar oraciones
 %-------------------------------------------------------------------------------
@@ -454,7 +448,7 @@ procesar_elementos([Head|Tail], Final, Aux):-
     append(Final, [Resultado2], ListaFinal),
     procesar_elementos(Tail, ListaFinal, Aux).
 
-eliminar_caracter(Cadena, Caracter, NuevaCadena) :-
+eliminar_caracter(Cadena, Caracter, NuevaCadena):-
     atom_chars(Cadena, ListaCaracteres),
     delete(ListaCaracteres, Caracter, ListaSinCaracter),
     atom_chars(NuevaCadena, ListaSinCaracter).
