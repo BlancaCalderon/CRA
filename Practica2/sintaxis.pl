@@ -443,10 +443,16 @@ procesar_elementos([Head|Tail], Final, Aux):-
     split_string(Head, "(", "", Lista),
     length(Lista, Tam),
     nth1(Tam, Lista, Elem),
-    eliminar_caracter(Elem, ')', Resultado),
+    nth1(1, Lista, Condicion),
+    (Condicion = "'nx" ->
+    procesar_elementos(Tail, Final, Aux)
+    ;
+    (eliminar_caracter(Elem, ')', Resultado),
     eliminar_caracter(Resultado, '\'', Resultado2),
     append(Final, [Resultado2], ListaFinal),
-    procesar_elementos(Tail, ListaFinal, Aux).
+    procesar_elementos(Tail, ListaFinal, Aux)
+    )).
+
 
 eliminar_caracter(Cadena, Caracter, NuevaCadena):-
     atom_chars(Cadena, ListaCaracteres),
