@@ -6,16 +6,16 @@
 
 %Oraciones generales
 %-------------------------------------------------------------------------------
-oracion(O) --> oracion_simple(O).
+%oracion(O) --> oracion_simple(O).
 oracion(O) --> oracion_coordinada(O).
-oracion(O) --> oracion_compuesta(O).
+%oracion(O) --> oracion_compuesta(O).
 
 %-------------------------------------------------------------------------------
 %Definición de las oraciones simples
 %-------------------------------------------------------------------------------
-oracion_simple(o(GN, GV)) --> g_nominal(GN), g_verbal(GV).                                                          %Generalmente formadas por un grupo nomial seguido de un verbal(sujeto y predicado)
-oracion_simple(o(GV, GN, Sig)) --> g_verbal(GV), g_nominal(GN), signo(Sig).                                         %Se incluye que puedan terminar con un signo para tener en cuenta oraciones interrogativas y exclamativas
-oracion_simple(o(GV)) --> g_verbal(GV).                                                                             %Tambien pueden estar formadas solo por el grupo verbal(oraciones con sujeto omitido)
+oracion_simple(o(GN, GV)) --> g_nominal(GN, _, _), g_verbal(GV, _, _).                                                          %Generalmente formadas por un grupo nomial seguido de un verbal(sujeto y predicado)
+%oracion_simple(o(GV, GN, Sig)) --> g_verbal(GV), g_nominal(GN), signo(Sig).                                         %Se incluye que puedan terminar con un signo para tener en cuenta oraciones interrogativas y exclamativas
+%oracion_simple(o(GV)) --> g_verbal(GV).                                                                             %Tambien pueden estar formadas solo por el grupo verbal(oraciones con sujeto omitido)
 
 %-------------------------------------------------------------------------------
 %Definición de las oraciones coordinadas(Dos oraciones simples separadas por una conjuncion)
@@ -25,15 +25,13 @@ oracion_coordinada(oc(O1, Conj, O2)) --> oracion_simple(O1), conjuncion(Conj), o
 %-------------------------------------------------------------------------------
 %Definición de las oraciones subordinadas (pueden empeza con un nexo)
 %-------------------------------------------------------------------------------
-oracion_subordinada(or(GN, GV)) --> g_nominal(GN), g_verbal(GV).
+oracion_subordinada(or(GN, GV)) --> g_nominal(GN, _, _), g_verbal(GV).
 oracion_subordinada(or(NX, GV)) --> nexo(NX), g_verbal(GV).
-oracion_subordinada(or(NX, GN, GV)) --> nexo(NX), g_nominal(GN), g_verbal(GV).
+oracion_subordinada(or(NX, GN, GV)) --> nexo(NX), g_nominal(GN, _, _), g_verbal(GV).
 
 %-------------------------------------------------------------------------------
 %Definición de las oraciones compuestas (union de varias oraciones coordinadas, de dos o mas simples o de coordinadas y simples)
 %-------------------------------------------------------------------------------
-%oracion_compuesta(ocm(OS1, Conj, OS2)) --> oracion_simple(OS1), conjuncion(Conj), oracion_simple(OS2).
-
 oracion_compuesta(ocm(OC, Conj, OS)) --> oracion_coordinada(OC), conjuncion(Conj), oracion_simple(OS).
 oracion_compuesta(ocm(OC1, Conj, OC2)) --> oracion_coordinada(OC1), conjuncion(Conj), oracion_coordinada(OC2).
 oracion_compuesta(ocm(OC, Conj, OCM)) --> oracion_coordinada(OC), conjuncion(Conj), oracion_compuesta(OCM).
@@ -56,61 +54,61 @@ oracion_compuesta(ocm(OC, OCM)) --> oracion_coordinada(OC), oracion_compuesta(OC
 %-------------------------------------------------------------------------------
 %Definición del grupo nominal(nombre, nombre propio o determinante seguido de un nombre)
 %-------------------------------------------------------------------------------
-g_nominal(gn(N)) --> nombre(N).
-g_nominal(gn(N, GN)) --> nombre(N), g_nominal(GN).
-g_nominal(gn(NP)) --> nombre_propio(NP).
-g_nominal(gn(NP, OR)) --> nombre_propio(NP), oracion_subordinada(OR).                                               %Dentro de un grupo nominal puede haber una oracion subordinada
-g_nominal(gn(NP, GN)) --> nombre_propio(NP), g_nominal(GN).
-g_nominal(gn(GAdv, N)) --> g_adverbial(GAdv), nombre(N).                                                            %Un grupo nominal puede ser acompañado por un adverbio
-g_nominal(gn(GAdv, NP)) --> g_adverbial(GAdv), nombre_propio(NP).
-g_nominal(gn(Det, N)) --> determinante(Det), nombre(N).
-g_nominal(gn(Det, N, OR)) --> determinante(Det), nombre(N), oracion_subordinada(OR).
-g_nominal(gn(Det, N, GN)) --> determinante(Det), nombre(N), g_nominal(GN).
-g_nominal(gn(Det, GAdj, N)) --> determinante(Det), g_adjetival(GAdj), nombre(N).                                    %Un grupo nominal puede ser acompañado por un adjetivo
-g_nominal(gn(Det, GAdv, N)) --> determinante(Det), g_adverbial(GAdv), nombre(N).
-g_nominal(gn(Det, GAdv, GN)) --> determinante(Det), g_adverbial(GAdv), g_nominal(GN).
-g_nominal(gn(GAdj, N)) --> g_adjetival(GAdj), nombre(N).
-g_nominal(gn(GAdj, NP)) --> g_adjetival(GAdj), nombre_propio(NP).
-g_nominal(gn(GAdv, GAdj, N)) --> g_adverbial(GAdv), g_adjetival(GAdj), nombre(N).
-g_nominal(gn(GAdv, GAdj, NP)) --> g_adverbial(GAdv), g_adjetival(GAdj), nombre_propio(NP).
-g_nominal(gn(GPrep, GN)) --> g_preposicional(GPrep), g_nominal(GN).
+g_nominal(gn(N), Gen, Num) --> nombre(N, Gen, Num).
+%g_nominal(gn(N, GN)) --> nombre(N), g_nominal(GN).
+g_nominal(gn(NP), Gen, Num) --> nombre_propio(NP, Gen, Num).
+g_nominal(gn(NP, OR), Gen, Num) --> nombre_propio(NP, Gen, Num), oracion_subordinada(OR).                                               %Dentro de un grupo nominal puede haber una oracion subordinada
+%g_nominal(gn(NP, GN)) --> nombre_propio(NP), g_nominal(GN).
+%g_nominal(gn(GAdv, N)) --> g_adverbial(GAdv), nombre(N).                                                            %Un grupo nominal puede ser acompañado por un adverbio
+%g_nominal(gn(GAdv, NP)) --> g_adverbial(GAdv), nombre_propio(NP).
+g_nominal(gn(Det, N), Gen, Num) --> determinante(Det, Gen, Num), nombre(N, Gen, Num).
+g_nominal(gn(Det, N, OR), Gen, Num) --> determinante(Det, Gen, Num), nombre(N, Gen, Num), oracion_subordinada(OR).
+%g_nominal(gn(Det, N, GN)) --> determinante(Det), nombre(N), g_nominal(GN).
+g_nominal(gn(Det, GAdj, N), Gen, Num) --> determinante(Det, Gen, Num), g_adjetival(GAdj, Gen, Num), nombre(N, Gen, Num).                                    %Un grupo nominal puede ser acompañado por un adjetivo
+%g_nominal(gn(Det, GAdv, N)) --> determinante(Det), g_adverbial(GAdv), nombre(N).
+g_nominal(gn(Det, GAdv, GN), Gen, Num) --> determinante(Det, Gen, Num), g_adverbial(GAdv), g_nominal(GN, Gen, Num).
+g_nominal(gn(GAdj, N), Gen, Num) --> g_adjetival(GAdj, Gen, Num), nombre(N, Gen, Num).
+%g_nominal(gn(GAdj, NP)) --> g_adjetival(GAdj), nombre_propio(NP).
+g_nominal(gn(GAdv, GAdj, N), Gen, Num) --> g_adverbial(GAdv), g_adjetival(GAdj, Gen, Num), nombre(N, Gen, Num).
+%g_nominal(gn(GAdv, GAdj, NP)) --> g_adverbial(GAdv), g_adjetival(GAdj), nombre_propio(NP).
+%g_nominal(gn(GPrep, GN)) --> g_preposicional(GPrep), g_nominal(GN).
 
-g_nominal(gn(N, Conj, GN)) --> nombre(N), conjuncion(Conj), g_nominal(GN).                                           %Puede haber doble sujeto (separado por y)
-g_nominal(gn(NP, Conj, GN)) --> nombre_propio(NP), conjuncion(Conj), g_nominal(GN).
-g_nominal(gn(GAdv, N, Conj, GN)) --> g_adverbial(GAdv), nombre(N), conjuncion(Conj), g_nominal(GN).
-g_nominal(gn(GAdv, NP, Conj, GN)) --> g_adverbial(GAdv), nombre_propio(NP), conjuncion(Conj), g_nominal(GN).
-g_nominal(gn(Det, N, Conj, GN)) --> determinante(Det), nombre(N), conjuncion(Conj), g_nominal(GN).
-g_nominal(gn(Det, GAdj, N, Conj, GN)) --> determinante(Det), g_adjetival(GAdj), nombre(N), conjuncion(Conj), g_nominal(GN).
-g_nominal(gn(Det, GAdv, N, Conj, GN)) --> determinante(Det), g_adverbial(GAdv), nombre(N), conjuncion(Conj), g_nominal(GN).
-g_nominal(gn(Det, GAdv, GAdj, N, Conj, GN)) --> determinante(Det), g_adverbial(GAdv), g_adjetival(GAdj), nombre(N), conjuncion(Conj), g_nominal(GN).
-g_nominal(gn(GAdj, N, Conj, GN)) --> g_adjetival(GAdj), nombre(N), conjuncion(Conj), g_nominal(GN).
-g_nominal(gn(GAdj, NP, Conj, GN)) --> g_adjetival(GAdj), nombre_propio(NP), conjuncion(Conj), g_nominal(GN).
-g_nominal(gn(GAdv, GAdj, N, Conj, GN)) --> g_adverbial(GAdv), g_adjetival(GAdj), nombre(N), conjuncion(Conj), g_nominal(GN).
-g_nominal(gn(GAdv, GAdj, NP, Conj, GN)) --> g_adverbial(GAdv), g_adjetival(GAdj), nombre_propio(NP), conjuncion(Conj), g_nominal(GN).
-g_nominal(gn(GPrep, GN1, Conj, GN2)) --> g_preposicional(GPrep), g_nominal(GN1), conjuncion(Conj), g_nominal(GN2).
+%g_nominal(gn(N, Conj, GN)) --> nombre(N), conjuncion(Conj), g_nominal(GN).                                           %Puede haber doble sujeto (separado por y)
+g_nominal(gn(NP, Conj, GN), Gen, Num) --> nombre_propio(NP, Gen, Num), conjuncion(Conj), g_nominal(GN, _, _).
+%g_nominal(gn(GAdv, N, Conj, GN)) --> g_adverbial(GAdv), nombre(N), conjuncion(Conj), g_nominal(GN).
+%g_nominal(gn(GAdv, NP, Conj, GN)) --> g_adverbial(GAdv), nombre_propio(NP), conjuncion(Conj), g_nominal(GN).
+%g_nominal(gn(Det, N, Conj, GN)) --> determinante(Det), nombre(N), conjuncion(Conj), g_nominal(GN).
+%g_nominal(gn(Det, GAdj, N, Conj, GN)) --> determinante(Det), g_adjetival(GAdj), nombre(N), conjuncion(Conj), g_nominal(GN).
+%g_nominal(gn(Det, GAdv, N, Conj, GN)) --> determinante(Det), g_adverbial(GAdv), nombre(N), conjuncion(Conj), g_nominal(GN).
+%g_nominal(gn(Det, GAdv, GAdj, N, Conj, GN)) --> determinante(Det), g_adverbial(GAdv), g_adjetival(GAdj), nombre(N), conjuncion(Conj), g_nominal(GN).
+%g_nominal(gn(GAdj, N, Conj, GN)) --> g_adjetival(GAdj), nombre(N), conjuncion(Conj), g_nominal(GN).
+%g_nominal(gn(GAdj, NP, Conj, GN)) --> g_adjetival(GAdj), nombre_propio(NP), conjuncion(Conj), g_nominal(GN).
+%g_nominal(gn(GAdv, GAdj, N, Conj, GN)) --> g_adverbial(GAdv), g_adjetival(GAdj), nombre(N), conjuncion(Conj), g_nominal(GN).
+%g_nominal(gn(GAdv, GAdj, NP, Conj, GN)) --> g_adverbial(GAdv), g_adjetival(GAdj), nombre_propio(NP), conjuncion(Conj), g_nominal(GN).
+%g_nominal(gn(GPrep, GN1, Conj, GN2)) --> g_preposicional(GPrep), g_nominal(GN1), conjuncion(Conj), g_nominal(GN2).
 
 %-------------------------------------------------------------------------------
 %Definición del grupo verbal(verbo)
 %-------------------------------------------------------------------------------
-g_verbal(gv(V)) --> verbo(V).
-g_verbal(gv(V, GN)) --> verbo(V), g_nominal(GN).                                                                     %Un verbo puede estar acompañado por un grupo adjetival
-g_verbal(gv(V, GAdj)) --> verbo(V), g_adjetival(GAdj).                                                               %Un verbo puede estar acompañado por un grupo adverbial
-g_verbal(gv(V, GAdv)) --> verbo(V), g_adverbial(GAdv).                                                               %Un verbo puede estar acompañado por un grupo preposicional
-g_verbal(gv(V, GPrep)) --> verbo(V), g_preposicional(GPrep).
-g_verbal(gv(GAdv, GV)) --> g_adverbial(GAdv), g_verbal(GV).
-g_verbal(gv(GPrep, GV)) --> g_preposicional(GPrep), g_verbal(GV).
-g_verbal(gv(V, GAdj, GPrep)) --> verbo(V), g_adjetival(GAdj), g_preposicional(GPrep).
-g_verbal(gv(V, GAdv, GAdj)) --> verbo(V), g_adverbial(GAdv), g_adjetival(GAdj).
-g_verbal(gv(V, GV, GPrep)) --> verbo(V), g_verbal(GV), g_preposicional(GPrep).
-g_verbal(gv(V, GN, GPrep)) --> verbo(V), g_nominal(GN), g_preposicional(GPrep).
-g_verbal(gv(GAdv, GV, GPrep)) --> g_adverbial(GAdv), g_verbal(GV), g_preposicional(GPrep).
-g_verbal(gv(GPrep1, GV, GPrep2)) --> g_preposicional(GPrep1), g_verbal(GV), g_preposicional(GPrep2).
+g_verbal(gv(V), Gen, Num) --> verbo(V, Gen, Num).
+g_verbal(gv(V, GN), Gen, Num) --> verbo(V, Gen, Num), g_nominal(GN, _, _).                                                                     %Un verbo puede estar acompañado por un grupo adjetival
+g_verbal(gv(V, GAdj), Gen, Num) --> verbo(V, Gen, Num), g_adjetival(GAdj, _, _).                                                               %Un verbo puede estar acompañado por un grupo adverbial
+%g_verbal(gv(V, GAdv)) --> verbo(V), g_adverbial(GAdv).                                                               %Un verbo puede estar acompañado por un grupo preposicional
+g_verbal(gv(V, GPrep), Gen, Num) --> verbo(V, Gen, Num), g_preposicional(GPrep).
+g_verbal(gv(GAdv, GV), Gen, Num) --> g_adverbial(GAdv), g_verbal(GV, Gen, Num).
+%g_verbal(gv(GPrep, GV)) --> g_preposicional(GPrep), g_verbal(GV).
+%g_verbal(gv(V, GAdj, GPrep)) --> verbo(V), g_adjetival(GAdj), g_preposicional(GPrep).
+g_verbal(gv(V, GAdv, GAdj), Gen, Num) --> verbo(V, Gen, Num), g_adverbial(GAdv), (GAdj, _, _).
+%g_verbal(gv(V, GV, GPrep)) --> verbo(V), g_verbal(GV), g_preposicional(GPrep).
+%g_verbal(gv(V, GN, GPrep)) --> verbo(V), g_nominal(GN), g_preposicional(GPrep).
+%g_verbal(gv(GAdv, GV, GPrep)) --> g_adverbial(GAdv), g_verbal(GV), g_preposicional(GPrep).
+%g_verbal(gv(GPrep1, GV, GPrep2)) --> g_preposicional(GPrep1), g_verbal(GV), g_preposicional(GPrep2).
 
 %-------------------------------------------------------------------------------
 %Definición del grupo ajetival (un solo adjetivo o varios separados por una conjuncion)
 %-------------------------------------------------------------------------------
-g_adjetival(gadj(Adj)) --> adjetivo(Adj).
-g_adjetival(gadj(Adj, Conj, GAdj)) --> adjetivo(Adj), conjuncion(Conj), g_adjetival(GAdj).
+g_adjetival(gadj(Adj), Gen, Num) --> adjetivo(Adj, Gen, Num).
+g_adjetival(gadj(Adj, Conj, GAdj), Gen, Num) --> adjetivo(Adj, Gen, Num), conjuncion(Conj), g_adjetival(GAdj, Gen, Num).
 
 %-------------------------------------------------------------------------------
 %Definición del grupo adverbial (un solo adverbio o varios)
@@ -121,8 +119,8 @@ g_adverbial(gadv(Adv, GAdv)) --> adverbio(Adv), g_adverbial(GAdv).
 %-------------------------------------------------------------------------------
 %Definición del grupo preposicional (preposicion acompaña a un grupo nomial)
 %-------------------------------------------------------------------------------
-g_preposicional(gp(Prep, GN)) -->  preposicion(Prep), g_nominal(GN).
-g_preposicional(gp(Prep, GN, GPrep)) -->  preposicion(Prep), g_nominal(GN), g_preposicional(GPrep).
+g_preposicional(gp(Prep, GN)) -->  preposicion(Prep), g_nominal(GN, _, _).
+g_preposicional(gp(Prep, GN, GPrep)) -->  preposicion(Prep), g_nominal(GN, _, _), g_preposicional(GPrep).
 
 %_______________________________________________________________________________
 %_______________________________________________________________________________
@@ -130,16 +128,18 @@ g_preposicional(gp(Prep, GN, GPrep)) -->  preposicion(Prep), g_nominal(GN), g_pr
 %_______________________________________________________________________________
 %_______________________________________________________________________________
 
-determinante(det(X)) --> [X], {det(X)}.
-nombre(n(X)) --> [X], {n(X)}.
-nombre_propio(np(X)) --> [X], {np(X)}.
-verbo(v(X)) --> [X], {v(X)}.
-adjetivo(adj(X)) --> [X], {adj(X)}.
+determinante(det(X), Gen, Num) --> [X], {det(X, Gen, Num)}.
+nombre(n(X), Gen, Num) --> [X], {n(X, Gen, Num)}.
+nombre_propio(np(X), Gen, Num) --> [X], {np(X, Gen, Num)}.
+verbo(v(X), Gen, Num) --> [X], {v(X, Gen, Num)}.
+adjetivo(adj(X), Gen, Num) --> [X], {adj(X, Gen, Num)}.
+pronombre(pron(X)) --> [X], {pron(X)}.
+
 adverbio(adv(X)) --> [X], {adv(X)}.
 conjuncion(conj(X)) --> [X], {conj(X)}.
 preposicion(prep(X)) --> [X], {prep(X)}.
 signo(sig(X)) --> [X], {sig(X)}.
-nexo(nx(X)) --> [X], {nx(X)}.                                                                                        %Nexo se utiliza en las oraciones subordinadas
+nexo(nx(X)) --> [X], {nx(X)}.                                                                    %Nexo se utiliza en las oraciones subordinadas
 %_______________________________________________________________________________
 %_______________________________________________________________________________
                  %Diccionario
@@ -149,129 +149,129 @@ nexo(nx(X)) --> [X], {nx(X)}.                                                   
 %-------------------------------------------------------------------------------
 %Determinantes
 %-------------------------------------------------------------------------------
-det('a').
-det('an').
-det('the').
-det('The').
-det('my').
-det('your').
-det('that').
-det('this').
-det('these').
-det('those').
-det('his').
-det('her').
-det('its').
-det('ours').
-det('their').
-det('some').
-det('any').
-det('no').
-det('every').
-det('each').
-det('either').
-det('neither').
-det('few').
-det('many').
-det('several').
-det('all').
-det('much').
-det('a lot').
-det('plenty of').
-det('one').
-det('two').
-det('three').
-det('four').
-det('five').
-det('six').
-det('seven').
-det('eight').
-det('nine').
-det('ten').
-det('first').
-det('second').
-det('third').
+det('a', _, _).
+det('an', _, _).
+det('the', _, _).
+det('The', _, _).
+det('my', _, _).
+det('your', _, _).
+det('that', _, _).
+det('this', _, _).
+det('these', _, _).
+det('those', _, _).
+det('his', _, _).
+det('her', _, _).
+det('its', _, _).
+det('ours', _, _).
+det('their', _, _).
+det('some', _, _).
+det('any', _, _).
+det('no', _, _).
+det('every', _, _).
+det('each', _, _).
+det('either', _, _).
+det('neither', _, _).
+det('few', _, _).
+det('many', _, _).
+det('several', _, _).
+det('all', _, _).
+det('much', _, _).
+det('a lot', _, _).
+det('plenty of', _, _).
+det('one', _, _).
+det('two', _, _).
+det('three', _, _).
+det('four', _, _).
+det('five', _, _).
+det('six', _, _).
+det('seven', _, _).
+det('eight', _, _).
+det('nine', _, _).
+det('ten', _, _).
+det('first', _, _).
+det('second', _, _).
+det('third', _, _).
 
 %-------------------------------------------------------------------------------
 %Nombres
 %-------------------------------------------------------------------------------
-n('law').
-n('Law').
-n('philosophy').
-n('Philosophy').
-n('man').
-n('woman').
-n('coffee').
-n('newspaper').
-n('table').
-n('french fries').
-n('novel').
-n('paella').
-n('beer').
-n('juice').
-n('wall').
-n('apples').
-n('word processor').
-n('word').
-n('processor').
-n('documents').
-n('mouse').
-n('cat').
-n('neighbor').
-n('evenings').
-n('tool').
-n('it').
-n('yesterday').
-n('we').
+n('law', _, _).
+n('Law', _, _).
+n('philosophy', _, _).
+n('Philosophy', _, _).
+n('man', _, _).
+n('woman', _, _).
+n('coffee', _, _).
+n('newspaper', _, _).
+n('table', _, _).
+n('french fries', _, _).
+n('novel', _, _).
+n('paella', _, _).
+n('beer', _, _).
+n('juice', _, _).
+n('wall', _, _).
+n('apples', _, _).
+n('word processor', _, _).
+n('word', _, _).
+n('processor', _, _).
+n('documents', _, _).
+n('mouse', _, _).
+n('cat', _, _).
+n('neighbor', _, _).
+n('evenings', _, _).
+n('tool', _, _).
+n('it', _, _).
+n('yesterday', _, _).
+n('we', _, _).
 
 %-------------------------------------------------------------------------------
 %Nombres propios
 %-------------------------------------------------------------------------------
-np('José').
-np('María').
-np('Jose').
-np('Maria').
-np('Hector').
-np('Irene').
+np('José', _, _).
+np('María', _, _).
+np('Jose', _, _).
+np('Maria', _, _).
+np('Hector', _, _).
+np('Irene', _, _).
 
 %-------------------------------------------------------------------------------
 %Verbos
 %-------------------------------------------------------------------------------
-v('is').
-v('is having').
-v('studies').
-v('having').
-v('clears').
-v('drinks').
-v('reads').
-v('eat').
-v('drink').
-v('eats').
-v('prefers').
-v('sings').
-v('jumps').
-v('used').
-v('writing').
-v('caught').
-v('was').
-v('saw').
-v('climbs').
-v('is used').
+v('is', _, _).
+v('is having', _, _).
+v('studies', _, _).
+v('having', _, _).
+v('clears', _, _).
+v('drinks', _, _).
+v('reads', _, _).
+v('eat', _, _).
+v('drink', _, _).
+v('eats', _, _).
+v('prefers', _, _).
+v('sings', _, _).
+v('jumps', _, _).
+v('used', _, _).
+v('writing', _, _).
+v('caught', _, _).
+v('was', _, _).
+v('saw', _, _).
+v('climbs', _, _).
+v('is used', _, _).
 
 %-------------------------------------------------------------------------------
 %Adjetivos
 %-------------------------------------------------------------------------------
-adj('dark-haired').
-adj('tall').
-adj('french').
-adj('agile').
-adj('climbing').
-adj('picky').
-adj('red').
-adj('powerful').
-adj('slow').
-adj('gray').
-adj('writing').
+adj('dark-haired', _, _).
+adj('tall', _, _).
+adj('french', _, _).
+adj('agile', _, _).
+adj('climbing', _, _).
+adj('picky', _, _).
+adj('red', _, _).
+adj('powerful', _, _).
+adj('slow', _, _).
+adj('gray', _, _).
+adj('writing', _, _).
 
 %-------------------------------------------------------------------------------
 %Adverbios
