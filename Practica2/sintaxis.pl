@@ -7,7 +7,6 @@
 %Oraciones generales
 %-------------------------------------------------------------------------------
 oracion(O) --> oracion_simple(O).
-oracion(O) --> oracion_coordinada(O).
 oracion(O) --> oracion_compuesta(O).
 
 %-------------------------------------------------------------------------------
@@ -21,10 +20,15 @@ oracion_simple(o(GV)) --> g_verbal(GV, _, _).                                   
 %Definición de las oraciones coordinadas(Dos oraciones simples separadas por una conjuncion)
 %-------------------------------------------------------------------------------
 oracion_coordinada(oc(O1, Conj, O2)) --> oracion_simple(O1), conjuncion(Conj), oracion_simple(O2).
+oracion_coordinada(oc(O1, Conj, O2, Conj2, O3)) --> oracion_simple(O1), conjuncion(Conj), oracion_simple(O2), conjuncion(Conj2), oracion_simple(O3).
+oracion_coordinada(oc(O1, Conj, O2, Conj2, O3, Conj3, O4)) --> oracion_simple(O1), conjuncion(Conj), oracion_simple(O2), conjuncion(Conj2), oracion_simple(O3), conjuncion(Conj3), oracion_simple(O4).
+oracion_coordinada(oc(O1, Conj, O2, Conj2, O3, Conj3, O4, Conj4, O5)) --> oracion_simple(O1), conjuncion(Conj), oracion_simple(O2), conjuncion(Conj2), oracion_simple(O3), conjuncion(Conj3), oracion_simple(O4), conjuncion(Conj4), oracion_simple(O5).
 
 %-------------------------------------------------------------------------------
 %Definición de las oraciones subordinadas (pueden empeza con un nexo)
 %-------------------------------------------------------------------------------
+oracion_simple_sub(o(GN, GV)) --> g_nominal_sub(GN, Gen, Num), g_verbal(GV, Gen, Num).
+
 oracion_subordinada(or(GN, GV), _, _) --> g_nominal(GN, _, _), g_verbal(GV, _, _).
 oracion_subordinada(or(NX, GV), Gen, Num) --> nexo(NX), g_verbal(GV, Gen, Num).
 oracion_subordinada(or(NX, GN, GV), _, _) --> nexo(NX), g_nominal(GN, _, _), g_verbal(GV, _, _).
@@ -32,18 +36,8 @@ oracion_subordinada(or(NX, GN, GV), _, _) --> nexo(NX), g_nominal(GN, _, _), g_v
 %-------------------------------------------------------------------------------
 %Definición de las oraciones compuestas (union de varias oraciones coordinadas, de dos o mas simples o de coordinadas y simples)
 %-------------------------------------------------------------------------------
-oracion_compuesta(ocm(OC, Conj, OS)) --> oracion_coordinada(OC), conjuncion(Conj), oracion_simple(OS).
-oracion_compuesta(ocm(OC1, Conj, OC2)) --> oracion_coordinada(OC1), conjuncion(Conj), oracion_coordinada(OC2).
-oracion_compuesta(ocm(OC, Conj, OCM)) --> oracion_coordinada(OC), conjuncion(Conj), oracion_compuesta(OCM).
-oracion_compuesta(ocm(OS, Conj, OC)) --> oracion_simple(OS), conjuncion(Conj), oracion_coordinada(OC).
-oracion_compuesta(ocm(OS, Conj, OCM)) --> oracion_simple(OS), conjuncion(Conj), oracion_compuesta(OCM).
-
-oracion_compuesta(ocm(OS, OC)) --> oracion_simple(OS), oracion_coordinada(OC).
-oracion_compuesta(ocm(OC1, OC2)) --> oracion_coordinada(OC1), oracion_coordinada(OC2).
-oracion_compuesta(ocm(OC, OS)) --> oracion_coordinada(OC), oracion_simple(OS).
-
-oracion_compuesta(ocm(OS, OCM)) --> oracion_simple(OS), oracion_compuesta(OCM).
-oracion_compuesta(ocm(OC, OCM)) --> oracion_coordinada(OC), oracion_compuesta(OCM).
+oracion_compuesta(ocm(OC)) --> oracion_coordinada(OC).
+oracion_compuesta(ocm(OR)) --> oracion_simple_sub(OR).
 
 %_______________________________________________________________________________
 %_______________________________________________________________________________
@@ -54,15 +48,16 @@ oracion_compuesta(ocm(OC, OCM)) --> oracion_coordinada(OC), oracion_compuesta(OC
 %-------------------------------------------------------------------------------
 %Definición del grupo nominal(nombre, nombre propio o determinante seguido de un nombre)
 %-------------------------------------------------------------------------------
+g_nominal_sub(gn(NP, OR), Gen, Num) --> nombre_propio(NP, Gen, Num), oracion_subordinada(OR, Gen, Num).
+g_nominal_sub(gn(Det, N, OR), Gen, Num) --> determinante(Det, Gen, Num), nombre(N, Gen, Num), oracion_subordinada(OR, Gen, Num).
+
 g_nominal(gn(N), Gen, Num) --> nombre(N, Gen, Num).
 %g_nominal(gn(N, GN)) --> nombre(N), g_nominal(GN).
-g_nominal(gn(NP), Gen, Num) --> nombre_propio(NP, Gen, Num).
-g_nominal(gn(NP, OR), Gen, Num) --> nombre_propio(NP, Gen, Num), oracion_subordinada(OR, Gen, Num).                                               %Dentro de un grupo nominal puede haber una oracion subordinada
+g_nominal(gn(NP), Gen, Num) --> nombre_propio(NP, Gen, Num).                                               %Dentro de un grupo nominal puede haber una oracion subordinada
 %g_nominal(gn(NP, GN)) --> nombre_propio(NP), g_nominal(GN).
 %g_nominal(gn(GAdv, N)) --> g_adverbial(GAdv), nombre(N).                                                            %Un grupo nominal puede ser acompañado por un adverbio
 %g_nominal(gn(GAdv, NP)) --> g_adverbial(GAdv), nombre_propio(NP).
 g_nominal(gn(Det, N), Gen, Num) --> determinante(Det, Gen, Num), nombre(N, Gen, Num).
-g_nominal(gn(Det, N, OR), Gen, Num) --> determinante(Det, Gen, Num), nombre(N, Gen, Num), oracion_subordinada(OR, Gen, Num).
 %g_nominal(gn(Det, N, GN)) --> determinante(Det), nombre(N), g_nominal(GN).
 g_nominal(gn(Det, GAdj, N), Gen, Num) --> determinante(Det, Gen, Num), g_adjetival(GAdj), nombre(N, Gen, Num).                                    %Un grupo nominal puede ser acompañado por un adjetivo
 %g_nominal(gn(Det, GAdv, N)) --> determinante(Det), g_adverbial(GAdv), nombre(N).
