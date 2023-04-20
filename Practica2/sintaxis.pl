@@ -51,6 +51,7 @@ oracion_compuesta(ocm(OR)) --> oracion_simple_sub(OR).
 g_nominal_sub(gn(NP, OR), Gen, Num) --> nombre_propio(NP, Gen, Num), oracion_subordinada(OR, Gen, Num).
 g_nominal_sub(gn(Det, N, OR), Gen, Num) --> determinante(Det, Gen, Num), nombre(N, Gen, Num), oracion_subordinada(OR, Gen, Num).
 
+%-------------------------------------------------------------------------------
 g_nominal(gn(N), Gen, Num) --> nombre(N, Gen, Num).
 %g_nominal(gn(N, GN)) --> nombre(N), g_nominal(GN).
 g_nominal(gn(NP), Gen, Num) --> nombre_propio(NP, Gen, Num).                                               %Dentro de un grupo nominal puede haber una oracion subordinada
@@ -86,9 +87,9 @@ g_nominal(gn(NP, Conj, GN), Gen, Num) --> nombre_propio(NP, Gen, Num), conjuncio
 %Definición del grupo verbal(verbo)
 %-------------------------------------------------------------------------------
 g_verbal(gv(V), Gen, Num) --> verbo(V, Gen, Num).
-g_verbal(gv(V, GN), Gen, Num) --> verbo(V, Gen, Num), g_nominal(GN, _, _).                                                                     %Un verbo puede estar acompañado por un grupo adjetival
-g_verbal(gv(V, GAdj), Gen, Num) --> verbo(V, Gen, Num), g_adjetival(GAdj).                                                               %Un verbo puede estar acompañado por un grupo adverbial
-%g_verbal(gv(V, GAdv)) --> verbo(V), g_adverbial(GAdv).                                                               %Un verbo puede estar acompañado por un grupo preposicional
+g_verbal(gv(V, GN), Gen, Num) --> verbo(V, Gen, Num), g_nominal(GN, _, _).                                                             %Un verbo puede estar acompañado por un grupo adjetival
+g_verbal(gv(V, GAdjAtr), Gen, Num) --> verbo(V, Gen, Num), g_adjetival_atributo(GAdjAtr).                                                             %Un verbo puede estar acompañado por un grupo adverbial
+%g_verbal(gv(V, GAdv)) --> verbo(V), g_adverbial(GAdv).                                                                                %Un verbo puede estar acompañado por un grupo preposicional
 g_verbal(gv(V, GPrep), Gen, Num) --> verbo(V, Gen, Num), g_preposicional(GPrep).
 g_verbal(gv(GAdv, GV), Gen, Num) --> g_adverbial(GAdv), g_verbal(GV, Gen, Num).
 %g_verbal(gv(GPrep, GV)) --> g_preposicional(GPrep), g_verbal(GV).
@@ -104,6 +105,9 @@ g_verbal(gv(V, GAdv, GAdj), Gen, Num) --> verbo(V, Gen, Num), g_adverbial(GAdv),
 %-------------------------------------------------------------------------------
 g_adjetival(gadj(Adj)) --> adjetivo(Adj).
 g_adjetival(gadj(Adj, Conj, GAdj)) --> adjetivo(Adj), conjuncion(Conj), g_adjetival(GAdj).
+
+g_adjetival_atributo(gadj_atributo(Adj)) --> adjetivo(Adj).
+g_adjetival_atributo(gadj_atributo(Adj, Conj, GAdj)) --> adjetivo(Adj), conjuncion(Conj), g_adjetival(GAdj).
 
 %-------------------------------------------------------------------------------
 %Definición del grupo adverbial (un solo adverbio o varios)
