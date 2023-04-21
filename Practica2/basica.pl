@@ -7,7 +7,6 @@
 %Oraciones generales
 %-------------------------------------------------------------------------------
 oracion(O) --> oracion_simple(O).
-oracion(O) --> oracion_coordinada(O).
 oracion(O) --> oracion_compuesta(O).
 
 %-------------------------------------------------------------------------------
@@ -21,10 +20,15 @@ oracion_simple(o(GV)) --> g_verbal(GV).                                         
 %Definición de las oraciones coordinadas(Dos oraciones simples separadas por una conjuncion)
 %-------------------------------------------------------------------------------
 oracion_coordinada(oc(O1, Conj, O2)) --> oracion_simple(O1), conjuncion(Conj), oracion_simple(O2).
+oracion_coordinada(oc(O1, Conj, O2, Conj2, O3)) --> oracion_simple(O1), conjuncion(Conj), oracion_simple(O2), conjuncion(Conj2), oracion_simple(O3).
+oracion_coordinada(oc(O1, Conj, O2, Conj2, O3, Conj3, O4)) --> oracion_simple(O1), conjuncion(Conj), oracion_simple(O2), conjuncion(Conj2), oracion_simple(O3), conjuncion(Conj3), oracion_simple(O4).
+oracion_coordinada(oc(O1, Conj, O2, Conj2, O3, Conj3, O4, Conj4, O5)) --> oracion_simple(O1), conjuncion(Conj), oracion_simple(O2), conjuncion(Conj2), oracion_simple(O3), conjuncion(Conj3), oracion_simple(O4), conjuncion(Conj4), oracion_simple(O5).
 
 %-------------------------------------------------------------------------------
 %Definición de las oraciones subordinadas (pueden empeza con un nexo)
 %-------------------------------------------------------------------------------
+oracion_simple_sub(o(GN, GV)) --> g_nominal_sub(GN), g_verbal(GV).
+                               %:(
 oracion_subordinada(or(GN, GV)) --> g_nominal(GN), g_verbal(GV).
 oracion_subordinada(or(NX, GV)) --> nexo(NX), g_verbal(GV).
 oracion_subordinada(or(NX, GN, GV)) --> nexo(NX), g_nominal(GN), g_verbal(GV).
@@ -32,21 +36,8 @@ oracion_subordinada(or(NX, GN, GV)) --> nexo(NX), g_nominal(GN), g_verbal(GV).
 %-------------------------------------------------------------------------------
 %Definición de las oraciones compuestas (union de varias oraciones coordinadas, de dos o mas simples o de coordinadas y simples)
 %-------------------------------------------------------------------------------
-%oracion_compuesta(ocm(OS1, Conj, OS2)) --> oracion_simple(OS1), conjuncion(Conj), oracion_simple(OS2).
-
-oracion_compuesta(ocm(OC, Conj, OS)) --> oracion_coordinada(OC), conjuncion(Conj), oracion_simple(OS).
-oracion_compuesta(ocm(OC1, Conj, OC2)) --> oracion_coordinada(OC1), conjuncion(Conj), oracion_coordinada(OC2).
-oracion_compuesta(ocm(OC, Conj, OCM)) --> oracion_coordinada(OC), conjuncion(Conj), oracion_compuesta(OCM).
-oracion_compuesta(ocm(OS, Conj, OC)) --> oracion_simple(OS), conjuncion(Conj), oracion_coordinada(OC).
-oracion_compuesta(ocm(OS, Conj, OCM)) --> oracion_simple(OS), conjuncion(Conj), oracion_compuesta(OCM).
-
-oracion_compuesta(ocm(OS, OC)) --> oracion_simple(OS), oracion_coordinada(OC).
-oracion_compuesta(ocm(OC1, OC2)) --> oracion_coordinada(OC1), oracion_coordinada(OC2).
-oracion_compuesta(ocm(OC, OS)) --> oracion_coordinada(OC), oracion_simple(OS).
-
-oracion_compuesta(ocm(OS, OCM)) --> oracion_simple(OS), oracion_compuesta(OCM).
-oracion_compuesta(ocm(OC, OCM)) --> oracion_coordinada(OC), oracion_compuesta(OCM).
-
+oracion_compuesta(ocm(OC)) --> oracion_coordinada(OC).
+oracion_compuesta(ocm(OR)) --> oracion_simple_sub(OR).
 %_______________________________________________________________________________
 %_______________________________________________________________________________
                  %Definición de los grupos sintácticos
@@ -56,15 +47,16 @@ oracion_compuesta(ocm(OC, OCM)) --> oracion_coordinada(OC), oracion_compuesta(OC
 %-------------------------------------------------------------------------------
 %Definición del grupo nominal(nombre, nombre propio o determinante seguido de un nombre)
 %-------------------------------------------------------------------------------
+g_nominal_sub(gn(NP, OR)) --> nombre_propio(NP), oracion_subordinada(OR).
+g_nominal_sub(gn(GN, OR)) --> g_nominal(GN), oracion_subordinada(OR).
+
 g_nominal(gn(N)) --> nombre(N).
 g_nominal(gn(N, GN)) --> nombre(N), g_nominal(GN).
-g_nominal(gn(NP)) --> nombre_propio(NP).
-g_nominal(gn(NP, OR)) --> nombre_propio(NP), oracion_subordinada(OR).                                               %Dentro de un grupo nominal puede haber una oracion subordinada
+g_nominal(gn(NP)) --> nombre_propio(NP).                                             %Dentro de un grupo nominal puede haber una oracion subordinada
 g_nominal(gn(NP, GN)) --> nombre_propio(NP), g_nominal(GN).
 g_nominal(gn(GAdv, N)) --> g_adverbial(GAdv), nombre(N).                                                            %Un grupo nominal puede ser acompañado por un adverbio
 g_nominal(gn(GAdv, NP)) --> g_adverbial(GAdv), nombre_propio(NP).
 g_nominal(gn(Det, N)) --> determinante(Det), nombre(N).
-g_nominal(gn(Det, N, OR)) --> determinante(Det), nombre(N), oracion_subordinada(OR).
 g_nominal(gn(Det, N, GN)) --> determinante(Det), nombre(N), g_nominal(GN).
 g_nominal(gn(Det, GAdj, N)) --> determinante(Det), g_adjetival(GAdj), nombre(N).                                    %Un grupo nominal puede ser acompañado por un adjetivo
 g_nominal(gn(Det, GAdv, N)) --> determinante(Det), g_adverbial(GAdv), nombre(N).
@@ -110,6 +102,7 @@ g_verbal(gv(GPrep1, GV, GPrep2)) --> g_preposicional(GPrep1), g_verbal(GV), g_pr
 %Definición del grupo ajetival (un solo adjetivo o varios separados por una conjuncion)
 %-------------------------------------------------------------------------------
 g_adjetival(gadj(Adj)) --> adjetivo(Adj).
+g_adjetival(gadj(GAdv, Adj)) --> g_adverbial(GAdv), adjetivo(Adj).
 g_adjetival(gadj(Adj, Conj, GAdj)) --> adjetivo(Adj), conjuncion(Conj), g_adjetival(GAdj).
 
 %-------------------------------------------------------------------------------
@@ -403,52 +396,64 @@ oracion14(['The', 'man', 'we', 'saw', 'yesterday', 'was', 'my', 'neighbor']).
 %Dado el análisis de las oraciones obtener las oraciones simples que componen oracion analizada
 %-------------------------------------------------------------------------------
 obtener(Oracion, L):-
-   obtener_oracion(Oracion, 1, [], LSucia),
+   obtener_oracion(Oracion, [], LSucia),
    limpiar_oraciones(LSucia, [], L).
 
-obtener_oracion(_, 0, Fin, Fin).
+obtener_oracion([ ], Fin, Fin).
 
-obtener_oracion(Oracion, 1, Lista, Final):-
-    X = Oracion,
-    (
-    o(Sujeto, Predicado) = X,
-    separar_subordinada(Sujeto, R),
-    nth1(2, R, Nexo),
+obtener_oracion(Oracion, _, Final):-
+    Oracion =.. [Etiqueta | _],
+    Etiqueta = o,
+    formar_oracion([Oracion], Fin),
+    Final = Fin.
 
-    (Nexo = [] ->
-    (Y = [X | Lista],
-    obtener_oracion(Oracion, 0, Y, Final),!)
+obtener_oracion(Oracion, _, Final):-
+    Oracion =.. [Etiqueta | Args],
+    Etiqueta = oc,
+    procesar_simple(Args, [], ListaOr),
+    reverse(ListaOr, ListaOr2),
+    formar_oracion(ListaOr2, Fin),
+    Final = Fin.
+
+obtener_oracion(Oracion, Lista, Final):-
+    Oracion =.. [Etiqueta | Args],
+    Etiqueta = ocm,
+    quitar_par(Args, Args2),
+    obtener_oracion(Args2, Lista, Final2),
+    Final = Final2.
+
+procesar_simple([ ], Final, Final).
+
+procesar_simple([Head | Tail], Lista, Fin):-
+    Head =.. [Etiqueta | _],
+    Etiqueta = o,
+    procesar_simple(Tail, [Head | Lista], Fin),!.
+
+procesar_simple([_ | Tail], Lista, Fin):-
+    procesar_simple(Tail, Lista, Fin),!.
+
+formar_oracion(Oraciones, Formadas):-
+    formar_oracion_aux(Oraciones, [], Formadas).
+
+formar_oracion_aux([ ], Fin, Fin).
+
+formar_oracion_aux([Head | Tail], Lista, Fin):-
+    o(Suj, Predicado) = Head,
+    separar_subordinada(Suj, Resultado),
+    nth1(2, Resultado, Elem),
+    (Elem = [] ->
+    (formar_oracion_aux(Tail, [Head | Lista], Fin),!)
     ;
-    (
-    nth1(1, R, Suj),
-    Arbol = o(Suj, Predicado),
-    obtener_oracion(Arbol, 1, Lista, Lista1),!,
-    obtener_oracion(Nexo, 1, Lista1, Lista2),!,
-    obtener_oracion(Oracion, 0, Lista2, Final),!))
-    ;
-    o(Predicado) = X,
+    (nth1(1, Resultado, S),
+    Nueva = o(S, Predicado),
+    formar_oracion_aux(Tail, [Nueva, Elem], Fin),!)).
+
+formar_oracion_aux([Head | Tail], Lista, Fin):-
+    o(Predicado) = Head,
     nth1(1, Lista, Elem),
-    Z = Elem,
-    o(Sujeto, _) = Z,
-    Y = [o(Sujeto, Predicado) | Lista],
-    obtener_oracion(Oracion, 0, Y, Final),!
-    ).
-
-obtener_oracion(Oracion, 1, Lista, Final):-
-    X = Oracion,
-    oc(Simple, _, Simple2) = X,
-    obtener_oracion(Simple, 1, Lista, Lista1),!,
-    obtener_oracion(Simple2, 1, Lista1, Lista2),!,
-    obtener_oracion(Oracion, 0, Lista2, Final),!.
-
-obtener_oracion(Oracion, 1, Lista, Final):-
-    X = Oracion,
-    (ocm(Simple, Simple2) = X
-    ;
-    ocm(Simple, _, Simple2) = X),
-    obtener_oracion(Simple, 1, Lista, Lista1),!,
-    obtener_oracion(Simple2, 1, Lista1, Lista2),!,
-    obtener_oracion(Oracion, 0, Lista2, Final),!.
+    o(Suj, _) = Elem,
+    Nueva = o(Suj, Predicado),
+    formar_oracion_aux(Tail, [Nueva| Lista], Fin),!.
 
 separar_subordinada(Lista, Salida):-
     Lista =.. [_ | Argumentos],
@@ -459,8 +464,8 @@ separar_subordinada(Lista, Salida):-
 separar([Head | Tail], Aux, Subordinada, Final):-
     Head =.. [Etiqueta | _],
     (Etiqueta = or ->
-    separar(Tail, Aux, Head, Final);
-    separar(Tail, [Head | Aux], Subordinada, Final)
+    separar(Tail, Aux, Head, Final),!;
+    separar(Tail, [Head | Aux], Subordinada, Final),!
     ).
 
 separar([ ], Aux, Subordinada, Final):-
@@ -473,8 +478,8 @@ separar([ ], Aux, Subordinada, Final):-
 anadir([Head | Tail], Sujeto, Aux, Final):-
     Head =.. [Etiqueta | _],
     (Etiqueta = nx ->
-    anadir(Tail, Sujeto, Aux, Final);
-    anadir(Tail, Sujeto, [Head | Aux], Final)
+    anadir(Tail, Sujeto, Aux, Final),!;
+    anadir(Tail, Sujeto, [Head | Aux], Final),!
     ).
 
 anadir([ ], _, [ ], Final):-
@@ -523,4 +528,3 @@ eliminar_caracter(Cadena, Caracter, NuevaCadena):-
     atom_chars(Cadena, ListaCaracteres),
     delete(ListaCaracteres, Caracter, ListaSinCaracter),
     atom_chars(NuevaCadena, ListaSinCaracter).
-
