@@ -417,7 +417,7 @@ obtener_oracion(Oracion, _, Final):-                                            
 obtener_oracion(Oracion, Lista, Final):-                                                                             %Si oracion pasada es un oracion compuesta (etiqueta ocm)
     Oracion =.. [Etiqueta | Args],
     Etiqueta = ocm,
-    quitar_par(Args, Args2),                                                                                         %Método que convertir oracion como cola en compound
+    quitar_par(Args, Args2),                                                                                         %Método que separa la oracion compuesta en pares de oraciones
     obtener_oracion(Args2, Lista, Final2),                                                                           %Llamada recursiva al método recursivo con la segunda oración del par para obtener sus simples respectivas
     Final = Final2.
 
@@ -492,7 +492,7 @@ anadir([ ], Sujeto, Aux, Final):-                                               
     Final = o(Sujeto, Aux3));
     Final =.. [o | Aux2]).
 
-quitar_par([Con], Sin):-                                                                                             %Convierte oracion simple como cola a un compound
+quitar_par([Con], Sin):-
     Sin = Con.
 
 

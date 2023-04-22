@@ -14,10 +14,10 @@ oracion(O) --> oracion_compuesta(O).
 %-------------------------------------------------------------------------------
 oracion_simple(o(GN, GV)) --> g_nominal(GN, Gen, Num, _), g_verbal(GV, Gen, Num).                                                          %Generalmente formadas por un grupo nomial seguido de un verbal(sujeto y predicado)
 oracion_simple(o(GV, GN, Sig)) --> g_verbal(GV, Gen, Num), g_nominal(GN, Gen, Num, _), signo(Sig).                                         %Se incluye que puedan terminar con un signo para tener en cuenta oraciones interrogativas y exclamativas
-oracion_simple(o(GV)) --> g_verbal(GV, _, _).                                                                             %Tambien pueden estar formadas solo por el grupo verbal(oraciones con sujeto omitido)
+oracion_simple(o(GV)) --> g_verbal(GV, _, _).                                                                                              %Tambien pueden estar formadas solo por el grupo verbal(oraciones con sujeto omitido)
 
 %-------------------------------------------------------------------------------
-%Definición de las oraciones coordinadas(Dos oraciones simples separadas por una conjuncion)
+%Definición de las oraciones coordinadas(Dos o más oraciones simples separadas por una conjuncion)
 %-------------------------------------------------------------------------------
 oracion_coordinada(oc(O1, Conj, O2)) --> oracion_simple(O1), conjuncion(Conj), oracion_simple(O2).
 oracion_coordinada(oc(O1, Conj, O2, Conj2, O3)) --> oracion_simple(O1), conjuncion(Conj), oracion_simple(O2), conjuncion(Conj2), oracion_simple(O3).
@@ -34,7 +34,7 @@ oracion_subordinada(or(NX, GV), Gen, Num) --> nexo(NX), g_verbal(GV, Gen, Num).
 oracion_subordinada(or(NX, GN, GV), _, _) --> nexo(NX), g_nominal(GN, _, _, _), g_verbal(GV, _, _).
 
 %-------------------------------------------------------------------------------
-%Definición de las oraciones compuestas (union de varias oraciones coordinadas, de dos o mas simples o de coordinadas y simples)
+%Definición de las oraciones compuestas (oraciones coordinadas y subordinadas)
 %-------------------------------------------------------------------------------
 oracion_compuesta(ocm(OC)) --> oracion_coordinada(OC).
 oracion_compuesta(ocm(OR)) --> oracion_simple_sub(OR).
@@ -89,11 +89,11 @@ g_nominal(gn(NP, Conj, GN), Gen, Num, _) --> nombre_propio(NP, Gen, Num), conjun
 %Definición del grupo verbal(verbo)
 %-------------------------------------------------------------------------------
 g_verbal(gv(V), _, Num) --> verbo(V, _, Num).
-g_verbal(gv(V, GN), _, Num) --> verbo(V, _, Num), cd(GN, _, _).                                                             %Un verbo puede estar acompañado por un grupo adjetival
-g_verbal(gv(V, GAdjAtr), _, Num) --> verbo(V, _, Num), g_adjetival_atributo(GAdjAtr).                                                             %Un verbo puede estar acompañado por un grupo adverbial
+g_verbal(gv(V, GN), _, Num) --> verbo(V, _, Num), cd(GN, _, _).                                                                                      %Verbo seguido de un grupo nominal que actua como complemento directo
+g_verbal(gv(V, GAdjAtr), _, Num) --> verbo(V, _, Num), g_adjetival_atributo(GAdjAtr).                                                                %Un verbo puede estar acompañado por un grupo adjetival que hará función de atributo
 g_verbal(gv(V, GPrep), _, Num) --> verbo(V, _, Num), g_preposicional(GPrep).
 g_verbal(gv(V, GPrep, GPrep2), _, Num) --> verbo(V, _, Num), g_preposicional(GPrep), g_preposicional(GPrep2).
-g_verbal(gv(GAdv, GV), _, Num) --> g_adverbial(GAdv), g_verbal(GV, _, Num).
+g_verbal(gv(GAdv, GV), _, Num) --> g_adverbial(GAdv), g_verbal(GV, _, Num).                                                                          %Un verbo puede estar acompañado por un grupo adverbial
 
 %g_verbal(gv(V, GAdv)) --> verbo(V), g_adverbial(GAdv).
 %g_verbal(gv(GPrep, GV)) --> g_preposicional(GPrep), g_verbal(GV).
@@ -122,22 +122,22 @@ g_adverbial(gadv(Adv)) --> adverbio(Adv).
 g_adverbial(gadv(Adv, GAdv)) --> adverbio(Adv), g_adverbial(GAdv).
 
 %-------------------------------------------------------------------------------
-%Definición del grupo preposicional (preposicion acompaña a un grupo nomial)
-%-------------------------------------------------------------------------------
-g_preposicional(gp_ccl(Prep, GN)) -->  preposicion(Prep, _), g_nominal(GN, _, _, lugar).
-g_preposicional(gp_cct(Prep, GN)) -->  preposicion(Prep, _), g_nominal(GN, _, _, tiempo).
+%Definición del grupo preposicional (preposicion acompaña a un grupo nominal) y pueden actuar como complementos circunstanciales
+%-------------------------------------------------------------------------------                                                                     %Complemento cirscunstancial de lugar
+g_preposicional(gp_ccl(Prep, GN)) -->  preposicion(Prep, _), g_nominal(GN, _, _, lugar).                                                             %Complemento cirscunstancial de tiempo
+g_preposicional(gp_cct(Prep, GN)) -->  preposicion(Prep, _), g_nominal(GN, _, _, tiempo).                                                            %Complemento cirscunstancial de finalidad
 g_preposicional(gp_ccf(Prep, GN)) -->  preposicion(Prep, finalidad), g_nominal(GN, _, _, _).
 %g_preposicional(gp(Prep, GN)) -->  preposicion(Prep, _), g_nominal(GN, _, _, _).
 %g_preposicional(gp(Prep, GN, Prep2, GN2)) -->  preposicion(Prep), g_nominal(GN, _, _), preposicion(Prep2), g_nominal(GN2, _, _).
 
-%---
-%CD
-%---
-cd(gn_atributo(Det, N), Gen, Num) --> determinante(Det, Gen, Num), nombre(N, Gen, Num, atributo).
-cd(gn_atributo(Det, GAdj, N), Gen, Num) --> determinante(Det, Gen, Num), g_adjetival(GAdj), nombre(N, Gen, Num, _).
-cd(gn_cct(N), Gen, Num) --> nombre(N, Gen, Num, tiempo).
+%-------------------------------------------------------------------------------
+%Definición de las funciones que puede tener un grupo nominal (complemento directo, atributo o complemento circunstancial)
+%-------------------------------------------------------------------------------
+cd(gn_atributo(Det, N), Gen, Num) --> determinante(Det, Gen, Num), nombre(N, Gen, Num, atributo).                                                    %Grupo nominal como atributo
+cd(gn_atributo(Det, GAdj, N), Gen, Num) --> determinante(Det, Gen, Num), g_adjetival(GAdj), nombre(N, Gen, Num, _).                                  %Grupo nominal con adjetivo como atributo
+cd(gn_cct(N), Gen, Num) --> nombre(N, Gen, Num, tiempo).                                                                                             %Grupo nominal como complemento cirscunstancial de tiempo
 cd(gn_cct(Det, N), Gen, Num) --> determinante(Det, Gen, Num), nombre(N, Gen, Num, lugar).
-cd(gn_cd(N), Gen, Num) --> nombre(N, Gen, Num, nombre).
+cd(gn_cd(N), Gen, Num) --> nombre(N, Gen, Num, nombre).                                                                                              %grupo nomial como complemento directo
 cd(gn_cd(Det, N), Gen, Num) --> determinante(Det, Gen, Num), nombre(N, Gen, Num, nombre).
 cd(gn_cd(GAdj, N), Gen, Num) --> g_adjetival(GAdj), nombre(N, Gen, Num, nombre).
 
@@ -161,12 +161,12 @@ signo(sig(X)) --> [X], {sig(X)}.
 nexo(nx(X)) --> [X], {nx(X)}.                                                                    %Nexo se utiliza en las oraciones subordinadas
 %_______________________________________________________________________________
 %_______________________________________________________________________________
-                 %Diccionario
+                 %Diccionario (se le ha añadido el género y número de cada palabra)
 %_______________________________________________________________________________
 %_______________________________________________________________________________
 
 %-------------------------------------------------------------------------------
-%Determinantes
+%Determinantes  (determinante, genero, numero)
 %-------------------------------------------------------------------------------
 det('a', _, singular).
 det('an', _, singular).
@@ -212,7 +212,7 @@ det('second', _, _).
 det('third', _, _).
 
 %-------------------------------------------------------------------------------
-%Nombres
+%Nombres   (nombre, genero, numero, tipo) tipo puede ser de tiempo, lugar, nombre normal etc y se usa para determinar que función realiza en al oración (tipo de complemento)
 %-------------------------------------------------------------------------------
 n('law', femenino, singular, nombre).
 n('Law', femenino, singular, nombre).
@@ -244,7 +244,7 @@ n('yesterday', masculino, singular, tiempo).
 n('we', _, plural, nombre).
 
 %-------------------------------------------------------------------------------
-%Nombres propios
+%Nombres propios    (nombre, genero, numero)
 %-------------------------------------------------------------------------------
 np('José', masculino, singular).
 np('María', femenino, singular).
@@ -254,7 +254,7 @@ np('Hector', masculino, singular).
 np('Irene', femenino, singular).
 
 %-------------------------------------------------------------------------------
-%Verbos
+%Verbos   (verbo, tipo, numero) el genero de los verbos es el mismo que el del sujeto y su tipo indica su función, verbos copulativos (to be) indican una caracteristica del sujeto y estan seguidos de un atributo
 %-------------------------------------------------------------------------------
 v('is', copulativo, singular).
 v('are', copulativo, plural).
@@ -294,7 +294,7 @@ adj('gray').
 adj('writing').
 
 %-------------------------------------------------------------------------------
-%Adverbios
+%Adverbios (no tienen genero ni número)
 %-------------------------------------------------------------------------------
 adv('quite').
 adv('always').
@@ -316,7 +316,7 @@ adv('very').
 adv('only').
 
 %-------------------------------------------------------------------------------
-%Conjunciones
+%Conjunciones (no tienen genero ni número)
 %-------------------------------------------------------------------------------
 conj('and').
 conj(',').
@@ -346,7 +346,7 @@ conj('while').
 conj('that').
 
 %-------------------------------------------------------------------------------
-%Preposiciones
+%Preposiciones (preposicion, tipo) el tipo indica su funcion dentro de la oracion determinando que complemento circunstancial puede indicar (tiempo, lugra, modo, finalidad etc)
 %-------------------------------------------------------------------------------
 prep('above', _).
 prep('about', _).
@@ -423,67 +423,66 @@ oracion14(['The', 'man', 'we', 'saw', 'yesterday', 'was', 'my', 'neighbor']).
 %Dado el análisis de las oraciones obtener las oraciones simples que componen oracion analizada
 %-------------------------------------------------------------------------------
 obtener(Oracion, L):-
-   obtener_oracion(Oracion, [], LSucia),
-   limpiar_oraciones(LSucia, [], L).
-   
-obtener_oracion([ ], Fin, Fin).
+   obtener_oracion(Oracion, [], LSucia),                                                                             %Método que dada una oración la divide en oraciones simples correspondientes
+   limpiar_oraciones(LSucia, [], L).                                                                                 %Método que dada las oraciones simples obtenidas con el método anterior las limpia quitando las etiqeutas y (
 
-obtener_oracion(Oracion, _, Final):-
-    Oracion =.. [Etiqueta | _],
+obtener_oracion([ ], Fin, Fin).                                                                                      %Condición de parada cuando oracion original es vacia (se han obtenido todas las simples posibles)
+
+obtener_oracion(Oracion, _, Final):-                                                                                 %Obtiene la etiqueta que indica que tipo de oraciobn es (o,oc,or,ocm)
+    Oracion =.. [Etiqueta | _],                                                                                      %Si es una oracion simple (etiqueta es o) llama a método formar_oracion
     Etiqueta = o,
-    formar_oracion([Oracion], Fin),
+    formar_oracion([Oracion], Fin),                                                                                  %Devuelve oracion simple obtenida
     Final = Fin.
 
-obtener_oracion(Oracion, _, Final):-
+obtener_oracion(Oracion, _, Final):-                                                                                 %Si la oración pasada es coordinada (su etiqueta es oc)
     Oracion =.. [Etiqueta | Args],
     Etiqueta = oc,
-    procesar_simple(Args, [], ListaOr),
-    reverse(ListaOr, ListaOr2),
+    procesar_simple(Args, [], ListaOr),                                                                              %Llama a procesar_simple para obtener las oraciones simples que forman la coordinada
+    reverse(ListaOr, ListaOr2),                                                                                      %El método anterior devuelve las oraciones al revés por lo que se les debe dar la vuelta
     formar_oracion(ListaOr2, Fin),
     Final = Fin.
 
-obtener_oracion(Oracion, Lista, Final):-
+obtener_oracion(Oracion, Lista, Final):-                                                                             %Si oracion pasada es un oracion compuesta (etiqueta ocm)
     Oracion =.. [Etiqueta | Args],
     Etiqueta = ocm,
-    quitar_par(Args, Args2),
-    obtener_oracion(Args2, Lista, Final2),
+    quitar_par(Args, Args2),                                                                                         %Método que convertir oracion como cola en compound
+    obtener_oracion(Args2, Lista, Final2),                                                                           %Llamada recursiva al método recursivo con la segunda oración del par para obtener sus simples respectivas
     Final = Final2.
 
-procesar_simple([ ], Final, Final).
+procesar_simple([ ], Final, Final).                                                                                  %Caso de parada
 
 procesar_simple([Head | Tail], Lista, Fin):-
     Head =.. [Etiqueta | _],
-    Etiqueta = o,
-    procesar_simple(Tail, [Head | Lista], Fin),!.
-    
-procesar_simple([_ | Tail], Lista, Fin):-
-    procesar_simple(Tail, Lista, Fin),!.
-    
-formar_oracion(Oraciones, Formadas):-
-    formar_oracion_aux(Oraciones, [], Formadas).
-    
-formar_oracion_aux([ ], Fin, Fin).
+    Etiqueta = o,                                                                                                    %Si la oración pasada es simple(etiqueta o)
+    procesar_simple(Tail, [Head | Lista], Fin),!.                                                                    %Llamada recursiva con la cola(por si dentro de la oración hay una subordinada)
 
+procesar_simple([_ | Tail], Lista, Fin):-                                                                            %Si la oración no es una simple se quita el primer elemnto haciendo llamada recursiva con la cola para avanzar con el análisis
+    procesar_simple(Tail, Lista, Fin),!.
+
+formar_oracion(Oraciones, Formadas):-                                                                                %Llama a metodo auxiliar
+    formar_oracion_aux(Oraciones, [], Formadas).
+
+formar_oracion_aux([ ], Fin, Fin).
+                                                                                                                     %Si la oración tiene tanto sujeto como predicado (no hay sujeto omitido)
 formar_oracion_aux([Head | Tail], Lista, Fin):-
     o(Suj, Predicado) = Head,
-    separar_subordinada(Suj, Resultado),
-    nth1(2, Resultado, Elem),
+    separar_subordinada(Suj, Resultado),                                                                             %Método que si dentro de una oración (dentro del gn) hay una subordinada la saca y devuelve
+    nth1(2, Resultado, Elem),                                                                                        %Si el segundo elemento devuelvo del metodo anterior es vacio es que no hay oracion subordinada
     (Elem = [] ->
-    (formar_oracion_aux(Tail, [Head | Lista], Fin),!)
+    (formar_oracion_aux(Tail, [Head | Lista], Fin),!)                                                                %Llamada recursiva
     ;
-    (nth1(1, Resultado, S),
+    (nth1(1, Resultado, S),                                                                                          %Si no vacio hay subordinada guardandola en la lista de oraciones simples
     Nueva = o(S, Predicado),
-    formar_oracion_aux(Tail, [Nueva, Elem], Fin),!)).
-    
-formar_oracion_aux([Head | Tail], Lista, Fin):-
+    formar_oracion_aux(Tail, [Nueva, Elem], Fin),!)).                                                                %Llamada recursiva
+
+formar_oracion_aux([Head | Tail], Lista, Fin):-                                                                      %Si la oración solo tiene predicado (sujeto omitido) se obtiene el sujeto de la oración simple anterior de la lista de oraciones y se le pone  a la actual
     o(Predicado) = Head,
     nth1(1, Lista, Elem),
     o(Suj, _) = Elem,
-    Nueva = o(Suj, Predicado),
-    formar_oracion_aux(Tail, [Nueva| Lista], Fin),!.
+    Nueva = o(Suj, Predicado),                                                                                       %Oración simple incluyendo el sujeto
+    formar_oracion_aux(Tail, [Nueva| Lista], Fin),!.                                                                 %Llamada recursiva guardando la nueva oración simple generada
 
-%-------------------------------------------------------------------------------
-separar_subordinada(Lista, Salida):-
+separar_subordinada(Lista, Salida):-                                                                                 %Método que obtiene la oracións ubordinada dentro de una simple
     Lista =.. [_ | Argumentos],
     separar(Argumentos, [], [], ListaDoble),
     Salida = ListaDoble.
@@ -491,69 +490,69 @@ separar_subordinada(Lista, Salida):-
 
 separar([Head | Tail], Aux, Subordinada, Final):-
     Head =.. [Etiqueta | _],
-    (Etiqueta = or ->
-    separar(Tail, Aux, Head, Final),!;
+    (Etiqueta = or ->                                                                                                %Si oracion es subordinada (etiqueta or) hace llamada recursiva sacandola
+    separar(Tail, Aux, Head, Final),!;                                                                               %Si no es subordindada la devuelve metiendo la cabeza de la lista en Aux  y pasando la cola
     separar(Tail, [Head | Aux], Subordinada, Final),!
     ).
 
 separar([ ], Aux, Subordinada, Final):-
-    reverse(Aux, Aux2),
-    Sujeto =.. [gn | Aux2],
-    Subordinada =.. [_ | Args],
-    anadir(Args, Sujeto, [], Salida),
+    reverse(Aux, Aux2),                                                                                              %Da la vuelta a la lista para ordenarla ya que previamente se ha invertido
+    Sujeto =.. [gn | Aux2],                                                                                          %Obtiene sujeto de la oración (etiqeuta gn)
+    Subordinada =.. [_ | Args],                                                                                      %Obtiene la oración subordinada
+    anadir(Args, Sujeto, [], Salida),                                                                                %Llama a metodo añadir
     Final = [Sujeto, Salida].
 
 anadir([Head | Tail], Sujeto, Aux, Final):-
-    Head =.. [Etiqueta | _],
+    Head =.. [Etiqueta | _],                                                                                         %Saca la eqiqueta, si es nexo (etiqueta nx) de la oración subordinada se quita de la llamada recursiva
     (Etiqueta = nx ->
-    anadir(Tail, Sujeto, Aux, Final),!;
+    anadir(Tail, Sujeto, Aux, Final),!;                                                                              %Si no hay nexo no quita la cabeza de la lista manteniendolo en la llamada recursiva
     anadir(Tail, Sujeto, [Head | Aux], Final),!
     ).
 
-anadir([ ], _, [ ], Final):-
+anadir([ ], _, [ ], Final):-                                                                                         %Si oracion pasada y Aux es vacia devuelve otra vacia
     Final = [].
 
-anadir([ ], Sujeto, Aux, Final):-
-    reverse(Aux, Aux2),
+anadir([ ], Sujeto, Aux, Final):-                                                                                    %Si solo la oracion pasada es vacia pero Aux no
+    reverse(Aux, Aux2),                                                                                              %Da la vuelta a Aux ya que en pasos anteriores se ha invertido
     length(Aux2, Tam),
-    (Tam = 1 ->
+    (Tam = 1 ->                                                                                                      %Si el tamaño de Aux es 1 llamamos a quitar_par
     (quitar_par(Aux2, Aux3),
     Final = o(Sujeto, Aux3));
     Final =.. [o | Aux2]).
 
-quitar_par([Con], Sin):-
+quitar_par([Con], Sin):-                                                                                             %Convierte oracion simple como cola a un compound
     Sin = Con.
 
 
-%Metodos para limpiar oraciones
 %-------------------------------------------------------------------------------
-limpiar_oraciones([ ], Final, Final).
+%Metodos para limpiar oraciones quitando paréntesis y etiquetas
+%-------------------------------------------------------------------------------
+limpiar_oraciones([ ], Final, Final).                                                                                %Caso de parada
 
 limpiar_oraciones([Head | Tail], Final, Aux):-
-    limpiar_oracion(Head, Resultado),
+    limpiar_oracion(Head, Resultado),                                                                                %Llama a método limpiarOracion que elimina etiqeutas de la cabeza de la lista (primer elemento de la oración)
     limpiar_oraciones(Tail, [Resultado | Final], Aux).
-
+                                                                                                                     %Llamada recursiva para limpiar el resto de la oracion
 limpiar_oracion(Oracion, Cadena):-
-    term_to_atom(Oracion, Atom),
+    term_to_atom(Oracion, Atom),                                                                                     %Limpia elemento pasado de la oracón pasandolo a tipo Atom
     atomic_list_concat(Atoms, ',', Atom),
     maplist(atom_string, Atoms, Lista),
-    procesar_elementos(Lista, [], Resultado),
+    procesar_elementos(Lista, [], Resultado),                                                                        %Llama a método procesar_elementos que devuelve lista limpia sin etiquetas ni parentesis
     atomic_list_concat(Resultado, ' ', Cad),
-    Cadena = Cad.
+    Cadena = Cad.                                                                                                    %Se concatena resultado de la enterior(lista ya limpia)
 
-procesar_elementos([ ], Final, Final).
+procesar_elementos([ ], Final, Final).                                                                               %Caso base
 
 procesar_elementos([Head|Tail], Final, Aux):-
-    split_string(Head, "(", "", Lista),
-    length(Lista, Tam),
-    nth1(Tam, Lista, Elem),
-    eliminar_caracter(Elem, ')', Resultado),
-    eliminar_caracter(Resultado, '\'', Resultado2),
-    append(Final, [Resultado2], ListaFinal),
-    procesar_elementos(Tail, ListaFinal, Aux).
+    split_string(Head, "(", "", Lista),                                                                              %Separa la lista por (
+    length(Lista, Tam),                                                                                              %Saca el tamaño de la lista separada
+    nth1(Tam, Lista, Elem),                                                                                          %Guarda en Elem ultimo elemento de la lista separada
+    eliminar_caracter(Elem, ')', Resultado),                                                                         %Llama a metodo eliminar caracteres para devolver elemento pasado sin paréntesis
+    eliminar_caracter(Resultado, '\'', Resultado2),                                                                  %Llama a metodo eliminar caracteres para devolver elemento pasado sin comillas simples
+    append(Final, [Resultado2], ListaFinal),                                                                         %Junta elemento limpio con lista Final
+    procesar_elementos(Tail, ListaFinal, Aux).                                                                       %Llamada recursiva para limpiar siguiente elemento
 
-eliminar_caracter(Cadena, Caracter, NuevaCadena):-
-    atom_chars(Cadena, ListaCaracteres),
-    delete(ListaCaracteres, Caracter, ListaSinCaracter),
-    atom_chars(NuevaCadena, ListaSinCaracter).
-
+eliminar_caracter(Cadena, Caracter, NuevaCadena):-                                                                   %Método que elimina de una cadena pasada el caracter indicado
+    atom_chars(Cadena, ListaCaracteres),                                                                             %Convierte cadena en lista de caracteres
+    delete(ListaCaracteres, Caracter, ListaSinCaracter),                                                             %Borra de la lista de caracteres el caracter pasado
+    atom_chars(NuevaCadena, ListaSinCaracter).                                                                       %Vuelve a convertir resultado en una cadena
