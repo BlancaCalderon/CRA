@@ -63,7 +63,7 @@ g_nominal(gn(GAdj, N), Gen, Num, CC) --> g_adjetival(GAdj), nombre(N, Gen, Num, 
 g_nominal(gn(GAdv, GAdj, N), Gen, Num, _) --> g_adverbial(GAdv), g_adjetival(GAdj), nombre(N, Gen, Num, _).
 g_nominal(gn(NP, Conj, GN), Gen, Num, _) --> nombre_propio(NP, Gen, Num), conjuncion(Conj), g_nominal(GN, _, _, _).
 
-%g_nominal(gn(N, GN)) --> nombre(N), g_nominal(GN).                                              %Dentro de un grupo nominal puede haber una oracion subordinada
+%g_nominal(gn(N, GN)) --> nombre(N), g_nominal(GN).
 %g_nominal(gn(NP, GN)) --> nombre_propio(NP), g_nominal(GN).
 %g_nominal(gn(GAdv, N)) --> g_adverbial(GAdv), nombre(N).                                                            %Un grupo nominal puede ser acompañado por un adverbio
 %g_nominal(gn(GAdv, NP)) --> g_adverbial(GAdv), nombre_propio(NP).
@@ -152,8 +152,6 @@ nombre(n(X), Gen, Num, CC) --> [X], {n(X, Gen, Num, CC)}.
 nombre_propio(np(X), Gen, Num) --> [X], {np(X, Gen, Num)}.
 verbo(v(X), Cop, Num) --> [X], {v(X, Cop, Num)}.
 adjetivo(adj(X)) --> [X], {adj(X)}.
-pronombre(pron(X)) --> [X], {pron(X)}.
-
 adverbio(adv(X)) --> [X], {adv(X)}.
 conjuncion(conj(X)) --> [X], {conj(X)}.
 preposicion(prep(X), CC) --> [X], {prep(X, CC)}.
@@ -423,18 +421,16 @@ oracion14(['The', 'man', 'we', 'saw', 'yesterday', 'was', 'my', 'neighbor']).
 %Dado el análisis de las oraciones obtener las oraciones simples que componen oracion analizada
 %-------------------------------------------------------------------------------
 obtener(Oracion, L):-
-   obtener_oracion(Oracion, [], LSucia),                                                                             %Método que dada una oración la divide en oraciones simples correspondientes
+   obtener_oracion(Oracion, LSucia),                                                                             %Método que dada una oración la divide en oraciones simples correspondientes
    limpiar_oraciones(LSucia, [], L).                                                                                 %Método que dada las oraciones simples obtenidas con el método anterior las limpia quitando las etiqeutas y (
 
-obtener_oracion([ ], Fin, Fin).                                                                                      %Condición de parada cuando oracion original es vacia (se han obtenido todas las simples posibles)
-
-obtener_oracion(Oracion, _, Final):-                                                                                 %Obtiene la etiqueta que indica que tipo de oraciobn es (o,oc,or,ocm)
+obtener_oracion(Oracion, Final):-                                                                                 %Obtiene la etiqueta que indica que tipo de oraciobn es (o,oc,or,ocm)
     Oracion =.. [Etiqueta | _],                                                                                      %Si es una oracion simple (etiqueta es o) llama a método formar_oracion
     Etiqueta = o,
     formar_oracion([Oracion], Fin),                                                                                  %Devuelve oracion simple obtenida
     Final = Fin.
 
-obtener_oracion(Oracion, _, Final):-                                                                                 %Si la oración pasada es coordinada (su etiqueta es oc)
+obtener_oracion(Oracion, Final):-                                                                                 %Si la oración pasada es coordinada (su etiqueta es oc)
     Oracion =.. [Etiqueta | Args],
     Etiqueta = oc,
     procesar_simple(Args, [], ListaOr),                                                                              %Llama a procesar_simple para obtener las oraciones simples que forman la coordinada
@@ -442,11 +438,11 @@ obtener_oracion(Oracion, _, Final):-                                            
     formar_oracion(ListaOr2, Fin),
     Final = Fin.
 
-obtener_oracion(Oracion, Lista, Final):-                                                                             %Si oracion pasada es un oracion compuesta (etiqueta ocm)
+obtener_oracion(Oracion, Final):-                                                                             %Si oracion pasada es un oracion compuesta (etiqueta ocm)
     Oracion =.. [Etiqueta | Args],
     Etiqueta = ocm,
     quitar_par(Args, Args2),                                                                                         %Método que convertir oracion como cola en compound
-    obtener_oracion(Args2, Lista, Final2),                                                                           %Llamada recursiva al método recursivo con la segunda oración del par para obtener sus simples respectivas
+    obtener_oracion(Args2, Final2),                                                                           %Llamada recursiva al método recursivo con la segunda oración del par para obtener sus simples respectivas
     Final = Final2.
 
 procesar_simple([ ], Final, Final).                                                                                  %Caso de parada
