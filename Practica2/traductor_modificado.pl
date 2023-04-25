@@ -33,11 +33,13 @@ oracion_coordinada(ing, oc(O1, Conj, O2, Conj2, O3, Conj3, O4, Conj4, O5)) --> o
 
 %---------------------------- ORACION SUBORDINADA -----------------------------------------------
 oracion_simple_sub(esp, o(GN, GV)) --> g_nominal_sub(esp, GN), g_verbal(esp, GV).
+oracion_simple_sub(ing, o(GN, GV)) --> g_nominal_sub(ing, GN), g_verbal(ing, GV).
+
 oracion_subordinada(esp, or(GN, GV)) --> g_nominal(esp, GN), g_verbal(esp, GV).
 oracion_subordinada(esp, or(NX, GV)) --> nexo(esp, NX), g_verbal(esp, GV).
 oracion_subordinada(esp, or(NX, GN, GV)) --> nexo(esp, NX), g_nominal(esp, GN), g_verbal(esp, GV).
 
-oracion_simple_sub(ing, o(GN, GV)) --> g_nominal_sub(ing, GN), g_verbal(ing, GV).
+
 oracion_subordinada(ing, or(GN, GV)) --> g_nominal(ing, GN), g_verbal(ing, GV).
 oracion_subordinada(ing, or(NX, GV)) --> nexo(ing, NX), g_verbal(ing, GV).
 oracion_subordinada(ing, or(NX, GN, GV)) --> nexo(ing, NX), g_nominal(ing, GN), g_verbal(ing, GV).
@@ -182,25 +184,33 @@ g_preposicional(ing, gp(Prep, GN, GPrep)) -->  preposicion(ing, Prep), g_nominal
 
 %---------------------------- GRAMATICA -----------------------------------------------
 determinante(esp, det(X)) --> [X], {det(X,_)}.
-nombre(esp, n(X)) --> [X], {n(X,_)}.
-nombre_propio(esp, np(X)) --> [X], {np(X,_)}.
-verbo(esp, v(X)) --> [X], {v(X,_)}.
-adjetivo(esp, adj(X)) --> [X], {adj(X,_)}.
-adverbio(esp, adv(X)) --> [X], {adv(X,_)}.
-conjuncion(esp, conj(X)) --> [X], {conj(X,_)}.
-preposicion(esp, prep(X)) --> [X], {prep(X,_)}.
-signo(esp, sig(X)) --> [X], {sig(X,_)}.
-nexo(esp, nx(X)) --> [X], {nx(X,_)}.
-
 determinante(ing, det(X)) --> [Y], {det(X,Y)}.
+
+nombre(esp, n(X)) --> [X], {n(X,_)}.
 nombre(ing, n(X)) --> [Y], {n(X,Y)}.
+
+nombre_propio(esp, np(X)) --> [X], {np(X,_)}.
 nombre_propio(ing, np(X)) --> [Y], {np(X,Y)}.
+
+verbo(esp, v(X)) --> [X], {v(X,_)}.
 verbo(ing, v(X)) --> [Y], {v(X,Y)}.
+
+adjetivo(esp, adj(X)) --> [X], {adj(X,_)}.
 adjetivo(ing, adj(X)) --> [Y], {adj(X,Y)}.
+
+adverbio(esp, adv(X)) --> [X], {adv(X,_)}.
 adverbio(ing, adv(X)) --> [Y], {adv(X,Y)}.
+
+conjuncion(esp, conj(X)) --> [X], {conj(X,_)}.
 conjuncion(ing, conj(X)) --> [Y], {conj(X,Y)}.
+
+preposicion(esp, prep(X)) --> [X], {prep(X,_)}.
 preposicion(ing, prep(X)) --> [Y], {prep(X,Y)}.
+
+signo(esp, sig(X)) --> [X], {sig(X,_)}.
 signo(ing, sig(X)) --> [Y], {sig(X,Y)}.
+
+nexo(esp, nx(X)) --> [X], {nx(X,_)}.
 nexo(ing, nx(X)) --> [Y], {nx(X,Y)}.
 %------------------------------------------------------------------------------------
 
@@ -859,7 +869,7 @@ n('men', 'hombres').
 %------------------------------------------------------------------------------------
 
 %---------------------------- VERBOS -----------------------------------------------
- v('ser', 'be').
+v('ser', 'be').
 v('soy', 'am').
 v('eres', 'are').
 v('es', 'is').
@@ -1236,6 +1246,7 @@ np('Marta', 'Marta').
 %------------------------------------------------------------------------------------
 
 %---------------------------- ADJETIVOS -----------------------------------------------
+adj('guapo', 'pretty').
 adj('bueno', 'good').
 adj('nuevo', 'new').
 adj('mismo', 'same').
@@ -1267,6 +1278,7 @@ adj('frío', 'cold').
 adj('rico', 'tasty').
 adj('pobre', 'poor').
 
+adj('pretty', 'guapo').
 adj('good', 'bueno').
 adj('new', 'nuevo').
 adj('same', 'mismo').
