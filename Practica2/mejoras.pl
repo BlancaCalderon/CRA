@@ -47,10 +47,9 @@ oracion_compuesta(ocm(OR)) --> oracion_simple_sub(OR).
 %-------------------------------------------------------------------------------
 %Definición del grupo nominal(nombre, nombre propio o determinante seguido de un nombre)
 %-------------------------------------------------------------------------------
-%de las subordinada
+%Subordinadas
 g_nominal_sub(gn(NP, OR), Gen, Num) --> nombre_propio(NP, Gen, Num), oracion_subordinada(OR, Gen, Num).
 g_nominal_sub(gn(GN, OR), Gen, Num) --> cd(GN, _, _), oracion_subordinada(OR, Gen, Num).
-%g_nominal_sub(gn(Det, N, OR), Gen, Num) --> determinante(Det, Gen, Num), nombre(N, Gen, Num, _), oracion_subordinada(OR, Gen, Num).
 
 %-------------------------------------------------------------------------------
 g_nominal(gn(N), Gen, Num, _) --> nombre(N, Gen, Num, _).
@@ -61,29 +60,6 @@ g_nominal(gn(Det, GAdv, GN), Gen, Num, _) --> determinante(Det, Gen, Num), g_adv
 g_nominal(gn(GAdj, N), Gen, Num, CC) --> g_adjetival(GAdj), nombre(N, Gen, Num, CC).
 g_nominal(gn(GAdv, GAdj, N), Gen, Num, _) --> g_adverbial(GAdv), g_adjetival(GAdj), nombre(N, Gen, Num, _).
 g_nominal(gn(NP, Conj, GN), Gen, Num, _) --> nombre_propio(NP, Gen, Num), conjuncion(Conj), g_nominal(GN, _, _, _).
-
-%g_nominal(gn(N, GN)) --> nombre(N), g_nominal(GN).                                              %Dentro de un grupo nominal puede haber una oracion subordinada
-%g_nominal(gn(NP, GN)) --> nombre_propio(NP), g_nominal(GN).
-%g_nominal(gn(GAdv, N)) --> g_adverbial(GAdv), nombre(N).                                                            %Un grupo nominal puede ser acompañado por un adverbio
-%g_nominal(gn(GAdv, NP)) --> g_adverbial(GAdv), nombre_propio(NP).
-%g_nominal(gn(Det, N, GN)) --> determinante(Det), nombre(N), g_nominal(GN).                                              %Un grupo nominal puede ser acompañado por un adjetivo
-%g_nominal(gn(Det, GAdv, N)) --> determinante(Det), g_adverbial(GAdv), nombre(N).
-%g_nominal(gn(GAdj, NP)) --> g_adjetival(GAdj), nombre_propio(NP).
-%g_nominal(gn(GAdv, GAdj, NP)) --> g_adverbial(GAdv), g_adjetival(GAdj), nombre_propio(NP).
-%g_nominal(gn(GPrep, GN)) --> g_preposicional(GPrep), g_nominal(GN).
-%g_nominal(gn(N, Conj, GN)) --> nombre(N), conjuncion(Conj), g_nominal(GN).                                           %Puede haber doble sujeto (separado por y)
-%g_nominal(gn(GAdv, N, Conj, GN)) --> g_adverbial(GAdv), nombre(N), conjuncion(Conj), g_nominal(GN).
-%g_nominal(gn(GAdv, NP, Conj, GN)) --> g_adverbial(GAdv), nombre_propio(NP), conjuncion(Conj), g_nominal(GN).
-%g_nominal(gn(Det, N, Conj, GN)) --> determinante(Det), nombre(N), conjuncion(Conj), g_nominal(GN).
-%g_nominal(gn(Det, GAdj, N, Conj, GN)) --> determinante(Det), g_adjetival(GAdj), nombre(N), conjuncion(Conj), g_nominal(GN).
-%g_nominal(gn(Det, GAdv, N, Conj, GN)) --> determinante(Det), g_adverbial(GAdv), nombre(N), conjuncion(Conj), g_nominal(GN).
-%g_nominal(gn(Det, GAdv, GAdj, N, Conj, GN)) --> determinante(Det), g_adverbial(GAdv), g_adjetival(GAdj), nombre(N), conjuncion(Conj), g_nominal(GN).
-%g_nominal(gn(GAdj, N, Conj, GN)) --> g_adjetival(GAdj), nombre(N), conjuncion(Conj), g_nominal(GN).
-%g_nominal(gn(GAdj, NP, Conj, GN)) --> g_adjetival(GAdj), nombre_propio(NP), conjuncion(Conj), g_nominal(GN).
-%g_nominal(gn(GAdv, GAdj, N, Conj, GN)) --> g_adverbial(GAdv), g_adjetival(GAdj), nombre(N), conjuncion(Conj), g_nominal(GN).
-%g_nominal(gn(GAdv, GAdj, NP, Conj, GN)) --> g_adverbial(GAdv), g_adjetival(GAdj), nombre_propio(NP), conjuncion(Conj), g_nominal(GN).
-%g_nominal(gn(GPrep, GN1, Conj, GN2)) --> g_preposicional(GPrep), g_nominal(GN1), conjuncion(Conj), g_nominal(GN2).
-
 %-------------------------------------------------------------------------------
 %Definición del grupo verbal(verbo)
 %-------------------------------------------------------------------------------
@@ -93,15 +69,6 @@ g_verbal(gv(V, GAdjAtr), _, Num) --> verbo(V, _, Num), g_adjetival_atributo(GAdj
 g_verbal(gv(V, GPrep), _, Num) --> verbo(V, _, Num), g_preposicional(GPrep).
 g_verbal(gv(V, GPrep, GPrep2), _, Num) --> verbo(V, _, Num), g_preposicional(GPrep), g_preposicional(GPrep2).
 g_verbal(gv(GAdv, GV), _, Num) --> g_adverbial(GAdv), g_verbal(GV, _, Num).                                                                          %Un verbo puede estar acompañado por un grupo adverbial
-
-%g_verbal(gv(V, GAdv)) --> verbo(V), g_adverbial(GAdv).
-%g_verbal(gv(GPrep, GV)) --> g_preposicional(GPrep), g_verbal(GV).
-%g_verbal(gv(V, GAdj, GPrep)) --> verbo(V), g_adjetival(GAdj), g_preposicional(GPrep).
-%g_verbal(gv(V, GAdv, GAdj), Gen, Num) --> verbo(V, Gen, Num), g_adverbial(GAdv), g_adjetival(GAdj).
-%g_verbal(gv(V, GV, GPrep)) --> verbo(V), g_verbal(GV), g_preposicional(GPrep).
-%g_verbal(gv(V, GN, GPrep)) --> verbo(V), g_nominal(GN), g_preposicional(GPrep).
-%g_verbal(gv(GAdv, GV, GPrep)) --> g_adverbial(GAdv), g_verbal(GV), g_preposicional(GPrep).
-%g_verbal(gv(GPrep1, GV, GPrep2)) --> g_preposicional(GPrep1), g_verbal(GV), g_preposicional(GPrep2).
 
 %-------------------------------------------------------------------------------
 %Definición del grupo ajetival (un solo adjetivo o varios separados por una conjuncion)
@@ -126,9 +93,6 @@ g_adverbial(gadv(Adv, GAdv)) --> adverbio(Adv), g_adverbial(GAdv).
 g_preposicional(gp_ccl(Prep, GN)) -->  preposicion(Prep, _), g_nominal(GN, _, _, lugar).                                                             %Complemento cirscunstancial de tiempo
 g_preposicional(gp_cct(Prep, GN)) -->  preposicion(Prep, _), g_nominal(GN, _, _, tiempo).                                                            %Complemento cirscunstancial de finalidad
 g_preposicional(gp_ccf(Prep, GN)) -->  preposicion(Prep, finalidad), g_nominal(GN, _, _, _).
-%g_preposicional(gp(Prep, GN)) -->  preposicion(Prep, _), g_nominal(GN, _, _, _).
-%g_preposicional(gp(Prep, GN, Prep2, GN2)) -->  preposicion(Prep), g_nominal(GN, _, _), preposicion(Prep2), g_nominal(GN2, _, _).
-
 %-------------------------------------------------------------------------------
 %Definición de las funciones que puede tener un grupo nominal (complemento directo, atributo o complemento circunstancial)
 %-------------------------------------------------------------------------------
@@ -555,3 +519,199 @@ eliminar_caracter(Cadena, Caracter, NuevaCadena):-                              
     atom_chars(Cadena, ListaCaracteres),                                                                             %Convierte cadena en lista de caracteres
     delete(ListaCaracteres, Caracter, ListaSinCaracter),                                                             %Borra de la lista de caracteres el caracter pasado
     atom_chars(NuevaCadena, ListaSinCaracter).                                                                       %Vuelve a convertir resultado en una cadena
+    
+
+%-------------------------------------------------------------------------------
+%Pruebas
+%-------------------------------------------------------------------------------
+arbol1():-
+    oracion1(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol2():-
+    oracion2(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol3():-
+    oracion3(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol4():-
+    oracion4(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol5():-
+    oracion5(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol6():-
+    oracion6(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol7():-
+    oracion7(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol8():-
+    oracion8(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol9():-
+    oracion9(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol10():-
+    oracion10(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol11():-
+    oracion11(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol12():-
+    oracion12(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol13():-
+    oracion13(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol14():-
+    oracion14(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener(X, Lista),
+    dibujar_arboles(Lista).
+
+
+dibujar_lista([ ]).
+
+dibujar_arboles([Head | Tail]):-
+    draw(Head),
+    dibujar_arboles(Tail).
+
+%-------------------------------------------------------------------------------
+mostrar_oraciones1():-
+    oracion1(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones2():-
+    oracion2(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones3():-
+    oracion3(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones4():-
+    oracion4(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones5():-
+    oracion5(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones6():-
+    oracion6(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones7():-
+    oracion7(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones8():-
+    oracion8(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones9():-
+    oracion9(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones10():-
+    oracion10(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones11():-
+    oracion11(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones12():-
+    oracion12(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones13():-
+    oracion13(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones14():-
+    oracion14(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+
