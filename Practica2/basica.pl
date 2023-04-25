@@ -526,3 +526,198 @@ eliminar_caracter(Cadena, Caracter, NuevaCadena):-                              
     atom_chars(Cadena, ListaCaracteres),                                                                             %Convierte cadena en lista de caracteres
     delete(ListaCaracteres, Caracter, ListaSinCaracter),                                                             %Borra de la lista de caracteres el caracter pasado
     atom_chars(NuevaCadena, ListaSinCaracter).                                                                       %Vuelve a convertir resultado en una cadena
+    
+    
+%-------------------------------------------------------------------------------
+%Pruebas
+%-------------------------------------------------------------------------------
+arbol1():-
+    oracion1(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol2():-
+    oracion2(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol3():-
+    oracion3(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol4():-
+    oracion4(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol5():-
+    oracion5(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol6():-
+    oracion6(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol7():-
+    oracion7(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol8():-
+    oracion8(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol9():-
+    oracion9(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol10():-
+    oracion10(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol11():-
+    oracion11(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol12():-
+    oracion12(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol13():-
+    oracion13(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol14():-
+    oracion14(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+
+
+dibujar_lista([ ]).
+
+dibujar_arboles([Head | Tail]):-
+    draw(Head),
+    dibujar_arboles(Tail).
+
+%-------------------------------------------------------------------------------
+mostrar_oraciones1():-
+    oracion1(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones2():-
+    oracion2(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones3():-
+    oracion3(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones4():-
+    oracion4(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones5():-
+    oracion5(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones6():-
+    oracion6(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones7():-
+    oracion7(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones8():-
+    oracion8(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones9():-
+    oracion9(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones10():-
+    oracion10(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones11():-
+    oracion11(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones12():-
+    oracion12(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones13():-
+    oracion13(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones14():-
+    oracion14(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+    

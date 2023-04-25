@@ -63,7 +63,7 @@ g_nominal(gn(GAdj, N), Gen, Num, CC) --> g_adjetival(GAdj), nombre(N, Gen, Num, 
 g_nominal(gn(GAdv, GAdj, N), Gen, Num, _) --> g_adverbial(GAdv), g_adjetival(GAdj), nombre(N, Gen, Num, _).
 g_nominal(gn(NP, Conj, GN), Gen, Num, _) --> nombre_propio(NP, Gen, Num), conjuncion(Conj), g_nominal(GN, _, _, _).
 
-%g_nominal(gn(N, GN)) --> nombre(N), g_nominal(GN).                                              %Dentro de un grupo nominal puede haber una oracion subordinada
+%g_nominal(gn(N, GN)) --> nombre(N), g_nominal(GN).
 %g_nominal(gn(NP, GN)) --> nombre_propio(NP), g_nominal(GN).
 %g_nominal(gn(GAdv, N)) --> g_adverbial(GAdv), nombre(N).                                                            %Un grupo nominal puede ser acompañado por un adverbio
 %g_nominal(gn(GAdv, NP)) --> g_adverbial(GAdv), nombre_propio(NP).
@@ -152,8 +152,6 @@ nombre(n(X), Gen, Num, CC) --> [X], {n(X, Gen, Num, CC)}.
 nombre_propio(np(X), Gen, Num) --> [X], {np(X, Gen, Num)}.
 verbo(v(X), Cop, Num) --> [X], {v(X, Cop, Num)}.
 adjetivo(adj(X)) --> [X], {adj(X)}.
-pronombre(pron(X)) --> [X], {pron(X)}.
-
 adverbio(adv(X)) --> [X], {adv(X)}.
 conjuncion(conj(X)) --> [X], {conj(X)}.
 preposicion(prep(X), CC) --> [X], {prep(X, CC)}.
@@ -423,67 +421,64 @@ oracion14(['The', 'man', 'we', 'saw', 'yesterday', 'was', 'my', 'neighbor']).
 %Dado el análisis de las oraciones obtener las oraciones simples que componen oracion analizada
 %-------------------------------------------------------------------------------
 obtener(Oracion, L):-
-   obtener_oracion(Oracion, [], LSucia),
-   limpiar_oraciones(LSucia, [], L).
-   
-obtener_oracion([ ], Fin, Fin).
+   obtener_oracion(Oracion, LSucia),                                                                             %Método que dada una oración la divide en oraciones simples correspondientes
+   limpiar_oraciones(LSucia, [], L).                                                                                 %Método que dada las oraciones simples obtenidas con el método anterior las limpia quitando las etiqeutas y (
 
-obtener_oracion(Oracion, _, Final):-
-    Oracion =.. [Etiqueta | _],
+obtener_oracion(Oracion, Final):-                                                                                 %Obtiene la etiqueta que indica que tipo de oraciobn es (o,oc,or,ocm)
+    Oracion =.. [Etiqueta | _],                                                                                      %Si es una oracion simple (etiqueta es o) llama a método formar_oracion
     Etiqueta = o,
-    formar_oracion([Oracion], Fin),
+    formar_oracion([Oracion], Fin),                                                                                  %Devuelve oracion simple obtenida
     Final = Fin.
 
-obtener_oracion(Oracion, _, Final):-
+obtener_oracion(Oracion, Final):-                                                                                 %Si la oración pasada es coordinada (su etiqueta es oc)
     Oracion =.. [Etiqueta | Args],
     Etiqueta = oc,
-    procesar_simple(Args, [], ListaOr),
-    reverse(ListaOr, ListaOr2),
+    procesar_simple(Args, [], ListaOr),                                                                              %Llama a procesar_simple para obtener las oraciones simples que forman la coordinada
+    reverse(ListaOr, ListaOr2),                                                                                      %El método anterior devuelve las oraciones al revés por lo que se les debe dar la vuelta
     formar_oracion(ListaOr2, Fin),
     Final = Fin.
 
-obtener_oracion(Oracion, Lista, Final):-
+obtener_oracion(Oracion, Final):-                                                                             %Si oracion pasada es un oracion compuesta (etiqueta ocm)
     Oracion =.. [Etiqueta | Args],
     Etiqueta = ocm,
-    quitar_par(Args, Args2),
-    obtener_oracion(Args2, Lista, Final2),
+    quitar_par(Args, Args2),                                                                                         %Método que convertir oracion como cola en compound
+    obtener_oracion(Args2, Final2),                                                                           %Llamada recursiva al método recursivo con la segunda oración del par para obtener sus simples respectivas
     Final = Final2.
 
-procesar_simple([ ], Final, Final).
+procesar_simple([ ], Final, Final).                                                                                  %Caso de parada
 
 procesar_simple([Head | Tail], Lista, Fin):-
     Head =.. [Etiqueta | _],
-    Etiqueta = o,
-    procesar_simple(Tail, [Head | Lista], Fin),!.
-    
-procesar_simple([_ | Tail], Lista, Fin):-
-    procesar_simple(Tail, Lista, Fin),!.
-    
-formar_oracion(Oraciones, Formadas):-
-    formar_oracion_aux(Oraciones, [], Formadas).
-    
-formar_oracion_aux([ ], Fin, Fin).
+    Etiqueta = o,                                                                                                    %Si la oración pasada es simple(etiqueta o)
+    procesar_simple(Tail, [Head | Lista], Fin),!.                                                                    %Llamada recursiva con la cola(por si dentro de la oración hay una subordinada)
 
+procesar_simple([_ | Tail], Lista, Fin):-                                                                            %Si la oración no es una simple se quita el primer elemnto haciendo llamada recursiva con la cola para avanzar con el análisis
+    procesar_simple(Tail, Lista, Fin),!.
+
+formar_oracion(Oraciones, Formadas):-                                                                                %Llama a metodo auxiliar
+    formar_oracion_aux(Oraciones, [], Formadas).
+
+formar_oracion_aux([ ], Fin, Fin).
+                                                                                                                     %Si la oración tiene tanto sujeto como predicado (no hay sujeto omitido)
 formar_oracion_aux([Head | Tail], Lista, Fin):-
     o(Suj, Predicado) = Head,
-    separar_subordinada(Suj, Resultado),
-    nth1(2, Resultado, Elem),
+    separar_subordinada(Suj, Resultado),                                                                             %Método que si dentro de una oración (dentro del gn) hay una subordinada la saca y devuelve
+    nth1(2, Resultado, Elem),                                                                                        %Si el segundo elemento devuelvo del metodo anterior es vacio es que no hay oracion subordinada
     (Elem = [] ->
-    (formar_oracion_aux(Tail, [Head | Lista], Fin),!)
+    (formar_oracion_aux(Tail, [Head | Lista], Fin),!)                                                                %Llamada recursiva
     ;
-    (nth1(1, Resultado, S),
+    (nth1(1, Resultado, S),                                                                                          %Si no vacio hay subordinada guardandola en la lista de oraciones simples
     Nueva = o(S, Predicado),
-    formar_oracion_aux(Tail, [Nueva, Elem], Fin),!)).
-    
-formar_oracion_aux([Head | Tail], Lista, Fin):-
+    formar_oracion_aux(Tail, [Nueva, Elem], Fin),!)).                                                                %Llamada recursiva
+
+formar_oracion_aux([Head | Tail], Lista, Fin):-                                                                      %Si la oración solo tiene predicado (sujeto omitido) se obtiene el sujeto de la oración simple anterior de la lista de oraciones y se le pone  a la actual
     o(Predicado) = Head,
     nth1(1, Lista, Elem),
     o(Suj, _) = Elem,
-    Nueva = o(Suj, Predicado),
-    formar_oracion_aux(Tail, [Nueva| Lista], Fin),!.
+    Nueva = o(Suj, Predicado),                                                                                       %Oración simple incluyendo el sujeto
+    formar_oracion_aux(Tail, [Nueva| Lista], Fin),!.                                                                 %Llamada recursiva guardando la nueva oración simple generada
 
-%-------------------------------------------------------------------------------
-separar_subordinada(Lista, Salida):-
+separar_subordinada(Lista, Salida):-                                                                                 %Método que obtiene la oracións ubordinada dentro de una simple
     Lista =.. [_ | Argumentos],
     separar(Argumentos, [], [], ListaDoble),
     Salida = ListaDoble.
@@ -491,69 +486,264 @@ separar_subordinada(Lista, Salida):-
 
 separar([Head | Tail], Aux, Subordinada, Final):-
     Head =.. [Etiqueta | _],
-    (Etiqueta = or ->
-    separar(Tail, Aux, Head, Final),!;
+    (Etiqueta = or ->                                                                                                %Si oracion es subordinada (etiqueta or) hace llamada recursiva sacandola
+    separar(Tail, Aux, Head, Final),!;                                                                               %Si no es subordindada la devuelve metiendo la cabeza de la lista en Aux  y pasando la cola
     separar(Tail, [Head | Aux], Subordinada, Final),!
     ).
 
 separar([ ], Aux, Subordinada, Final):-
-    reverse(Aux, Aux2),
-    Sujeto =.. [gn | Aux2],
-    Subordinada =.. [_ | Args],
-    anadir(Args, Sujeto, [], Salida),
+    reverse(Aux, Aux2),                                                                                              %Da la vuelta a la lista para ordenarla ya que previamente se ha invertido
+    Sujeto =.. [gn | Aux2],                                                                                          %Obtiene sujeto de la oración (etiqeuta gn)
+    Subordinada =.. [_ | Args],                                                                                      %Obtiene la oración subordinada
+    anadir(Args, Sujeto, [], Salida),                                                                                %Llama a metodo añadir
     Final = [Sujeto, Salida].
 
 anadir([Head | Tail], Sujeto, Aux, Final):-
-    Head =.. [Etiqueta | _],
+    Head =.. [Etiqueta | _],                                                                                         %Saca la eqiqueta, si es nexo (etiqueta nx) de la oración subordinada se quita de la llamada recursiva
     (Etiqueta = nx ->
-    anadir(Tail, Sujeto, Aux, Final),!;
+    anadir(Tail, Sujeto, Aux, Final),!;                                                                              %Si no hay nexo no quita la cabeza de la lista manteniendolo en la llamada recursiva
     anadir(Tail, Sujeto, [Head | Aux], Final),!
     ).
 
-anadir([ ], _, [ ], Final):-
+anadir([ ], _, [ ], Final):-                                                                                         %Si oracion pasada y Aux es vacia devuelve otra vacia
     Final = [].
 
-anadir([ ], Sujeto, Aux, Final):-
-    reverse(Aux, Aux2),
+anadir([ ], Sujeto, Aux, Final):-                                                                                    %Si solo la oracion pasada es vacia pero Aux no
+    reverse(Aux, Aux2),                                                                                              %Da la vuelta a Aux ya que en pasos anteriores se ha invertido
     length(Aux2, Tam),
-    (Tam = 1 ->
+    (Tam = 1 ->                                                                                                      %Si el tamaño de Aux es 1 llamamos a quitar_par
     (quitar_par(Aux2, Aux3),
     Final = o(Sujeto, Aux3));
     Final =.. [o | Aux2]).
 
-quitar_par([Con], Sin):-
+quitar_par([Con], Sin):-                                                                                             %Convierte oracion simple como cola a un compound
     Sin = Con.
 
 
-%Metodos para limpiar oraciones
 %-------------------------------------------------------------------------------
-limpiar_oraciones([ ], Final, Final).
+%Metodos para limpiar oraciones quitando paréntesis y etiquetas
+%-------------------------------------------------------------------------------
+limpiar_oraciones([ ], Final, Final).                                                                                %Caso de parada
 
 limpiar_oraciones([Head | Tail], Final, Aux):-
-    limpiar_oracion(Head, Resultado),
+    limpiar_oracion(Head, Resultado),                                                                                %Llama a método limpiarOracion que elimina etiqeutas de la cabeza de la lista (primer elemento de la oración)
     limpiar_oraciones(Tail, [Resultado | Final], Aux).
-
+                                                                                                                     %Llamada recursiva para limpiar el resto de la oracion
 limpiar_oracion(Oracion, Cadena):-
-    term_to_atom(Oracion, Atom),
+    term_to_atom(Oracion, Atom),                                                                                     %Limpia elemento pasado de la oracón pasandolo a tipo Atom
     atomic_list_concat(Atoms, ',', Atom),
     maplist(atom_string, Atoms, Lista),
-    procesar_elementos(Lista, [], Resultado),
+    procesar_elementos(Lista, [], Resultado),                                                                        %Llama a método procesar_elementos que devuelve lista limpia sin etiquetas ni parentesis
     atomic_list_concat(Resultado, ' ', Cad),
-    Cadena = Cad.
+    Cadena = Cad.                                                                                                    %Se concatena resultado de la enterior(lista ya limpia)
 
-procesar_elementos([ ], Final, Final).
+procesar_elementos([ ], Final, Final).                                                                               %Caso base
 
 procesar_elementos([Head|Tail], Final, Aux):-
-    split_string(Head, "(", "", Lista),
-    length(Lista, Tam),
-    nth1(Tam, Lista, Elem),
-    eliminar_caracter(Elem, ')', Resultado),
-    eliminar_caracter(Resultado, '\'', Resultado2),
-    append(Final, [Resultado2], ListaFinal),
-    procesar_elementos(Tail, ListaFinal, Aux).
+    split_string(Head, "(", "", Lista),                                                                              %Separa la lista por (
+    length(Lista, Tam),                                                                                              %Saca el tamaño de la lista separada
+    nth1(Tam, Lista, Elem),                                                                                          %Guarda en Elem ultimo elemento de la lista separada
+    eliminar_caracter(Elem, ')', Resultado),                                                                         %Llama a metodo eliminar caracteres para devolver elemento pasado sin paréntesis
+    eliminar_caracter(Resultado, '\'', Resultado2),                                                                  %Llama a metodo eliminar caracteres para devolver elemento pasado sin comillas simples
+    append(Final, [Resultado2], ListaFinal),                                                                         %Junta elemento limpio con lista Final
+    procesar_elementos(Tail, ListaFinal, Aux).                                                                       %Llamada recursiva para limpiar siguiente elemento
 
-eliminar_caracter(Cadena, Caracter, NuevaCadena):-
-    atom_chars(Cadena, ListaCaracteres),
-    delete(ListaCaracteres, Caracter, ListaSinCaracter),
-    atom_chars(NuevaCadena, ListaSinCaracter).
+eliminar_caracter(Cadena, Caracter, NuevaCadena):-                                                                   %Método que elimina de una cadena pasada el caracter indicado
+    atom_chars(Cadena, ListaCaracteres),                                                                             %Convierte cadena en lista de caracteres
+    delete(ListaCaracteres, Caracter, ListaSinCaracter),                                                             %Borra de la lista de caracteres el caracter pasado
+    atom_chars(NuevaCadena, ListaSinCaracter).                                                                       %Vuelve a convertir resultado en una cadena
+    
+    
+%-------------------------------------------------------------------------------
+%Pruebas
+%-------------------------------------------------------------------------------
+arbol1():-
+    oracion1(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+    
+arbol2():-
+    oracion2(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+    
+arbol3():-
+    oracion3(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+    
+arbol4():-
+    oracion4(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+    
+arbol5():-
+    oracion5(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+    
+arbol6():-
+    oracion6(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+    
+arbol7():-
+    oracion7(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+
+arbol8():-
+    oracion8(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+    
+arbol9():-
+    oracion9(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+    
+arbol10():-
+    oracion10(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+    
+arbol11():-
+    oracion11(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+    
+arbol12():-
+    oracion12(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+    
+arbol13():-
+    oracion13(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+    
+arbol14():-
+    oracion14(L),
+    oracion(X, L, []),
+    draw(X),
+    obtener_oracion(X, Lista),
+    dibujar_arboles(Lista).
+    
+
+dibujar_lista([ ]).
+
+dibujar_arboles([Head | Tail]):-
+    draw(Head),
+    dibujar_arboles(Tail).
+
+%-------------------------------------------------------------------------------
+mostrar_oraciones1():-
+    oracion1(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+    
+mostrar_oraciones2():-
+    oracion2(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+    
+mostrar_oraciones3():-
+    oracion3(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+    
+mostrar_oraciones4():-
+    oracion4(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+    
+mostrar_oraciones5():-
+    oracion5(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+    
+mostrar_oraciones6():-
+    oracion6(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+    
+mostrar_oraciones7():-
+    oracion7(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+    
+mostrar_oraciones8():-
+    oracion8(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+
+mostrar_oraciones9():-
+    oracion9(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+    
+mostrar_oraciones10():-
+    oracion10(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+    
+mostrar_oraciones11():-
+    oracion11(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+    
+mostrar_oraciones12():-
+    oracion12(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+    
+mostrar_oraciones13():-
+    oracion13(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
+    
+mostrar_oraciones14():-
+    oracion14(L),
+    oracion(X, L, []),
+    obtener(X, S),
+    write(S).
 
