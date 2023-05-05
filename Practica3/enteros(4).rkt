@@ -437,19 +437,18 @@
                    ((Y (lambda (f)
                          (lambda (x)
                            ((
-                             (null l)              ;condicion de la recursividad if
+                             (null x)              
                              (lambda (no_use)
                                zero
                                )
                              (lambda (no_use)
-                               (sucesor (longitud (tl l)))
+                               (sucesor (longitud (tl x)))
                                )
                              )
                             zero)
                            )
                          ))
                     l)
-                   
                    ))
 
 (define concatenar (lambda (l1)
@@ -461,7 +460,7 @@
                           ((Y (lambda (f)
                                 (lambda (x)
                                   ((
-                                    (null x)              ;condicion de la recursividad if
+                                    (null x)              
                                     (lambda (no_use)
                                       l2
                                       )
@@ -477,27 +476,113 @@
 
 
 (define mostrar (lambda (l)
-                   (((null l) (lambda (no_use) zero) (lambda (no_use) (longitudaux l))) zero)))
+                   (((null l) (lambda (no_use) (display "")) (lambda (no_use) (mostraraux l))) zero)))
 
 (define mostraraux (lambda (l)
                    ((Y (lambda (f)
-                         (display (hd l))
+                         (display (testenteros(hd l))) (display " ")
                          (lambda (x)
                            ((
-                             (null l)              ;condicion de la recursividad if
+                             (null x)              
                              (lambda (no_use)
-                               zero
+                               (display "")
                                )
                              (lambda (no_use)
-                               (mostrar (tl l))
+                               (mostrar (tl x))
                                )
                              )
                             zero)
                            )
                          ))
                     l)
-                   
                    ))
+
+(define inversion (lambda (l)
+                    (((null l) (lambda (no_use) nil) (lambda (no_use) (inversionaux l))) zero)))
+
+(define inversionaux (lambda (l)
+                       ((Y (lambda (f)
+                         (lambda (x)
+                           ((
+                             (null x)              
+                             (lambda (no_use)
+                               nil
+                               )
+                             (lambda (no_use)
+                               ((concatenar (inversion (tl x))) ((const (hd x)) nil))
+                               )
+                             )
+                            zero)
+                           )
+                         ))
+                    l)
+                        ))
+
+(define pertenece (lambda (l)
+                    (lambda (e)
+                      (((null l) (lambda (no_use) false) (lambda (no_use) ((perteneceaux l) e))) zero))))
+
+(define perteneceaux (lambda (l)
+                       (lambda (e)
+                         ((Y (lambda (f)
+                               (lambda (x)
+                                 ((
+                                   ((esigualent (hd l)) e)           
+                                   (lambda (no_use)
+                                     true
+                                     )
+                                   (lambda (no_use)
+                                     ((pertenece (tl x)) e)
+                                     )
+                                   )
+                                  zero)
+                                 )
+                               ))
+                          l)
+                         )))
+
+
+(define sumarlista (lambda (l)
+                   (((null l) (lambda (no_use) cero) (lambda (no_use) (sumarlistaaux l))) cero)))
+
+(define sumarlistaaux (lambda (l)
+                        ((Y (lambda (f)
+                              (lambda (x)
+                                ((
+                                  (null x)              
+                                  (lambda (no_use)
+                                    cero
+                                    )
+                                  (lambda (no_use)
+                                    ((sument (hd x)) (sumarlista (tl x)))
+                                    )
+                                  )
+                                 cero)
+                                )
+                              ))
+                         l)
+                        ))
+
+(define maxlista (lambda (l)
+                   (((null l) (lambda (no_use) cero) (lambda (no_use) (maxlistaaux l))) cero)))
+
+(define maxlistaaux (lambda (l)
+                      ((Y (lambda (f)
+                            (lambda (x)
+                              ((
+                                (null x)              
+                                (lambda (no_use)
+                                  cero
+                                  )
+                                (lambda (no_use)
+                                  ((esmayorent)
+                                  )
+                                )
+                               cero)
+                              )
+                            ))
+                       l)
+                      ))
 
 
 
@@ -507,14 +592,3 @@
 ;Listas de ejemplos
 (define lista1 ((const cinco) ((const tres) ((const dos) nil))) )
 (define lista2 ((const uno) ((const ocho) ((const cinco) ((const tres) ((const dos) nil))))) )
-
-
-
-
-
-
-
-
-
-
-
