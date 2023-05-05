@@ -411,3 +411,19 @@
                    ((par ((mcdnat (primero (absoluto r))) (primero (absoluto s)))) zero))))
 
 
+
+;-------------------------------------------------------------------------------------------------------------------------
+;Listas
+(define prueba (list uno dos tres cuatro))
+(define nil (lambda (z) z))
+
+;(define null (primero))
+
+(define hd (lambda (z)
+             testenteros(primero(segundo z))))
+
+
+
+
+
+
