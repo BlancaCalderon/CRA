@@ -502,21 +502,21 @@
 
 (define inversionaux (lambda (l)
                        ((Y (lambda (f)
-                         (lambda (x)
-                           ((
-                             (null x)              
-                             (lambda (no_use)
-                               nil
+                             (lambda (x)
+                               ((
+                                 (null x)              
+                                 (lambda (no_use)
+                                   nil
+                                   )
+                                 (lambda (no_use)
+                                   ((concatenar (inversion (tl x))) ((const (hd x)) nil))
+                                   )
+                                 )
+                                zero)
                                )
-                             (lambda (no_use)
-                               ((concatenar (inversion (tl x))) ((const (hd x)) nil))
-                               )
-                             )
-                            zero)
-                           )
-                         ))
-                    l)
-                        ))
+                             ))
+                        l)
+                       ))
 
 (define pertenece (lambda (l)
                     (lambda (e)
@@ -609,8 +609,32 @@
                        l)
                       )))
 
+(define sumar2listas (lambda (l1)
+                       (lambda (l2)
+                         (((null l1) (lambda (no_use) nil) (lambda (no_use) ((sumar2listasaux l1) l2))) zero))))
+
+(define sumar2listasaux (lambda (l1)
+                          (lambda (l2)
+                            ((Y (lambda (f)
+                                  (lambda (x)
+                                    ((
+                                      (null x)              
+                                      (lambda (no_use)
+                                        nil
+                                        )
+                                      (lambda (no_use)
+                                        ((concatenar ((const ((sument (hd x)) (hd l2))) nil)) ((sumar2listas (tl x)) (tl l2)))
+                                        )
+                                      )
+                                     cero)
+                                    )
+                                  ))
+                             l1)
+                            )))
+
 
 
 ;Listas de ejemplos
 (define lista1 ((const cinco) ((const tres) ((const dos) nil))) )
-(define lista2 ((const uno) ((const ocho) ((const cinco) ((const tres) ((const dos) nil))))) )
+(define lista2 ((const siete) ((const dos) ((const cinco) ((const uno) ((const dos) nil))))) )
+(define lista3 ((const dos) ((const dos) ((const cuatro) ((const cinco) ((const cero) nil))))) )
