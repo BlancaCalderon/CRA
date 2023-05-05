@@ -21,6 +21,8 @@ max --> (testenteros ((maxlista lista1) (hd lista1)))
 
 min --> (testenteros ((minlista lista1) (hd lista1)))
 
+sumar listas --> (mostrar ((sumar2listas lista2) lista3))
+
 
 pruebas --> (comprobar (longitud ((concatenar lista1) lista2)))
 		(mostrar (inversion lista2))
