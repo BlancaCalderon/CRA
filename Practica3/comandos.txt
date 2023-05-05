@@ -1,0 +1,30 @@
+
+
+(primero((constructor dos) uno))
+
+mostrar cabecita --> (testenteros(hd((constructor dos) nil)))
+			(testenteros(hd lista1))
+
+			(testenteros(hd (tl lista1)))
+
+longitud --> (comprobar (longitud lista1))
+
+concatenar --> ((concatenar lista1) lista2)
+
+invertir --> (mostrar (inversion lista2))
+
+mostrar --> (mostrar lista1)
+
+sumar --> (testenteros (sumarlista lista2))
+
+max --> (testenteros ((maxlista lista1) (hd lista1)))
+
+min --> (testenteros ((minlista lista1) (hd lista1)))
+
+
+pruebas --> (comprobar (longitud ((concatenar lista1) lista2)))
+		(mostrar (inversion lista2))
+		((const (hd lista1)) nil)
+		(mostrar ((concatenar nil)((const (hd lista1)) nil)))
+
+

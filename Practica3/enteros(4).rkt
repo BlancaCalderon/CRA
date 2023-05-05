@@ -564,28 +564,50 @@
                         ))
 
 (define maxlista (lambda (l)
-                   (((null l) (lambda (no_use) cero) (lambda (no_use) (maxlistaaux l))) cero)))
+                   (lambda (n)
+                     (((null l) (lambda (no_use) n) (lambda (no_use) ((maxlistaaux l)n))) cero))))
 
 (define maxlistaaux (lambda (l)
-                      ((Y (lambda (f)
+                      (lambda (n)
+                        ((Y (lambda (f)
                             (lambda (x)
                               ((
-                                (null x)              
+                                ((esmayorent (hd l)) n)              
                                 (lambda (no_use)
-                                  cero
+                                  ((maxlista (tl l)) (hd l))
                                   )
                                 (lambda (no_use)
-                                  ((esmayorent)
+                                  ((maxlista (tl l)) n)
                                   )
                                 )
                                cero)
                               )
                             ))
                        l)
-                      ))
+                      )))
 
+(define minlista (lambda (l)
+                   (lambda (n)
+                     (((null l) (lambda (no_use) n) (lambda (no_use) ((minlistaaux l)n))) cero))))
 
-
+(define minlistaaux (lambda (l)
+                      (lambda (n)
+                        ((Y (lambda (f)
+                            (lambda (x)
+                              ((
+                                ((esmenorent (hd l)) n)              
+                                (lambda (no_use)
+                                  ((minlista (tl l)) (hd l))
+                                  )
+                                (lambda (no_use)
+                                  ((minlista (tl l)) n)
+                                  )
+                                )
+                               cero)
+                              )
+                            ))
+                       l)
+                      )))
 
 
 
