@@ -414,104 +414,13 @@
 
 ;-------------------------------------------------------------------------------------------------------------------------
 ;Listas
+(define prueba (list uno dos tres cuatro))
 (define nil (lambda (z) z))
 
-(define null primero)
-
-(define const (lambda (x)
-                      (lambda (y)
-                        ((par false) ((par x) y)))))
+;(define null (primero))
 
 (define hd (lambda (z)
-             (primero(segundo z))))
-
-(define tl (lambda (z)
-             (segundo (segundo z))))
-
-
-;Operaciones
-(define longitud (lambda (l)
-                   (((null l) (lambda (no_use) zero) (lambda (no_use) (longitudaux l))) zero)))
-
-(define longitudaux (lambda (l)
-                   ((Y (lambda (f)
-                         (lambda (x)
-                           ((
-                             (null l)              ;condicion de la recursividad if
-                             (lambda (no_use)
-                               zero
-                               )
-                             (lambda (no_use)
-                               (sucesor (longitud (tl l)))
-                               )
-                             )
-                            zero)
-                           )
-                         ))
-                    l)
-                   
-                   ))
-
-(define concatenar (lambda (l1)
-                     (lambda (l2)
-                       (((null l1) (lambda (no_use) l2) (lambda (no_use) ((concatenaraux  l1) l2))) zero) )))
-
-(define concatenaraux (lambda (l1)
-                        (lambda (l2)
-                          ((Y (lambda (f)
-                                (lambda (x)
-                                  ((
-                                    (null x)              ;condicion de la recursividad if
-                                    (lambda (no_use)
-                                      l2
-                                      )
-                                    (lambda (no_use)
-                                      ((const (hd x)) ((concatenar (tl x)) l2))
-                                      )
-                                    )
-                                   zero)
-                                  )
-                                ))
-                           l1)
-                          )))
-
-
-(define mostrar (lambda (l)
-                   (((null l) (lambda (no_use) zero) (lambda (no_use) (longitudaux l))) zero)))
-
-(define mostraraux (lambda (l)
-                   ((Y (lambda (f)
-                         (display (hd l))
-                         (lambda (x)
-                           ((
-                             (null l)              ;condicion de la recursividad if
-                             (lambda (no_use)
-                               zero
-                               )
-                             (lambda (no_use)
-                               (mostrar (tl l))
-                               )
-                             )
-                            zero)
-                           )
-                         ))
-                    l)
-                   
-                   ))
-
-
-
-
-
-
-;Listas de ejemplos
-(define lista1 ((const cinco) ((const tres) ((const dos) nil))) )
-(define lista2 ((const uno) ((const ocho) ((const cinco) ((const tres) ((const dos) nil))))) )
-
-
-
-
-
+             testenteros(primero(segundo z))))
 
 
 
