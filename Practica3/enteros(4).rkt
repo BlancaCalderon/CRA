@@ -413,36 +413,45 @@
 
 
 ;-------------------------------------------------------------------------------------------------------------------------
-;Listas
+;Operaciones base de las listas
+;-------------------------------------------------------------------------------------------------------------------------
+
 (define nil (lambda (z) z))
 
+;Lista vacia
 (define null primero)
 
+;Constructor de la lista
 (define const (lambda (x)
                       (lambda (y)
                         ((par false) ((par x) y)))))
-
+;Primer elemento de la lista
 (define hd (lambda (z)
              (primero(segundo z))))
 
+;Cola de la lista
 (define tl (lambda (z)
              (segundo (segundo z))))
 
+;-------------------------------------------------------------------------------------------------------------------------
+;Operaciones de las listas
+;-------------------------------------------------------------------------------------------------------------------------
 
-;Operaciones
+;Operacion que calcula la longitud de una lista pasada
 (define longitud (lambda (l)
-                   (((null l) (lambda (no_use) zero) (lambda (no_use) (longitudaux l))) zero)))
+                   (((null l) (lambda (no_use) zero) (lambda (no_use) (longitudaux l))) zero)))		;si la lista no es vacia llama a longitudaux para seguir recorriendo la lista
 
+;Operacion auxiliar de longitud para simular la recursividad
 (define longitudaux (lambda (l)
                    ((Y (lambda (f)
                          (lambda (x)
                            ((
-                             (null x)              
+                             (null x)         								;si la lista es vacia se termina la ejecucion     
                              (lambda (no_use)
                                zero
                                )
                              (lambda (no_use)
-                               (sucesor (longitud (tl x)))
+                               (sucesor (longitud (tl x)))						;si no es vacia se suma uno y se hace llamada a longitud con el resto de la lista para recorrerla
                                )
                              )
                             zero)
@@ -451,21 +460,25 @@
                     l)
                    ))
 
+;-------------------------------------------------------------------------------------------------------------------------
+
+;Operacion que concatena dos listas l1 y l2
 (define concatenar (lambda (l1)
                      (lambda (l2)
-                       (((null l1) (lambda (no_use) l2) (lambda (no_use) ((concatenaraux  l1) l2))) zero) )))
+                       (((null l1) (lambda (no_use) l2) (lambda (no_use) ((concatenaraux  l1) l2))) zero) )))	;si l1 no es vacia llama de nuevo a concatenaraux para seguir recorriendo la lista
 
+;Operacion auxiliar de concatenar para simular la recursividad
 (define concatenaraux (lambda (l1)
                         (lambda (l2)
                           ((Y (lambda (f)
                                 (lambda (x)
                                   ((
-                                    (null x)              
+                                    (null x)   						;Si la lista 1 es vacia se termina y devuelve l2  (l2 contiene la union de los elementos de l1)          
                                     (lambda (no_use)
                                       l2
                                       )
                                     (lambda (no_use)
-                                      ((const (hd x)) ((concatenar (tl x)) l2))
+                                      ((const (hd x)) ((concatenar (tl x)) l2))		;si la lista 1 no es vacia se forma lista con su cabeza y la llamada a concatenar pasandole la cola de l1 para recorrer la lista
                                       )
                                     )
                                    zero)
@@ -474,21 +487,24 @@
                            l1)
                           )))
 
+;-------------------------------------------------------------------------------------------------------------------------
 
+;Operacion que muestra los elementos que contiene lista dada
 (define mostrar (lambda (l)
-                   (((null l) (lambda (no_use) (display "")) (lambda (no_use) (mostraraux l))) zero)))
+                   (((null l) (lambda (no_use) (display "")) (lambda (no_use) (mostraraux l))) zero)))		;si la lista es vacia no muestra nada y termina, si no llama a mostraraux
 
+;operacion auxiliar para recorrer lista de mostrar
 (define mostraraux (lambda (l)
                    ((Y (lambda (f)
-                         (display (testenteros(hd l))) (display " ")
-                         (lambda (x)
+                         (display (testenteros(hd l))) (display " ")						;muestra cabeza de la lista por consola
+                         (lambda (x)	
                            ((
-                             (null x)              
+                             (null x)              								;si la lista es vacia se termina
                              (lambda (no_use)
                                (display "")
                                )
                              (lambda (no_use)
-                               (mostrar (tl x))
+                               (mostrar (tl x))									;si no es vacia se llama a mostrar con el resto de la lista continuando su recorrido
                                )
                              )
                             zero)
@@ -496,20 +512,23 @@
                          ))
                     l)
                    ))
+;-------------------------------------------------------------------------------------------------------------------------
 
+;Operacion inversion que da la vuelta a una lista dada
 (define inversion (lambda (l)
-                    (((null l) (lambda (no_use) nil) (lambda (no_use) (inversionaux l))) zero)))
+                    (((null l) (lambda (no_use) nil) (lambda (no_use) (inversionaux l))) zero)))               ;si la lista pasada no es vacia se llama a inversionaux
 
+;operacion auxiliar de inversion para simular recursividad
 (define inversionaux (lambda (l)
                        ((Y (lambda (f)
                              (lambda (x)
                                ((
-                                 (null x)              
+                                 (null x)              							       ;si la lista es vacia se termina la ejecucion y devuelve nil para indicar final de la lista
                                  (lambda (no_use)
                                    nil
                                    )
                                  (lambda (no_use)
-                                   ((concatenar (inversion (tl x))) ((const (hd x)) nil))
+                                   ((concatenar (inversion (tl x))) ((const (hd x)) nil))		       ;si no es nula se concatena nueva llamada con el resto de la lista con la cabeza de la lista invirtiendo asi el orden
                                    )
                                  )
                                 zero)
@@ -518,21 +537,25 @@
                         l)
                        ))
 
+;-------------------------------------------------------------------------------------------------------------------------
+
+;Operacion que determina si elementos recibido pertenece a lista pasada
 (define pertenece (lambda (l)
                     (lambda (e)
-                      (((null l) (lambda (no_use) false) (lambda (no_use) ((perteneceaux l) e))) zero))))
+                      (((null l) (lambda (no_use) false) (lambda (no_use) ((perteneceaux l) e))) zero)))) 	;si lista es vacio no encuentra elemento y devuelve falso, si no es vacia se llama a perteneceaux
 
+;operacion auxiliar de pertenece para simular recursividad
 (define perteneceaux (lambda (l)
                        (lambda (e)
                          ((Y (lambda (f)
                                (lambda (x)
                                  ((
-                                   ((esigualent (hd l)) e)           
+                                   ((esigualent (hd l)) e)        						;revisa si el elemento es igual a la cabeza de la lista y si lo es devuelve true   
                                    (lambda (no_use)
                                      true
                                      )
                                    (lambda (no_use)
-                                     ((pertenece (tl x)) e)
+                                     ((pertenece (tl x)) e)							;si el elemento no es igual sigue recorriendo la lista llamando a pertenece con la cola de la lista
                                      )
                                    )
                                   zero)
@@ -541,20 +564,25 @@
                           l)
                          )))
 
+;-------------------------------------------------------------------------------------------------------------------------
+;Operaciones de la codificacion de los enteros
+;-------------------------------------------------------------------------------------------------------------------------
 
+;Operacion que devuelve la suma de todos los elementos de una lista
 (define sumarlista (lambda (l)
-                   (((null l) (lambda (no_use) cero) (lambda (no_use) (sumarlistaaux l))) cero)))
+                   (((null l) (lambda (no_use) cero) (lambda (no_use) (sumarlistaaux l))) cero)))              ;si no es vacia llama a sumarlistaaux
 
+;operacion auxiliar para realizar recursividad de sumarlista
 (define sumarlistaaux (lambda (l)
                         ((Y (lambda (f)
                               (lambda (x)
                                 ((
                                   (null x)              
-                                  (lambda (no_use)
+                                  (lambda (no_use)								;si la lista es vacia se termina devolviendo cero
                                     cero
                                     )
                                   (lambda (no_use)
-                                    ((sument (hd x)) (sumarlista (tl x)))
+                                    ((sument (hd x)) (sumarlista (tl x)))					;si no es vacia se suma la cabeza de la lista a la llamada a sumarlista que recibe el resto de la lista para recorrerla
                                     )
                                   )
                                  cero)
@@ -563,21 +591,25 @@
                          l)
                         ))
 
+;-------------------------------------------------------------------------------------------------------------------------
+
+;Operacion que devuelve el maximo de una lista, recibe la lista y el elemento maximo actual
 (define maxlista (lambda (l)
                    (lambda (n)
-                     (((null l) (lambda (no_use) n) (lambda (no_use) ((maxlistaaux l)n))) cero))))
+                     (((null l) (lambda (no_use) n) (lambda (no_use) ((maxlistaaux l)n))) cero))))		;si la lista es vacia devuelve el elemento y si no llama a maxlistaaux
 
+;operacion auxiliar para simular recursividad de maxlista
 (define maxlistaaux (lambda (l)
                       (lambda (n)
                         ((Y (lambda (f)
                             (lambda (x)
                               ((
-                                ((esmayorent (hd l)) n)              
+                                ((esmayorent (hd l)) n)        							;comprueba si la cabeza de la lista es mayor que el maximo actual      
                                 (lambda (no_use)
-                                  ((maxlista (tl l)) (hd l))
+                                  ((maxlista (tl l)) (hd l))							;si lo es llama a maxlista con el nuevo maximo que es la cabeza de la lista y el resto de la lista
                                   )
                                 (lambda (no_use)
-                                  ((maxlista (tl l)) n)
+                                  ((maxlista (tl l)) n)								;si la cabeza no es mayor se llama a maxlista con el mismo elemento pasado y el resto de la lista
                                   )
                                 )
                                cero)
@@ -586,21 +618,22 @@
                        l)
                       )))
 
+;Operacion que devuelve el minimo de una lista, recibe la lista y el elemento minimo actual
 (define minlista (lambda (l)
                    (lambda (n)
-                     (((null l) (lambda (no_use) n) (lambda (no_use) ((minlistaaux l)n))) cero))))
+                     (((null l) (lambda (no_use) n) (lambda (no_use) ((minlistaaux l)n))) cero))))		;si la lista es vacia devuelve el elemento y si no llama a minlistaaux
 
 (define minlistaaux (lambda (l)
                       (lambda (n)
                         ((Y (lambda (f)
                             (lambda (x)
                               ((
-                                ((esmenorent (hd l)) n)              
+                                ((esmenorent (hd l)) n)              						;comprueba si la cabeza de la lista es menor que el minimo actual 
                                 (lambda (no_use)
-                                  ((minlista (tl l)) (hd l))
+                                  ((minlista (tl l)) (hd l))							;si lo es llama a minlista con el nuevo minimo que es la cabeza de la lista y el resto de la lista
                                   )
                                 (lambda (no_use)
-                                  ((minlista (tl l)) n)
+                                  ((minlista (tl l)) n)								;si la cabeza no es menor se llama a minlista con el mismo elemento pasado y el resto de la lista
                                   )
                                 )
                                cero)
@@ -609,21 +642,27 @@
                        l)
                       )))
 
+;-------------------------------------------------------------------------------------------------------------------------
+;Mejoras
+;-------------------------------------------------------------------------------------------------------------------------
+
+;Operacion que suma los elementos de dos listas del mismo tamaño como la suma de dos vectores
 (define sumar2listas (lambda (l1)
                        (lambda (l2)
-                         (((null l1) (lambda (no_use) nil) (lambda (no_use) ((sumar2listasaux l1) l2))) zero))))
+                         (((null l1) (lambda (no_use) nil) (lambda (no_use) ((sumar2listasaux l1) l2))) zero))))                        ;si listas no vacias se llama a sumar2listasaux
 
+;operacion auxilir de sumar2listas para simular recursividad
 (define sumar2listasaux (lambda (l1)
                           (lambda (l2)
                             ((Y (lambda (f)
                                   (lambda (x)
                                     ((
-                                      (null x)              
+                                      (null x)      											;si la lista es vacia se termina devolviendo nil	        
                                       (lambda (no_use)
                                         nil
                                         )
                                       (lambda (no_use)
-                                        ((concatenar ((const ((sument (hd x)) (hd l2))) nil)) ((sumar2listas (tl x)) (tl l2)))
+                                        ((concatenar ((const ((sument (hd x)) (hd l2))) nil)) ((sumar2listas (tl x)) (tl l2)))         ;si no es vacia se suma las cabezas de ambas y se concatenan con siguiente ejecucion pasando el resto de ambas listas
                                         )
                                       )
                                      cero)
@@ -632,9 +671,10 @@
                              l1)
                             )))
 
-
-
+;-------------------------------------------------------------------------------------------------------------------------
 ;Listas de ejemplos
+;-------------------------------------------------------------------------------------------------------------------------
+
 (define lista1 ((const cinco) ((const tres) ((const dos) nil))) )
 (define lista2 ((const siete) ((const dos) ((const cinco) ((const uno) ((const dos) nil))))) )
 (define lista3 ((const dos) ((const dos) ((const cuatro) ((const cinco) ((const cero) nil))))) )
