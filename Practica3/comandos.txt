@@ -27,6 +27,20 @@ sumar listas --> (mostrar ((sumar2listas lista2) lista3))
 pertenece --> ((pertenece lista2) cinco)
 
 
+
+(testenteros ((buscarelem lista2) dos))
+
+(mostrar ((obtenerinicio lista2) tres))
+
+(mostrar ((obtenerfinal lista2) dos))
+
+(mostrar ((elimarpos lista2) dos))
+
+(mostrar ((eliminarelem lista3) dos))
+
+
+
+
 pruebas --> (comprobar (longitud ((concatenar lista1) lista2)))
 		(mostrar (inversion lista2))
 		((const (hd lista1)) nil)
