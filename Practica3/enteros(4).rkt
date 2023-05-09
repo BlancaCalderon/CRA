@@ -671,23 +671,24 @@
                              l1)
                             )))
 
-;buscar opr posiciobn
+;-------------------------------------------------------------------------------------------------------------------------
+;Operacion que devuelve el elemento en la posición pasada
 (define buscarelem (lambda (l)
                          (lambda (p)
-                           (((((esmenorent p) cero) or (null l)) (lambda (no_use) -uno) (lambda (no_use) ((buscarelemaux l)p))) zero))))
+                           (((((esmenorent p) cero) or (null l)) (lambda (no_use) -uno) (lambda (no_use) ((buscarelemaux l)p))) zero))))  ;si la posicion es menor que cero o la lista es vacia se termina devolviendo -1 que indica error, si no se llama a buscarelemaux
 
+;operacion auxiliar para simular recursividad de buscarelem
 (define buscarelemaux (lambda (l)
-                        (lambda (p)
-                          
+                        (lambda (p)                       
                           ((Y (lambda (f)
                                 (lambda (x)
                                   ((
-                                    ((esmayorent p) cero)              						;comprueba si la cabeza de la lista es menor que el minimo actual 
+                                    ((esmayorent p) cero)                                                                                 ;si la posicion es mayor que cero todavia no la hemos encontrado por lo que se sigue recorriendo la lista llamando a buscarelem con el resto de la lista y la posicion disminuida   						
                                     (lambda (no_use)
-                                      ((buscarelem (tl x)) ((restaent p) uno))							;si lo es llama a minlista con el nuevo minimo que es la cabeza de la lista y el resto de la lista
+                                      ((buscarelem (tl x)) ((restaent p) uno))							
                                       )
                                     (lambda (no_use)
-                                      (hd x)								;si la cabeza no es menor se llama a minlista con el mismo elemento pasado y el resto de la lista
+                                      (hd x)					                                                          ;si no es mayor es que se ha encontrado la posicion por lo que se devuelve la cabeza de la lista la cual corresponde al elemento buscado			
                                       )
                                     )
                                    zero)
@@ -697,21 +698,23 @@
                           )))
 
 
+;-------------------------------------------------------------------------------------------------------------------------
+;Operacion que devuelve los primeros elementos hasta el número indicado (p)
 (define obtenerinicio (lambda (l)
                          (lambda (p)
-                           (((((esmenorent p) cero) or (null l)) (lambda (no_use) nil) (lambda (no_use) ((obtenerinicioaux l) p))) zero))))
+                           (((((esmenorent p) cero) or (null l)) (lambda (no_use) nil) (lambda (no_use) ((obtenerinicioaux l) p))) zero))))           ;si la posicion es menor que cero o la lista es vacia se termina devolviendo nil, si no se llama a obtenerinicioaux
 
 (define obtenerinicioaux (lambda (l)
                            (lambda (p)
                              ((Y (lambda (f)
                                    (lambda (x)
                                      ((
-                                       ((esmayorent p) cero)              						;comprueba si la cabeza de la lista es menor que el minimo actual 
+                                       ((esmayorent p) cero)              						
                                        (lambda (no_use)
-                                         ((concatenar ((const (hd l)) nil)) ((obtenerinicio (tl l)) ((restaent p) uno)))							;si lo es llama a minlista con el nuevo minimo que es la cabeza de la lista y el resto de la lista
+                                         ((concatenar ((const (hd l)) nil)) ((obtenerinicio (tl l)) ((restaent p) uno)))	                      ;si la posicion es mayor que cero todavia no la hemos encontrado por lo que se sigue recorriendo la lista concatenando los elementos para guardarlos y llamando a obtenerinicio con el resto de la lista						
                                          )
                                        (lambda (no_use)
-                                         nil;si la cabeza no es menor se llama a minlista con el mismo elemento pasado y el resto de la lista
+                                         nil                                                                                                          ;si se ha encontrado la posicion se devuelve lista vacia ya que ya tenemos todos los elementos que queriamos
                                          )
                                        )
                                       zero)
@@ -720,21 +723,23 @@
                               l)
                              )))
 
+;-------------------------------------------------------------------------------------------------------------------------
+;Operacion que devuelve los elementos de la lista que vienen despues de la posicion indicada
 (define obtenerfinal (lambda (l)
                          (lambda (p)
-                           (((((esmenorent p) cero) or (null l)) (lambda (no_use) nil) (lambda (no_use) ((obtenerfinalaux l) p))) zero))))
+                           (((((esmenorent p) cero) or (null l)) (lambda (no_use) nil) (lambda (no_use) ((obtenerfinalaux l) p))) zero))))          ;si la posicion es menor que cero o la lista es vacia se termina devolviendo nil, si no se llama a obtenerfinalaux
 
 (define obtenerfinalaux (lambda (l)
                            (lambda (p)
                              ((Y (lambda (f)
                                    (lambda (x)
                                      ((
-                                       ((esmayorent p) cero)              						;comprueba si la cabeza de la lista es menor que el minimo actual 
+                                       ((esmayorent p) cero)              						
                                        (lambda (no_use)
-                                         ((obtenerfinal (tl x)) ((restaent p) uno))							;si lo es llama a minlista con el nuevo minimo que es la cabeza de la lista y el resto de la lista
+                                         ((obtenerfinal (tl x)) ((restaent p) uno))	                                                            ;si la posicion es mayor que cero todavia no la hemos encontrado por lo que se sigue recorriendo la lista sin guaradar los elementos (solo queremos los que esten despues) y llamando a obtenerfinal con el resto de la lista										
                                          )
                                        (lambda (no_use)
-                                         x;si la cabeza no es menor se llama a minlista con el mismo elemento pasado y el resto de la lista
+                                         x                                                                                                          ;si se ha encontrado la posicion se devuelve la lista restante que corresponde a los elementos despues de la posicion
                                          )
                                        )
                                       zero)
@@ -743,23 +748,23 @@
                               l)
                              )))
 
-
+;-------------------------------------------------------------------------------------------------------------------------
+;Operacion que elimina de la lista todas las apariciones del elemento pasado
 (define eliminarelem (lambda (l)
                          (lambda (p)
-                           (((null l) (lambda (no_use) nil) (lambda (no_use) ((eliminarelemaux l) p))) zero))))
+                           (((null l) (lambda (no_use) nil) (lambda (no_use) ((eliminarelemaux l) p))) zero))))                                    ;se comprueba si la lista esta vacia en cuyo caso se devuelve nil y si no llama a elimarelemaux
 
 (define eliminarelemaux (lambda (l)
                            (lambda (p)
                              ((Y (lambda (f)
                                    (lambda (x)
                                      ((
-                                       ((esigualent p) (hd x))              						;comprueba si la cabeza de la lista es menor que el minimo actual 
+                                       ((esigualent p) (hd x))                                                                                    ;si el elemento pasado es igual a la cabeza de la lista no se guarda elemento y se hace llama a eliminarelem con el restod e esta lista (elimina elemento al no guardarlo)  						
                                        (lambda (no_use)
-                                         ((eliminarelem (tl x)) p)							;si lo es llama a minlista con el nuevo minimo que es la cabeza de la lista y el resto de la lista
+                                         ((eliminarelem (tl x)) p)							
                                          )
                                        (lambda (no_use)
-                                         ((concatenar ((const(hd x)) nil)) ((eliminarelem (tl x)) p));si la cabeza no es menor se llama a minlista con el mismo elemento pasado y el resto de la lista
-                                         )
+                                         ((concatenar ((const(hd x)) nil)) ((eliminarelem (tl x)) p))                                             ;si no es igual si que se guarda la cabeza de la lista para no borrarlo haciendo tambien llamada a eliminarelem con el resto de la lista
                                        )
                                       zero)
                                      )
@@ -767,22 +772,23 @@
                               l)
                              )))
 
-
+;-------------------------------------------------------------------------------------------------------------------------
+;Operacion que elimina elemento de la lista que se encuentra en la posición pasada
 (define eliminarpos (lambda (l)
                          (lambda (p)
-                           (((((esmenorent p) cero) or (null l)) (lambda (no_use) nil) (lambda (no_use) ((eliminarposaux l) p))) zero))))
+                           (((((esmenorent p) cero) or (null l)) (lambda (no_use) nil) (lambda (no_use) ((eliminarposaux l) p))) zero))))    ;si la posicion es menor que cero o la lista es vacia se termina devolviendo nil, si no se llama a eliminarposaux
 
 (define eliminarposaux (lambda (l)
                            (lambda (p)
                              ((Y (lambda (f)
                                    (lambda (x)
                                      ((
-                                       ((esmayorent p) cero)              						;comprueba si la cabeza de la lista es menor que el minimo actual 
+                                       ((esmayorent p) cero)              		                                                      ;si la posicion es mayor que cero no la hemos encontrado todavia por lo que guardamos la cabeza actual y se llama a eliminarpos con el resto de la lista y devolviendo la posicion				
                                        (lambda (no_use)
-                                         ((concatenar ((const(hd x)) nil)) ((eliminarpos (tl x)) ((restaent p) uno)))							;si lo es llama a minlista con el nuevo minimo que es la cabeza de la lista y el resto de la lista
+                                         ((concatenar ((const(hd x)) nil)) ((eliminarpos (tl x)) ((restaent p) uno)))	
                                          )
                                        (lambda (no_use)
-                                         (tl x);si la cabeza no es menor se llama a minlista con el mismo elemento pasado y el resto de la lista
+                                         (tl x)                                                                                               ;si se encuentra la posicion se devuelve el resto de la lista borrando asi el elemento de esa posicion
                                          )
                                        )
                                       zero)
@@ -824,6 +830,16 @@
 (display (testenteros ((minlista lista1) (hd lista1))))
 (display "\n\n- Sumar lista2 - lista3\n( ")
 (mostrar ((sumar2listas lista2) lista3))
+(display "\n\n- Obtener elemento de posición - lista2 - posicion 2\n( ")
+(display (testenteros ((buscarelem lista2) dos)))
+(display "\n\n- Devolver elementos antes de - lista2 - posicion 3\n( ")
+(mostrar ((obtenerinicio lista2) tres))
+(display "\n\n- Devolver elementos despues de - lista2 - posicion 2\n( ")
+(mostrar ((obtenerfinal lista2) dos))
+(display "\n\n- Eliminar elemento de la posicion - lista2 - posicion 2\n( ")
+(mostrar ((elimarpos lista2) dos))
+(display "\n\n- Eliminar elemento - lista3 - elemento 2\n( ")
+(mostrar ((eliminarelem lista3) dos))
 (display ")\n-----------------------------------")
 )
 

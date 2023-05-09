@@ -26,17 +26,15 @@ sumar listas --> (mostrar ((sumar2listas lista2) lista3))
 
 pertenece --> ((pertenece lista2) cinco)
 
+devolver elemento en posicion --> (testenteros ((buscarelem lista2) dos))
 
+devolver primeros n elementos --> (mostrar ((obtenerinicio lista2) tres))
 
-(testenteros ((buscarelem lista2) dos))
+devolver elementos tras posicion --> (mostrar ((obtenerfinal lista2) dos))
 
-(mostrar ((obtenerinicio lista2) tres))
+Eliminar elemento de la posicion --> (mostrar ((elimarpos lista2) dos))
 
-(mostrar ((obtenerfinal lista2) dos))
-
-(mostrar ((elimarpos lista2) dos))
-
-(mostrar ((eliminarelem lista3) dos))
+Eliminar apariciones del elemento --> (mostrar ((eliminarelem lista3) dos))
 
 
 
