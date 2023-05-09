@@ -671,6 +671,31 @@
                              l1)
                             )))
 
+;buscar opr posiciobn
+(define buscarelem (lambda (l)
+                         (lambda (p)
+                           (((((esmenorent p) cero) or (null l)) (lambda (no_use) -uno) (lambda (no_use) ((buscarelemaux l)p))) zero))))
+
+(define buscarelemaux (lambda (l)
+                        (lambda (p)
+                          
+                          ((Y (lambda (f)
+                                (lambda (x)
+                                  ((
+                                    ((esmayorent p) cero)              						;comprueba si la cabeza de la lista es menor que el minimo actual 
+                                    (lambda (no_use)
+                                      ((buscarelem (tl x)) ((restaent p) uno))							;si lo es llama a minlista con el nuevo minimo que es la cabeza de la lista y el resto de la lista
+                                      )
+                                    (lambda (no_use)
+                                      (hd x)								;si la cabeza no es menor se llama a minlista con el mismo elemento pasado y el resto de la lista
+                                      )
+                                    )
+                                   zero)
+                                  )
+                                ))
+                           l)
+                          )))
+
 ;-------------------------------------------------------------------------------------------------------------------------
 ;Listas de ejemplos
 ;-------------------------------------------------------------------------------------------------------------------------
