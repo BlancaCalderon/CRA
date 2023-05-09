@@ -711,7 +711,6 @@
                                          ((concatenar ((const (hd l)) nil)) ((obtenerinicio (tl l)) ((restaent p) uno)))							;si lo es llama a minlista con el nuevo minimo que es la cabeza de la lista y el resto de la lista
                                          )
                                        (lambda (no_use)
-                                         (display "entro")
                                          nil;si la cabeza no es menor se llama a minlista con el mismo elemento pasado y el resto de la lista
                                          )
                                        )
@@ -721,22 +720,69 @@
                               l)
                              )))
 
-(define obtenerinicio (lambda (l)
+(define obtenerfinal (lambda (l)
                          (lambda (p)
-                           (((((esmenorent p) cero) or (null l)) (lambda (no_use) nil) (lambda (no_use) ((obtenerinicioaux l) p))) zero))))
+                           (((((esmenorent p) cero) or (null l)) (lambda (no_use) nil) (lambda (no_use) ((obtenerfinalaux l) p))) zero))))
 
-(define obtenerinicioaux (lambda (l)
+(define obtenerfinalaux (lambda (l)
                            (lambda (p)
                              ((Y (lambda (f)
                                    (lambda (x)
                                      ((
                                        ((esmayorent p) cero)              						;comprueba si la cabeza de la lista es menor que el minimo actual 
                                        (lambda (no_use)
-                                         ((concatenar ((const (hd l)) nil)) ((obtenerinicio (tl l)) ((restaent p) uno)))							;si lo es llama a minlista con el nuevo minimo que es la cabeza de la lista y el resto de la lista
+                                         ((obtenerfinal (tl x)) ((restaent p) uno))							;si lo es llama a minlista con el nuevo minimo que es la cabeza de la lista y el resto de la lista
                                          )
                                        (lambda (no_use)
-                                         (display "entro")
-                                         nil;si la cabeza no es menor se llama a minlista con el mismo elemento pasado y el resto de la lista
+                                         x;si la cabeza no es menor se llama a minlista con el mismo elemento pasado y el resto de la lista
+                                         )
+                                       )
+                                      zero)
+                                     )
+                                   ))
+                              l)
+                             )))
+
+
+(define eliminarelem (lambda (l)
+                         (lambda (p)
+                           (((null l) (lambda (no_use) nil) (lambda (no_use) ((eliminarelemaux l) p))) zero))))
+
+(define eliminarelemaux (lambda (l)
+                           (lambda (p)
+                             ((Y (lambda (f)
+                                   (lambda (x)
+                                     ((
+                                       ((esigualent p) (hd x))              						;comprueba si la cabeza de la lista es menor que el minimo actual 
+                                       (lambda (no_use)
+                                         ((eliminarelem (tl x)) p)							;si lo es llama a minlista con el nuevo minimo que es la cabeza de la lista y el resto de la lista
+                                         )
+                                       (lambda (no_use)
+                                         ((concatenar ((const(hd x)) nil)) ((eliminarelem (tl x)) p));si la cabeza no es menor se llama a minlista con el mismo elemento pasado y el resto de la lista
+                                         )
+                                       )
+                                      zero)
+                                     )
+                                   ))
+                              l)
+                             )))
+
+
+(define eliminarpos (lambda (l)
+                         (lambda (p)
+                           (((((esmenorent p) cero) or (null l)) (lambda (no_use) nil) (lambda (no_use) ((eliminarposaux l) p))) zero))))
+
+(define eliminarposaux (lambda (l)
+                           (lambda (p)
+                             ((Y (lambda (f)
+                                   (lambda (x)
+                                     ((
+                                       ((esmayorent p) cero)              						;comprueba si la cabeza de la lista es menor que el minimo actual 
+                                       (lambda (no_use)
+                                         ((concatenar ((const(hd x)) nil)) ((eliminarpos (tl x)) ((restaent p) uno)))							;si lo es llama a minlista con el nuevo minimo que es la cabeza de la lista y el resto de la lista
+                                         )
+                                       (lambda (no_use)
+                                         (tl x);si la cabeza no es menor se llama a minlista con el mismo elemento pasado y el resto de la lista
                                          )
                                        )
                                       zero)
