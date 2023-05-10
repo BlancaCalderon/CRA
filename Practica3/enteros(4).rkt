@@ -799,42 +799,26 @@
                              )))
 
 
-(define ordenar (lambda (l)
-                  (((null (tl l)) (lambda (no_use) ((const (hd l)) nil)) (lambda (no_use) (ordenaraux l))) zero)))  ;si la posicion es menor que cero o la lista es vacia se termina devolviendo nil, si no se llama a eliminarposaux
-
-(define ordenaraux (lambda (l)
-                     ((Y (lambda (f)
-                           (lambda (x)
-                             ((
-                               ((esmayorent (hd x)) (hd (tl x)))              		                                                      ;si la posicion es mayor que cero no la hemos encontrado todavia por lo que guardamos la cabeza actual y se llama a eliminarpos con el resto de la lista y devolviendo la posicion				
-                               (lambda (no_use)
-                                 ((concatenar ((const (hd (tl x))) nil)) (ordenar ((const (hd x)) (tl (tl x)))))	
-                                 )
-                               (lambda (no_use)
-                                 ((concatenar ((const (hd x)) nil)) (ordenar (tl x)))                                                                      ;si se encuentra la posicion se devuelve el resto de la lista borrando asi el elemento de esa posicion
-                                 )
-                               )
-                              zero)
-                             )
-                           ))
-                      l)
-                     ))
-
+;-------------------------------------------------------------------------------------------------------------------------
+;Operaciones que ordenan una lista de menor a mayor
+;-------------------------------------------------------------------------------------------------------------------------
+;Operacion que recorre elemento y se lo pasa a una lista vacia (l2) y a colocar el cual lo coloca en la posicion que corresponde
 (define ordenacion (lambda (l1)
                          (lambda (l2)
-                           (((null l1) (lambda (no_use) l2) (lambda (no_use) ((ordenacionaux l1) l2))) zero))))    ;si la posicion es menor que cero o la lista es vacia se termina devolviendo nil, si no se llama a eliminarposaux
+                           (((null l1) (lambda (no_use) l2) (lambda (no_use) ((ordenacionaux l1) l2))) zero))))    ;si la lista es vacia se termina devolviendo la ordenada y si no se llama a ordenacionaux
 
+;Operacion que permite a ordenacion simular la recursividad
 (define ordenacionaux (lambda (l1)
                            (lambda (l2)
                              ((Y (lambda (f)
                                    (lambda (x)
                                      ((
-                                       (null l2)              		                                                      ;si la posicion es mayor que cero no la hemos encontrado todavia por lo que guardamos la cabeza actual y se llama a eliminarpos con el resto de la lista y devolviendo la posicion				
+                                       (null l2)              		                                                      ;si la lista ordenadada (l2) esta vacia se llama a ordenacion con el resto de la lista entrante y se introduce a la lista ordenada (l2)				
                                        (lambda (no_use)
                                          ((ordenacion (tl x)) ((const(hd l1)) l2))	
                                          )
                                        (lambda (no_use)
-                                         ((ordenacion (tl x)) ((colocar l2) (hd x)))                                                                                             ;si se encuentra la posicion se devuelve el resto de la lista borrando asi el elemento de esa posicion
+                                         ((ordenacion (tl x)) ((colocar l2) (hd x)))                                          ;si la lista ordenada no esta vacia se llama a ordenacion con el resto de la lista original y a colocar para introducir la cabeza de la lista original en la nueva lista                                                                                      
                                          )
                                        )
                                       zero)
@@ -844,22 +828,24 @@
                              )))
 
 
-
+;-------------------------------------------------------------------------------------------------------------------------
+;Operacion que coloca elemento dado en la lista dada
 (define colocar (lambda (l)
                          (lambda (p)
-                           (((null l) (lambda (no_use) ((const p) nil)) (lambda (no_use) ((colocaraux l) p))) zero))))    ;si la posicion es menor que cero o la lista es vacia se termina devolviendo nil, si no se llama a eliminarposaux
+                           (((null l) (lambda (no_use) ((const p) nil)) (lambda (no_use) ((colocaraux l) p))) zero))))    ;si la lista es vacia se introduce directamente el elemento y si no llama a colocaraux
 
+;operacion que permite a colocar simular la recursividad
 (define colocaraux (lambda (l)
                            (lambda (p)
                              ((Y (lambda (f)
                                    (lambda (x)
                                      ((
-                                       ((esmayorent p) (hd x))              		                                                      ;si la posicion es mayor que cero no la hemos encontrado todavia por lo que guardamos la cabeza actual y se llama a eliminarpos con el resto de la lista y devolviendo la posicion				
+                                       ((esmayorent p) (hd x))              		                                   ;compara si el elemento es mayor que la cabeza actual y si lo es concatena la cabeza (porque es mayor e ira despues) y llama a concatenar con el resto de la lista ordenando asi de menor a mayor				
                                        (lambda (no_use)
                                          ((concatenar ((const(hd x)) nil)) ((colocar (tl x)) p) )	
                                          )
                                        (lambda (no_use)
-                                         ((concatenar ((const p) nil)) x)                                                                                               ;si se encuentra la posicion se devuelve el resto de la lista borrando asi el elemento de esa posicion
+                                         ((concatenar ((const p) nil)) x)                                                  ;si el elemento es menor se llama a concatenar con el resto de la lista introduciendo el elemento al principio porque es mayor                                              
                                          )
                                        )
                                       zero)

@@ -36,8 +36,7 @@ Eliminar elemento de la posicion --> (mostrar ((elimarpos lista2) dos))
 
 Eliminar apariciones del elemento --> (mostrar ((eliminarelem lista3) dos))
 
-
-
+Ordenar una lista --> (mostrar ((ordenacion lista2) nil))
 
 pruebas --> (comprobar (longitud ((concatenar lista1) lista2)))
 		(mostrar (inversion lista2))
