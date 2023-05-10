@@ -798,10 +798,80 @@
                               l)
                              )))
 
+
+(define ordenar (lambda (l)
+                  (((null (tl l)) (lambda (no_use) ((const (hd l)) nil)) (lambda (no_use) (ordenaraux l))) zero)))  ;si la posicion es menor que cero o la lista es vacia se termina devolviendo nil, si no se llama a eliminarposaux
+
+(define ordenaraux (lambda (l)
+                     ((Y (lambda (f)
+                           (lambda (x)
+                             ((
+                               ((esmayorent (hd x)) (hd (tl x)))              		                                                      ;si la posicion es mayor que cero no la hemos encontrado todavia por lo que guardamos la cabeza actual y se llama a eliminarpos con el resto de la lista y devolviendo la posicion				
+                               (lambda (no_use)
+                                 ((concatenar ((const (hd (tl x))) nil)) (ordenar ((const (hd x)) (tl (tl x)))))	
+                                 )
+                               (lambda (no_use)
+                                 ((concatenar ((const (hd x)) nil)) (ordenar (tl x)))                                                                      ;si se encuentra la posicion se devuelve el resto de la lista borrando asi el elemento de esa posicion
+                                 )
+                               )
+                              zero)
+                             )
+                           ))
+                      l)
+                     ))
+
+(define ordenacion (lambda (l1)
+                         (lambda (l2)
+                           (((null l1) (lambda (no_use) l2) (lambda (no_use) ((ordenacionaux l1) l2))) zero))))    ;si la posicion es menor que cero o la lista es vacia se termina devolviendo nil, si no se llama a eliminarposaux
+
+(define ordenacionaux (lambda (l1)
+                           (lambda (l2)
+                             ((Y (lambda (f)
+                                   (lambda (x)
+                                     ((
+                                       (null l2)              		                                                      ;si la posicion es mayor que cero no la hemos encontrado todavia por lo que guardamos la cabeza actual y se llama a eliminarpos con el resto de la lista y devolviendo la posicion				
+                                       (lambda (no_use)
+                                         ((ordenacion (tl x)) ((const(hd l1)) l2))	
+                                         )
+                                       (lambda (no_use)
+                                         ((ordenacion (tl x)) ((colocar l2) (hd x)))                                                                                             ;si se encuentra la posicion se devuelve el resto de la lista borrando asi el elemento de esa posicion
+                                         )
+                                       )
+                                      zero)
+                                     )
+                                   ))
+                              l1)
+                             )))
+
+
+
+(define colocar (lambda (l)
+                         (lambda (p)
+                           (((null l) (lambda (no_use) ((const p) nil)) (lambda (no_use) ((colocaraux l) p))) zero))))    ;si la posicion es menor que cero o la lista es vacia se termina devolviendo nil, si no se llama a eliminarposaux
+
+(define colocaraux (lambda (l)
+                           (lambda (p)
+                             ((Y (lambda (f)
+                                   (lambda (x)
+                                     ((
+                                       ((esmayorent p) (hd x))              		                                                      ;si la posicion es mayor que cero no la hemos encontrado todavia por lo que guardamos la cabeza actual y se llama a eliminarpos con el resto de la lista y devolviendo la posicion				
+                                       (lambda (no_use)
+                                         ((concatenar ((const(hd x)) nil)) ((colocar (tl x)) p) )	
+                                         )
+                                       (lambda (no_use)
+                                         ((concatenar ((const p) nil)) x)                                                                                               ;si se encuentra la posicion se devuelve el resto de la lista borrando asi el elemento de esa posicion
+                                         )
+                                       )
+                                      zero)
+                                     )
+                                   ))
+                              l)
+                             )))
+
 ;-------------------------------------------------------------------------------------------------------------------------
 ;Listas de ejemplos
 ;-------------------------------------------------------------------------------------------------------------------------
-
+(define prueba ((const dos) nil))
 (define lista1 ((const cinco) ((const tres) ((const dos) nil))) )
 (define lista2 ((const siete) ((const dos) ((const cinco) ((const uno) ((const dos) nil))))) )
 (define lista3 ((const dos) ((const dos) ((const cuatro) ((const cinco) ((const cero) nil))))) )
@@ -841,6 +911,8 @@
 (mostrar ((eliminarpos lista2) dos))
 (display ")\n\n- Eliminar elemento - lista3 - elemento 2\n( ")
 (mostrar ((eliminarelem lista3) dos))
+(display ")\n\n- Ordenar lista2\n( ")
+(mostrar ((ordenacion lista2) nil))
 (display ")\n-----------------------------------")
 )
 
